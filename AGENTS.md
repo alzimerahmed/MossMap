@@ -43,6 +43,17 @@ MossMap = open-source offline maps app (fork of Organic Maps, Apache-2.0; upstre
 
 **Signing:** release/beta workflows require upstream secrets we do not have — release workflows stay disabled on the fork; check/build workflows are the active gate. Never hardcode signing material.
 
+## Removed on Purpose — Do NOT Re-add
+
+Repo was trimmed for size and fork-scope. These are intentionally absent — never restore them into the repo:
+
+- `data/borders/`, `data/test_data/`, `tools/shaders_compiler/` — heavy regenerable/test-only data; **CI sparse-restores them from upstream** in `build-cmake.yaml`. Tests needing them work only in CI.
+- `CLAUDE.md` (×3), `.claude/`, `.agents/`, `.gemini/`, `.github/copilot-instructions.md`, `.github/instructions/`, `.github/skills/` — non-Devin agent files.
+- `INSTALL.md`, `CONTRIBUTING.md`, `docs/CONTRIBUTING.md`, `GOVERNANCE`, `DCO`, `PR_GUIDE`, `RELEASE_MANAGEMENT`, `TEAMS`, `WINDOWS_RELEASE`, `ROADMAP`, `COMMIT_MESSAGES`, `DEBUG_COMMANDS`, `ANDROID_LOCATION_TEST`, `CODE_OF_CONDUCT`, `CREDENTIALS`, `docs/badges`, `docs/sponsors` — upstream community docs we don't maintain.
+- `package.json`, `.prettierrc.yaml`, `.git-blame-ignore-revs` — upstream-only tooling, dead on this fork.
+- Secret-dependent workflows: `android-release`, `android-release-metadata`, `android-sdk`, `android-beta`, `ios-beta`, `ios-release`, `android-monkey` — re-adding them makes pushes fail on missing secrets.
+- `LICENSE`, `NOTICE`, `CONTRIBUTORS`, `LICENSES/`, `DATA_LICENSE.txt` — **must stay** (license/attribution); never delete.
+
 ## Gotchas
 
 - **Shallow clone** (`--depth 1`) — no upstream history locally; don't attempt history-dependent git operations.
