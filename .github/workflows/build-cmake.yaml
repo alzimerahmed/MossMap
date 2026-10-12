@@ -57,24 +57,24 @@ jobs:
             unity: OFF
             run-tests: OFF
 
-          - os: ubuntu-24.04-arm
-            cc: clang-19
-            cxx: clang++-19
+          - os: ubuntu-26.04-arm
+            cc: clang-22
+            cxx: clang++-22
 
-          - os: ubuntu-24.04
+          - os: ubuntu-26.04
+            cc: gcc-15
+            cxx: g++-15
+
+          - os: ubuntu-24.04-arm
             cc: gcc-13
             cxx: g++-13
 
-          - os: ubuntu-24.04-arm
-            cc: gcc-13
-            cxx: g++-13
-
-          - os: macos-15
+          - os: macos-26
             cc: clang
             cxx: clang++
-            developer-dir: /Applications/Xcode_16.4.app/Contents/Developer
+            developer-dir: /Applications/Xcode_26.5.app/Contents/Developer
 
-          - os: windows-latest
+          - os: windows-2025-vs2026
             cc: cl.exe
             cxx: cl.exe
             cmake-preset-suffix: -windows
