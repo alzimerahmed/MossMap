@@ -296,7 +296,8 @@ void Results::Remove(size_t i)
 void Results::TrimTo(size_t count)
 {
   ASSERT_LESS_OR_EQUAL(count, m_results.size(), ());
-  m_results.resize(count);
+  if (count < m_results.size())
+    m_results.erase(m_results.begin() + count, m_results.end());
 }
 
 void Results::Clear()
