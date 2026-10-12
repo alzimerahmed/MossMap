@@ -116,10 +116,11 @@ jobs:
           repository: organicmaps/organicmaps
           sparse-checkout: |
             data/borders
+            data/test_data
             tools/shaders_compiler
           path: upstream-data
       - name: Move restored data into place
-        run: mv upstream-data/data/borders data/borders && mv upstream-data/tools/shaders_compiler tools/shaders_compiler && rm -rf upstream-data
+        run: mv upstream-data/data/borders data/borders && mv upstream-data/data/test_data data/test_data && mv upstream-data/tools/shaders_compiler tools/shaders_compiler && rm -rf upstream-data
 
       - name: Install build tools and dependencies (Linux)
         if: ${{ runner.os == 'Linux' }}

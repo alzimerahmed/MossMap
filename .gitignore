@@ -115,3 +115,7 @@ AGENTS.frostgram.bak
 # Regenerable/vendored heavy data (trimmed from fork)
 /data/borders/
 /tools/shaders_compiler/
+
+# Test-only data (restored from upstream in CI)
+/data/test_data/
+/.gemini/
