@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- First-run onboarding: detected region suggestion + offline capabilities blurb.
+     Uses only theme attributes (?cardBackground, ?fontHeadline6, ?android:textColorSecondary)
+     so dark mode follows the app theme automatically, and start/end margins so it is RTL-safe. -->
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="?cardBackground">
+
+  <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/onboarding_button_container"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_horizontal"
+      android:orientation="vertical"
+      android:paddingStart="@dimen/margin_base"
+      android:paddingEnd="@dimen/margin_base">
+
+      <ImageView
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="@dimen/margin_double_plus"
+        android:importantForAccessibility="no"
+        app:srcCompat="@drawable/ic_download"
+        app:tint="?android:colorAccent" />
+
+      <TextView
+        android:id="@+id/onboarding_title"
+        style="?fontHeadline6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_base"
+        android:gravity="center"
+        android:text="@string/onboarding_welcome_title" />
+
+      <TextView
+        android:id="@+id/onboarding_region_name"
+        style="?fontSubtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_base"
+        android:gravity="center"
+        android:textColor="?android:colorAccent"
+        tools:text="Germany" />
+
+      <TextView
+        android:id="@+id/onboarding_region_size"
+        style="?fontBody2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_half"
+        android:gravity="center"
+        android:textColor="?android:textColorSecondary"
+        tools:text="Download · 350 MB" />
+
+      <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/onboarding_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_base"
+        android:indeterminate="false"
+        android:max="100"
+        android:accessibilityLiveRegion="polite"
+        android:visibility="gone"
+        tools:progress="30"
+        tools:visibility="visible" />
+
+      <TextView
+        android:id="@+id/onboarding_offline_blurb"
+        style="?fontBody2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_double"
+        android:gravity="center"
+        android:text="@string/onboarding_offline_blurb"
+        android:textColor="?android:textColorSecondary" />
+    </LinearLayout>
+  </ScrollView>
+
+  <LinearLayout
+    android:id="@+id/onboarding_button_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/margin_base"
+    android:paddingEnd="@dimen/margin_base"
+    android:paddingBottom="@dimen/margin_base">
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/onboarding_btn_primary"
+      style="@style/MwmWidget.Button.Primary.Rounded"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:minHeight="48dp"
+      android:text="@string/onboarding_download_region_button" />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/onboarding_btn_browse_maps"
+      style="@style/MwmWidget.Button.Primary.Rounded"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_half"
+      android:minHeight="48dp"
+      android:text="@string/onboarding_browse_maps"
+      android:visibility="gone"
+      tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/onboarding_btn_skip"
+      style="@style/Widget.MaterialComponents.Button.TextButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_half"
+      android:minWidth="48dp"
+      android:minHeight="48dp"
+      android:text="@string/onboarding_skip" />
+  </LinearLayout>
+</RelativeLayout>

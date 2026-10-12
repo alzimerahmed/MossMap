@@ -1,0 +1,282 @@
+#include "platform/gui_thread.hpp"
+#include "platform/platform.hpp"
+#include "platform/socket.hpp"
+
+#include "base/file_name_utils.hpp"
+#include "base/logging.hpp"
+#include "base/scope_guard.hpp"
+
+#include "coding/file_writer.hpp"
+
+#include "std/windows.hpp"
+
+#include <functional>
+
+#include <direct.h>
+#include <shlobj.h>
+#include <shlwapi.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+namespace
+{
+bool GetUserWritableDir(std::string & outDir)
+{
+  char pathBuf[MAX_PATH] = {};
+  if (FAILED(::SHGetFolderPathA(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, pathBuf)))
+    return false;
+
+  outDir = pathBuf;
+  outDir += "\\OrganicMaps\\";
+#if OMIM_WINDOWS_DISTRIBUTION_DIRECT
+  outDir += "WindowsDirect\\";
+#elif OMIM_WINDOWS_DISTRIBUTION_STORE
+  outDir += "WindowsStore\\";
+#endif
+  return Platform::MkDirRecursively(outDir);
+}
+
+/// @return Full path to the executable file
+bool GetPathToBinary(std::string & outPath)
+{
+  char pathBuf[MAX_PATH] = {};
+  DWORD const length = ::GetModuleFileNameA(nullptr, pathBuf, MAX_PATH);
+  if (length == 0 || length >= MAX_PATH)
+    return false;
+  outPath = pathBuf;
+  return true;
+}
+}  // namespace
+
+namespace platform
+{
+std::unique_ptr<Socket> CreateSocket()
+{
+  return std::unique_ptr<Socket>();
+}
+}  // namespace platform
+
+Platform::Platform()
+{
+  std::string path;
+  CHECK(GetPathToBinary(path), ("Can't get path to binary"));
+
+  // Resources are read from data next to the executable; Debug builds also try ../../data.
+  path.erase(path.find_last_of('\\'));
+  if (IsFileExistsByFullPath(path + "\\data\\"))
+    m_resourcesDir = path + "\\data\\";
+  else
+  {
+#ifndef RELEASE
+    path.erase(path.find_last_of('\\'));
+    path.erase(path.find_last_of('\\'));
+    if (IsFileExistsByFullPath(path + "\\data\\"))
+      m_resourcesDir = path + "\\data\\";
+#else
+    CHECK(false, ("Can't find resources directory"));
+#endif
+  }
+
+#if OMIM_WINDOWS_DISTRIBUTION_DEVELOPMENT
+  auto const tmpFilePath = base::JoinPath(m_resourcesDir, "mapswithmetmptestfile");
+  try
+  {
+    FileWriter tmpfile(tmpFilePath);
+    tmpfile.Write("Hi from Alex!", 13);
+    m_writableDir = m_resourcesDir;
+  }
+  catch (RootException const &)
+  {
+    CHECK(GetUserWritableDir(m_writableDir), ("Can't get writable directory"));
+  }
+  FileWriter::DeleteFileX(tmpFilePath);
+#else
+  CHECK(GetUserWritableDir(m_writableDir), ("Can't get writable directory"));
+#endif
+
+  m_settingsDir = m_writableDir;
+  char tempPath[MAX_PATH + 1] = {};
+  DWORD const tempLength = ::GetTempPathA(MAX_PATH + 1, tempPath);
+  CHECK(tempLength != 0 && tempLength < sizeof(tempPath), ("Can't get temporary directory"));
+  m_tmpDir = tempPath;
+
+  m_guiThread = std::make_unique<platform::GuiThread>();
+
+  LOG(LINFO, ("Resources Directory:", m_resourcesDir));
+  LOG(LINFO, ("Writable Directory:", m_writableDir));
+  LOG(LINFO, ("Tmp Directory:", m_tmpDir));
+  LOG(LINFO, ("Settings Directory:", m_settingsDir));
+}
+
+bool Platform::IsFileExistsByFullPath(std::string const & filePath)
+{
+  return ::GetFileAttributesA(filePath.c_str()) != INVALID_FILE_ATTRIBUTES;
+}
+
+// static
+void Platform::DisableBackupForFile(std::string const & filePath) {}
+
+// static
+std::string Platform::GetCurrentWorkingDirectory() noexcept
+{
+  char path[MAX_PATH];
+  char const * const dir = getcwd(path, MAX_PATH);
+  if (dir == nullptr)
+    return {};
+  return dir;
+}
+
+// static
+Platform::EError Platform::RmDir(std::string const & dirName)
+{
+  if (_rmdir(dirName.c_str()) != 0)
+    return ErrnoToError();
+  return ERR_OK;
+}
+
+// static
+Platform::EError Platform::GetFileType(std::string const & path, EFileType & type)
+{
+  struct _stat32 stats;
+  if (_stat32(path.c_str(), &stats) != 0)
+    return ErrnoToError();
+  if (stats.st_mode & _S_IFREG)
+    type = EFileType::Regular;
+  else if (stats.st_mode & _S_IFDIR)
+    type = EFileType::Directory;
+  else
+    type = EFileType::Unknown;
+  return ERR_OK;
+}
+
+std::string Platform::DeviceName() const
+{
+  return OMIM_OS_NAME;
+}
+
+std::string Platform::DeviceModel() const
+{
+  return {};
+}
+
+Platform::EConnectionType Platform::ConnectionStatus()
+{
+  // @TODO Add implementation
+  return EConnectionType::CONNECTION_NONE;
+}
+
+Platform::ChargingStatus Platform::GetChargingStatus()
+{
+  return Platform::ChargingStatus::Plugged;
+}
+
+uint8_t Platform::GetBatteryLevel()
+{
+  // This value is always 100 for desktop.
+  return 100;
+}
+
+Platform::TStorageStatus Platform::GetWritableStorageStatus(uint64_t neededSize) const
+{
+  ULARGE_INTEGER freeSpace;
+  if (0 == ::GetDiskFreeSpaceExA(m_writableDir.c_str(), &freeSpace, NULL, NULL))
+  {
+    LOG(LWARNING, ("GetDiskFreeSpaceEx failed with error", GetLastError()));
+    return STORAGE_DISCONNECTED;
+  }
+
+  if (freeSpace.u.LowPart + (static_cast<uint64_t>(freeSpace.u.HighPart) << 32) < neededSize)
+    return NOT_ENOUGH_SPACE;
+
+  return STORAGE_OK;
+}
+
+bool Platform::IsDirectoryEmpty(std::string const & directory)
+{
+  return PathIsDirectoryEmptyA(directory.c_str());
+}
+
+bool Platform::GetFileSizeByFullPath(std::string const & filePath, uint64_t & size)
+{
+  HANDLE hFile =
+      CreateFileA(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  if (hFile != INVALID_HANDLE_VALUE)
+  {
+    SCOPE_GUARD(autoClose, std::bind_front(&CloseHandle, hFile));
+    LARGE_INTEGER fileSize;
+    if (0 != GetFileSizeEx(hFile, &fileSize))
+    {
+      size = fileSize.QuadPart;
+      return true;
+    }
+  }
+  return false;
+}
+
+namespace
+{
+enum class FileTimeType
+{
+  Creation,
+  Modification
+};
+time_t GetFileTime(std::string const & path, FileTimeType fileTimeType)
+{
+  HANDLE hFile = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+  if (hFile == INVALID_HANDLE_VALUE)
+    return 0;
+
+  SCOPE_GUARD(autoClose, std::bind_front(&CloseHandle, hFile));
+
+  FILETIME ft;
+  FILETIME * ftCreate = nullptr;
+  FILETIME * ftLastWrite = nullptr;
+
+  switch (fileTimeType)
+  {
+  case FileTimeType::Creation: ftCreate = &ft; break;
+  case FileTimeType::Modification: ftLastWrite = &ft; break;
+  }
+
+  if (!::GetFileTime(hFile, ftCreate, nullptr, ftLastWrite))
+    return 0;
+
+  ULARGE_INTEGER ull;
+  ull.LowPart = ft.dwLowDateTime;
+  ull.HighPart = ft.dwHighDateTime;
+  return static_cast<time_t>(ull.QuadPart / 10000000ULL - 11644473600ULL);
+}
+}  // namespace
+
+// static
+time_t Platform::GetFileCreationTime(std::string const & path)
+{
+  return GetFileTime(path, FileTimeType::Creation);
+}
+
+// static
+time_t Platform::GetFileModificationTime(std::string const & path)
+{
+  return GetFileTime(path, FileTimeType::Modification);
+}
+
+// static
+bool Platform::SetFileModificationTime(std::string const & path, time_t modTime)
+{
+  HANDLE hFile = CreateFileA(path.c_str(), FILE_WRITE_ATTRIBUTES, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+  if (hFile == INVALID_HANDLE_VALUE)
+    return false;
+
+  SCOPE_GUARD(autoClose, std::bind_front(&CloseHandle, hFile));
+
+  ULARGE_INTEGER ull;
+  ull.QuadPart = (static_cast<uint64_t>(modTime) + 11644473600ULL) * 10000000ULL;
+
+  FILETIME ft;
+  ft.dwLowDateTime = ull.LowPart;
+  ft.dwHighDateTime = ull.HighPart;
+
+  return ::SetFileTime(hFile, nullptr, nullptr, &ft) != 0;
+}
+
+void Platform::GetSystemFontNames(FilesList & res) const {}

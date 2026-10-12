@@ -1,0 +1,31 @@
+
+
+/********** Strings **********/
+
+
+/* View and button titles for accessibility. Also used in iPhone home screen quick actions. */
+"search" = "검색하기";
+
+/* "Bookmarks and Tracks" dialog title. Also used in iPhone home screen quick actions. */
+"bookmarks_and_tracks" = "북마크 및 트랙";
+
+
+/********** Other translations **********/
+
+
+/* Text in menu + Button in the main Help dialog. Used in home screen quick actions. */
+"report_a_bug" = "오류 신고";
+
+
+/********** 3d touch strings **********/
+
+
+/* Used in home screen quick actions. */
+"route" = "경로";
+
+
+/********** gps strings **********/
+
+
+/* Needed to explain why we require access to GPS coordinates when the app is active. */
+"NSLocationWhenInUseUsageDescription" = "현재 위치를 확인하는 것은 내비게이션과 최근 이동한 트랙 저장에 필요합니다.";

@@ -1,0 +1,93 @@
+#include "drape_frontend/engine_context.hpp"
+
+#include "drape/texture_manager.hpp"
+#include "drape_frontend/message_subclasses.hpp"
+
+#include <utility>
+
+namespace df
+{
+EngineContext::EngineContext(TileKey tileKey, ref_ptr<ThreadsCommutator> commutator, ref_ptr<dp::TextureManager> texMng,
+                             ref_ptr<MetalineManager> metalineMng, CustomFeaturesContextWeakPtr customFeaturesContext,
+                             bool is3dBuildingsEnabled, bool isTrafficEnabled, bool isolinesEnabled,
+                             int8_t mapLangIndex, dp::BackgroundMode backgroundMode, float areaOpacity)
+  : m_tileKey(tileKey)
+  , m_commutator(commutator)
+  , m_texMng(texMng)
+  , m_metalineMng(metalineMng)
+  , m_customFeaturesContext(customFeaturesContext)
+  , m_3dBuildingsEnabled(is3dBuildingsEnabled)
+  , m_trafficEnabled(isTrafficEnabled)
+  , m_isolinesEnabled(isolinesEnabled)
+  , m_mapLangIndex(mapLangIndex)
+  , m_backgroundMode(backgroundMode)
+  , m_areaOpacity(areaOpacity)
+{}
+
+ref_ptr<dp::TextureManager> EngineContext::GetTextureManager() const
+{
+  return m_texMng;
+}
+
+ref_ptr<MetalineManager> EngineContext::GetMetalineManager() const
+{
+  return m_metalineMng;
+}
+
+void EngineContext::BeginReadTile()
+{
+  PostMessage(make_unique_dp<TileReadStartMessage>(m_tileKey));
+}
+
+void EngineContext::Flush(TMapShapes && shapes)
+{
+  // Bound each upload operation while coalescing the small per-feature flushes.
+  size_t constexpr kShapesPerBatch = 64;
+  for (auto & shape : shapes)
+  {
+    if (m_geometry.empty())
+      m_geometry.reserve(kShapesPerBatch);
+    m_geometry.push_back(std::move(shape));
+    if (m_geometry.size() == kShapesPerBatch)
+      FlushGeometry();
+  }
+  shapes.clear();
+}
+
+void EngineContext::FlushGeometry()
+{
+  if (IsCancelled())
+    m_geometry.clear();
+  if (!m_geometry.empty())
+    PostMessage(make_unique_dp<MapShapeReadedMessage>(m_tileKey, std::exchange(m_geometry, {}), m_readCancelled));
+}
+
+void EngineContext::FlushOverlays(TMapShapes && shapes)
+{
+  FlushGeometry();
+  if (IsCancelled())
+  {
+    shapes.clear();
+    return;
+  }
+  PostMessage(make_unique_dp<OverlayMapShapeReadedMessage>(m_tileKey, std::move(shapes), m_readCancelled));
+}
+
+void EngineContext::FlushTrafficGeometry(TrafficSegmentsGeometry && geometry)
+{
+  m_commutator->PostMessage(ThreadsCommutator::ResourceUploadThread,
+                            make_unique_dp<FlushTrafficGeometryMessage>(m_tileKey, std::move(geometry)),
+                            MessagePriority::Low);
+}
+
+void EngineContext::EndReadTile()
+{
+  FlushGeometry();
+  PostMessage(make_unique_dp<TileReadEndMessage>(m_tileKey));
+}
+
+void EngineContext::PostMessage(drape_ptr<Message> && message)
+{
+  m_commutator->PostMessage(ThreadsCommutator::ResourceUploadThread, std::move(message), MessagePriority::Normal);
+}
+}  // namespace df
