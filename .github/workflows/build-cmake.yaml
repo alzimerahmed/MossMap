@@ -110,14 +110,16 @@ jobs:
       - name: Parallel submodules checkout
         run: git submodule update --depth 1 --init --recursive --jobs=20
 
-      - name: Restore borders test data (trimmed from the fork repo)
+      - name: Restore borders + shaders_compiler test data (trimmed from the fork repo)
         uses: actions/checkout@v6
         with:
           repository: organicmaps/organicmaps
-          sparse-checkout: data/borders
+          sparse-checkout: |
+            data/borders
+            tools/shaders_compiler
           path: upstream-data
-      - name: Move borders into place
-        run: mv upstream-data/data/borders data/borders && rm -rf upstream-data
+      - name: Move restored data into place
+        run: mv upstream-data/data/borders data/borders && mv upstream-data/tools/shaders_compiler tools/shaders_compiler && rm -rf upstream-data
 
       - name: Install build tools and dependencies (Linux)
         if: ${{ runner.os == 'Linux' }}
