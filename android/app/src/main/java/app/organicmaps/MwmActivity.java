@@ -142,7 +142,7 @@ public class MwmActivity extends BaseMwmFragmentActivity
   public static final String EXTRA_TRACK_ID = "track_id";
   public static final String EXTRA_UPDATE_THEME = "update_theme";
   // Stored both in the saved instance state and, when the core restarts, in the intent itself.
-  static final String EXTRA_CONSUMED = "mwm.extra.intent.processed";
+  public static final String EXTRA_CONSUMED = "mwm.extra.intent.processed";
   private boolean mIntentConsumed = false;
   private boolean mPreciseLocationDialogShown = false;
 

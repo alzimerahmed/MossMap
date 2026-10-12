@@ -25,8 +25,6 @@ std::string_view kMapLanguageCode = "MapLanguageCode";
 std::string_view kDeveloperMode = "DeveloperMode";
 std::string_view kDonateUrl = "DonateUrl";
 std::string_view kNY = "NY";
-std::string_view kTrackRecordingInterval = "GpsTrackingSamplingInterval";
-std::string_view kTrackRecordingMinAccuracy = "GpsTrackingMinAccuracy";
 
 StringStorage::StringStorage() : StringStorageBase(GetPlatform().SettingsPathForFile(SETTINGS_FILE_NAME)) {}
 

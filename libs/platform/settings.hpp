@@ -17,9 +17,9 @@ extern std::string_view kDonateUrl;
 extern std::string_view kNY;
 // Track recording (GPX track recorder) sampling configuration.
 // Interval in seconds between recorded fixes; 0 means record every fix.
-extern std::string_view kTrackRecordingInterval;
+inline constexpr std::string_view kTrackRecordingInterval = "GpsTrackingSamplingInterval";
 // Minimal horizontal accuracy in meters for a fix to be recorded.
-extern std::string_view kTrackRecordingMinAccuracy;
+inline constexpr std::string_view kTrackRecordingMinAccuracy = "GpsTrackingMinAccuracy";
 
 template <class T>
 bool FromString(std::string const & str, T & outValue);
