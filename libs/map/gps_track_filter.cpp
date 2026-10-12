@@ -112,8 +112,11 @@ GpsTrackFilter::GpsTrackFilter()
 {
   settings::TryGet(kMinHorizontalAccuracyKey, m_minAccuracy);
   settings::TryGet(kSamplingIntervalKey, m_minSamplingInterval);
-  if (m_minSamplingInterval < 0)
-    m_minSamplingInterval = 0;
+  // !(v >= 0) also rejects NaN read from a corrupted settings file.
+  if (!(m_minAccuracy >= 0))
+    m_minAccuracy = kMinHorizontalAccuracyMeters;
+  if (!(m_minSamplingInterval >= 0))
+    m_minSamplingInterval = kDefaultSamplingIntervalSeconds;
   g_minAccuracy.store(m_minAccuracy, std::memory_order_relaxed);
   g_minSamplingIntervalSeconds.store(m_minSamplingInterval, std::memory_order_relaxed);
 }
@@ -162,10 +165,12 @@ void GpsTrackFilter::Process(GpsVectorT const & inPoints, GpsVectorT & outPoints
 
     // When the gap between accepted fixes is long, the direction-prediction
     // check is meaningless (the fix may be a legitimate turn after a pause),
-    // so it only applies to short gaps.
-    double const gap = currInfo.m_timestamp - GetLastAcceptedInfo().m_timestamp;
+    // so it only applies to short gaps. The gap is only read when a fix has
+    // already been accepted (GetLastAcceptedInfo asserts otherwise).
     if (m_countAcceptedInfo == 0 ||
-        (IsGoodPoint(currInfo) && (gap > kMaxGapForDirectionCheck || m_countLastInfo < 2 || IsGoodVector(currInfo))))
+        (IsGoodPoint(currInfo) &&
+         (currInfo.m_timestamp - GetLastAcceptedInfo().m_timestamp > kMaxGapForDirectionCheck ||
+          m_countLastInfo < 2 || IsGoodVector(currInfo))))
     {
       outPoints.emplace_back(currInfo);
       AddLastAcceptedInfo(currInfo);
@@ -177,17 +182,26 @@ void GpsTrackFilter::Process(GpsVectorT const & inPoints, GpsVectorT & outPoints
 
 void GpsTrackFilter::Finalize(GpsVectorT & outPoints)
 {
-  if (m_countLastInfo > 0)
+  if (m_countLastInfo == 0)
+    return;
+
+  // Force append the last point, if wasn't added before. A repeated fix would only make a zero-length
+  // segment in the saved track, which the track geometry does not accept.
+  auto const & info = GetLastInfo();
+  if (m_countAcceptedInfo == 0)
   {
-    // Force append the last point, if wasn't added before. A repeated fix would only make a zero-length
-    // segment in the saved track, which the track geometry does not accept.
-    auto const & info = GetLastInfo();
-    auto const & lastAccepted = GetLastAcceptedInfo();
-    if (info.m_timestamp > lastAccepted.m_timestamp && !IsSamePoint(lastAccepted, info))
-    {
-      outPoints.push_back(info);
-      AddLastAcceptedInfo(info);
-    }
+    // Nothing was accepted (e.g. every fix was decimated or inaccurate);
+    // keep the last fix so the track is not silently empty.
+    outPoints.push_back(info);
+    AddLastAcceptedInfo(info);
+    return;
+  }
+
+  auto const & lastAccepted = GetLastAcceptedInfo();
+  if (info.m_timestamp > lastAccepted.m_timestamp && !IsSamePoint(lastAccepted, info))
+  {
+    outPoints.push_back(info);
+    AddLastAcceptedInfo(info);
   }
 }
 
@@ -249,23 +263,23 @@ bool GpsTrackFilter::IsGoodPoint(location::GpsInfo const & info) const
   return true;
 }
 
-location::GpsInfo const & GpsTrackFilter::GetLastInfo() const
-{
-  ASSERT_GREATER(m_countLastInfo, 0, ());
-  return m_lastInfo[0];
-}
-
-location::GpsInfo const & GpsTrackFilter::GetLastAcceptedInfo() const
-{
-  ASSERT_GREATER(m_countAcceptedInfo, 0, ());
-  return m_lastAcceptedInfo[0];
-}
-
 void GpsTrackFilter::AddLastInfo(location::GpsInfo const & info)
 {
   m_lastInfo[1] = m_lastInfo[0];
   m_lastInfo[0] = info;
   ++m_countLastInfo;
+}
+
+location::GpsInfo const & GpsTrackFilter::GetLastInfo() const
+{
+  static location::GpsInfo const kEmpty;
+  return m_countLastInfo > 0 ? m_lastInfo[0] : kEmpty;
+}
+
+location::GpsInfo const & GpsTrackFilter::GetLastAcceptedInfo() const
+{
+  static location::GpsInfo const kEmpty;
+  return m_countAcceptedInfo > 0 ? m_lastAcceptedInfo[0] : kEmpty;
 }
 
 void GpsTrackFilter::AddLastAcceptedInfo(location::GpsInfo const & info)
