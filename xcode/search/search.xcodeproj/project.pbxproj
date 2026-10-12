@@ -172,6 +172,8 @@
 		675346EE1A40560D00A0A8C3 /* locality_finder.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 675346D01A40560D00A0A8C3 /* locality_finder.hpp */; };
 		675346F11A40560D00A0A8C3 /* result.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 675346D31A40560D00A0A8C3 /* result.cpp */; };
 		675346F21A40560D00A0A8C3 /* result.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 675346D41A40560D00A0A8C3 /* result.hpp */; };
+		ED00000000000000000000A1 /* route_corridor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED00000000000000000000A3 /* route_corridor.cpp */; };
+		ED00000000000000000000A2 /* route_corridor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = ED00000000000000000000A4 /* route_corridor.hpp */; };
 		67935E7420D14D07002996B0 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67935E7320D14D06002996B0 /* CoreLocation.framework */; };
 		6796249B1D10138400AE4E3C /* test_results_matching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6796248F1D10137D00AE4E3C /* test_results_matching.cpp */; };
 		6796249C1D10138400AE4E3C /* test_search_engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 679624911D10137D00AE4E3C /* test_search_engine.cpp */; };
@@ -440,6 +442,8 @@
 		675346D01A40560D00A0A8C3 /* locality_finder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = locality_finder.hpp; sourceTree = "<group>"; };
 		675346D31A40560D00A0A8C3 /* result.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = result.cpp; sourceTree = "<group>"; };
 		675346D41A40560D00A0A8C3 /* result.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = result.hpp; sourceTree = "<group>"; };
+		ED00000000000000000000A3 /* route_corridor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = route_corridor.cpp; sourceTree = "<group>"; };
+		ED00000000000000000000A4 /* route_corridor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = route_corridor.hpp; sourceTree = "<group>"; };
 		67935E7320D14D06002996B0 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		679624831D10133300AE4E3C /* libsearch_tests_support.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsearch_tests_support.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6796248F1D10137D00AE4E3C /* test_results_matching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_results_matching.cpp; sourceTree = "<group>"; };
@@ -819,6 +823,8 @@
 				453C62392004BABE00467120 /* region_info_getter.hpp */,
 				675346D31A40560D00A0A8C3 /* result.cpp */,
 				675346D41A40560D00A0A8C3 /* result.hpp */,
+				ED00000000000000000000A3 /* route_corridor.cpp */,
+				ED00000000000000000000A4 /* route_corridor.hpp */,
 				347F33091C4540A8009758CC /* retrieval.cpp */,
 				347F330A1C4540A8009758CC /* retrieval.hpp */,
 				347F330B1C4540A8009758CC /* reverse_geocoder.cpp */,
@@ -962,6 +968,7 @@
 				675346E81A40560D00A0A8C3 /* keyword_lang_matcher.hpp in Headers */,
 				347F33271C4540A8009758CC /* reverse_geocoder.hpp in Headers */,
 				675346F21A40560D00A0A8C3 /* result.hpp in Headers */,
+				ED00000000000000000000A2 /* route_corridor.hpp in Headers */,
 				347F33251C4540A8009758CC /* retrieval.hpp in Headers */,
 				F652D8F51CFDE21900FC29A0 /* house_numbers_matcher.hpp in Headers */,
 				AFC51F034F6D240ECED4B3AC /* os_grid_coords_match.hpp in Headers */,
@@ -1177,6 +1184,7 @@
 				0831F257200E56110034C365 /* processor.cpp in Sources */,
 				F652D8FC1CFDE21900FC29A0 /* model.cpp in Sources */,
 				675346F11A40560D00A0A8C3 /* result.cpp in Sources */,
+				ED00000000000000000000A1 /* route_corridor.cpp in Sources */,
 				F652D8C11CFDE1E800FC29A0 /* features_filter.cpp in Sources */,
 				40EAD7E02329310B0025013B /* postcode_points.cpp in Sources */,
 				F652D8F81CFDE21900FC29A0 /* intersection_result.cpp in Sources */,
