@@ -1,39 +1,49 @@
-<div align="center">
-  <img src="qt/res/logo.png" height="100"/>
-</div>
-<h1 align="center">MossMap</h1>
+# MossMap — Privacy-first offline maps for hiking, cycling, and driving
 
-**MossMap** is a privacy-first offline maps & GPS app for hiking, cycling, and driving — a community-driven fork of [Organic Maps](https://github.com/organicmaps/organicmaps). Absolutely free. No ads. No tracking. Powered by [OpenStreetMap](https://www.openstreetmap.org) data.
+<div align="center">
 
 [![Android CI](https://github.com/alzimerahmed/MossMap/actions/workflows/android-check.yaml/badge.svg)](https://github.com/alzimerahmed/MossMap/actions/workflows/android-check.yaml)
 [![iOS CI](https://github.com/alzimerahmed/MossMap/actions/workflows/ios-check.yaml/badge.svg)](https://github.com/alzimerahmed/MossMap/actions/workflows/ios-check.yaml)
 [![Linux CMake CI](https://github.com/alzimerahmed/MossMap/actions/workflows/build-cmake.yaml/badge.svg)](https://github.com/alzimerahmed/MossMap/actions/workflows/build-cmake.yaml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?logo=apache)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/alzimerahmed/MossMap?logo=github)](https://github.com/alzimerahmed/MossMap/releases)
 
-*The whole world, in your pocket — offline.*
+*The whole world, in your pocket — offline. Free, no ads, no tracking, powered by OpenStreetMap.*
 
-[Features](#features) • [Tech Stack](#tech-stack) • [Building](#building)
+[Download](https://github.com/alzimerahmed/MossMap/releases) • [Features](#features) • [Tech Stack](#tech-stack) • [Building](#quick-start--building)
+
+</div>
 
 ---
+
+MossMap is a community-driven fork of [Organic Maps](https://github.com/organicmaps/organicmaps). It inherits the full upstream feature set — offline vector maps, turn-by-turn routing, offline search, bookmarks, OSM editing — and adds its own feature batches on top.
 
 ## Features
 
 Inherited from Organic Maps:
 
 - Detailed offline maps with places that don't exist on other maps, thanks to [OpenStreetMap](https://openstreetmap.org)
-- Cycling routes, hiking trails, and walking paths
-- Contour lines, elevation profiles, peaks, and slopes
+- Cycling routes, hiking trails, and walking paths with contour lines and elevation profiles
 - Turn-by-turn walking, cycling, and car navigation with voice guidance
 - Subway maps and public transport routes
 - Fast offline search on the map
 - Bookmarks and tracks import/export in KML, KMZ, GPX, GeoJSON formats
-- Dark Mode
-- Wikipedia articles for places of interest
+- Dark mode, offline Wikipedia articles for places of interest
 - Free and open-source (Apache-2.0)
 
-## Screenshots
+Added by MossMap:
 
-See the [upstream Organic Maps README](https://github.com/organicmaps/organicmaps#screenshots) for screenshots.
+- Satellite/aerial imagery overlay and user-added XYZ/WMS tile sources with per-source opacity
+- Weather radar overlay and point forecast (keyless, privacy-first)
+- GPX track recording with configurable interval and accuracy
+- Lane guidance display and sport/terrain-aware route planning (trail difficulty weighting)
+- Cross-street address search ("Main St & 5th Ave")
+- Mapillary street-level imagery links and Wikivoyage travel-guide links on the place page
+- Bookmark media notes and settings backup/restore to file (no cloud)
+- Speed camera and hazard warnings in navigation
+- Opt-in live location sharing to a user-chosen/self-hosted endpoint
+- On-device voice search (offline speech input, audio never leaves the phone)
+- Screen-reader navigation announcements when voice guidance is off
 
 ## Tech Stack
 
@@ -47,6 +57,8 @@ See the [upstream Organic Maps README](https://github.com/organicmaps/organicmap
 | Data pipeline | `generator/`, Python tooling (`tools/python`) |
 | Map data | OpenStreetMap |
 
+## Project Structure
+
 ```
 libs/         C++ core (indexer, routing, search, storage, map, drape, ...)
 android/      Android client (Gradle + JNI)
@@ -57,15 +69,14 @@ data/         Styles, categories, resources
 3party/       Vendored third-party libraries
 ```
 
-## Building
+## Quick Start / Building
 
 1. Clone the repo:
    ```bash
    git clone --recursive https://github.com/alzimerahmed/MossMap.git
    ```
-2. Android: open `android/` in Android Studio, or `./gradlew assembleDebug` (see `android/HOW_TO_USE_GRADLE.txt`).
-3. iOS: open `iphone/Maps/Maps.xcodeproj` in Xcode.
-4. Desktop/generator: CMake presets — see `CMakePresets.json`.
+2. Android: open `android/` in Android Studio, or run `./gradlew assembleDebug`.
+3. iOS: open `iphone/Maps/Maps.xcodeproj` in Xcode. Desktop/generator: use the CMake presets in `CMakePresets.json`.
 
 <details>
 <summary>Full build prerequisites</summary>
@@ -82,14 +93,15 @@ Fork → branch → PR. Conventional Commits (`type(scope): description`) for ch
 
 ## Roadmap
 
-- [ ] Fork CI hardening (check-only workflows green on the fork)
-- [ ] Feature phases from the internal roadmap (offline UX, routing, search improvements)
-- [ ] Quality Gate audit (security, performance, a11y)
-- [ ] Signed release builds
+- [x] Fork CI hardening (check-only workflows green on the fork)
+- [x] Feature batches: layers & imagery, routing & outdoors, content & data, platform & privacy
+- [x] Quality Gate audits (security, performance, a11y, anti-slop)
+- [x] Signed release builds (v1.0.0)
+- [ ] Transit routing, delta map updates, live traffic overlay, 3D terrain relief, route alternatives
 
 ## Changelog
 
-See [upstream releases](https://github.com/organicmaps/organicmaps/releases) for inherited changes; fork-specific changes will be documented in GitHub Releases.
+See [GitHub Releases](https://github.com/alzimerahmed/MossMap/releases).
 
 ## License & Attribution
 
