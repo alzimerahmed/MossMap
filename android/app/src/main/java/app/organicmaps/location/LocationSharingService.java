@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationChannelCompat;
@@ -232,10 +233,13 @@ public class LocationSharingService extends Service implements LocationListener
     }
   }
 
+  @SuppressLint("MissingPermission")
   @Override
   public void onDestroy()
   {
     final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    // Guarded at runtime (lint cannot see the flow through checkSelfPermission); onStartCommand
+    // already bails out without location permission, so a listener is only registered when granted.
     if (checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED)
       lm.removeUpdates(this);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
