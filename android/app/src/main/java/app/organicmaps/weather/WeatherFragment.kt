@@ -112,7 +112,7 @@ class WeatherFragment : BaseMwmDialogFragment(), WeatherForecastListener
       ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     row.minimumHeight = (48 * resources.displayMetrics.density).toInt() // 48dp touch target
     row.gravity = android.view.Gravity.CENTER_VERTICAL
-    val time = TIME_FORMAT.format(Date(forecast.mHourlyTime[index] * 1000))
+    val time = TIME_FORMAT.format(Date((forecast.mHourlyTime[index] * 1000).toLong()))
     row.text = getString(
       R.string.weather_hourly_row_format,
       time,

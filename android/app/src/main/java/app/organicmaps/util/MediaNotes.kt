@@ -71,7 +71,7 @@ object MediaNotes
     {
       context.startActivity(Intent.createChooser(intent, name))
     } catch (_: android.content.ActivityNotFoundException) {
-      Logger.w(TAG, "No activity to open media note", name)
+      Logger.w(TAG, "No activity to open media note: $name")
     }
   }
 
