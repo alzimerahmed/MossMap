@@ -123,13 +123,13 @@ class WeatherFragment : BaseMwmDialogFragment(), WeatherForecastListener
   }
 
   private fun formatTemperature(celsius: Double): String =
-    getString(R.string.weather_temperature_c, celsius)
+    getString(R.string.weather_temperature_c, String.format(Locale.US, "%.1f", celsius))
 
   private fun formatPrecipitation(mm: Double): String =
-    getString(R.string.weather_precipitation_mm, mm)
+    getString(R.string.weather_precipitation_mm, String.format(Locale.US, "%.1f", mm))
 
   private fun formatWind(kmh: Double): String =
-    getString(R.string.weather_wind_kmh, kmh)
+    getString(R.string.weather_wind_kmh, String.format(Locale.US, "%.0f", kmh))
 
   companion object
   {
