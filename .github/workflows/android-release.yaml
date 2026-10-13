@@ -49,13 +49,8 @@ jobs:
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
         run: |
-          cat > android/keystore.properties <<'EOF'
-          storeFile=../keystore.jks
-          storePassword=PLACEHOLDER_STORE
-          keyAlias=PLACEHOLDER_ALIAS
-          keyPassword=PLACEHOLDER_KEY
-          EOF
-          sed -i "s/PLACEHOLDER_STORE/$RELEASE_STORE_PASSWORD/; s/PLACEHOLDER_ALIAS/$RELEASE_KEY_ALIAS/; s/PLACEHOLDER_KEY/$RELEASE_KEY_PASSWORD/" android/keystore.properties
+          printf 'storeFile=../keystore.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "$RELEASE_STORE_PASSWORD" "$RELEASE_KEY_ALIAS" "$RELEASE_KEY_PASSWORD" > android/keystore.properties
 
       - name: Compile FdroidRelease
         shell: bash
@@ -86,4 +81,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes --repo "$GITHUB_REPOSITORY" || true
           gh release upload "${{ github.ref_name }}" android/app/build/outputs/apk/fdroid/release/*.apk --repo "$GITHUB_REPOSITORY" --clobber
