@@ -44293,8 +44293,6 @@ comment = Layers bottom sheet: current value of the imagery opacity slider, in p
 tags = android-app
 en = %@%
 
-# --- Weather (Feature Gap #17: weather overlay + forecast at point) ---
-
 [weather]
 comment = Title of the weather forecast panel.
 tags = android-app
