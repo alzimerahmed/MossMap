@@ -208,10 +208,17 @@ bool SearchAPI::SearchEverywhere(EverywhereSearchParams params)
     // Corridor filtering runs on the search callback thread, not the UI thread:
     // it is O(results x route segments) per streamed batch and would drop frames
     // on long routes if done on the UI thread.
-    Results filtered = results;
     if (corridor && corridor->IsValid())
+    {
+      Results filtered = results;
       FilterResultsByCorridor(filtered, *corridor);
-    RunUITask([onResults, results = std::move(filtered)]() mutable
+      RunUITask([onResults, results = std::move(filtered)]() mutable
+      {
+        onResults(std::move(results));
+      });
+      return;
+    }
+    RunUITask([onResults, results = results]() mutable
     {
       onResults(std::move(results));
     });

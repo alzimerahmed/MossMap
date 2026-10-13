@@ -107,9 +107,13 @@ public class OnboardingActivity extends BaseMwmFragmentActivity
         switch (item.newStatus)
         {
         case CountryItem.STATUS_DONE:
+          // Keep scanning the batch: our country may not be the first DONE leaf.
           if (mCountryId != null && mCountryId.equals(item.countryId))
+          {
             proceedToMap();
-          return;
+            return;
+          }
+          break;
 
         case CountryItem.STATUS_FAILED:
           // Let the user retry from the downloader or skip; keep the onboarding screen usable.
@@ -125,7 +129,8 @@ public class OnboardingActivity extends BaseMwmFragmentActivity
     @Override
     public void onProgress(String countryId, long localSize, long remoteSize)
     {
-      if (remoteSize > 0)
+      // Only our suggested region's download drives the onboarding progress bar.
+      if (mCountryId != null && mCountryId.equals(countryId) && remoteSize > 0)
         mProgress.setProgressCompat((int) (100 * localSize / remoteSize), true);
     }
   };

@@ -41,6 +41,10 @@
 
     <include layout="@layout/place_page_network"/>
 
+    <include layout="@layout/place_page_fax" />
+
+    <include layout="@layout/place_page_brand" />
+
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/place_page_links_fragment"
       android:layout_width="match_parent"
@@ -62,6 +66,17 @@
     <include layout="@layout/place_page_self_service" />
 
     <include layout="@layout/place_page_outdoor_seating"/>
+
+    <include layout="@layout/place_page_height" />
+
+    <include layout="@layout/place_page_building_levels" />
+
+    <include layout="@layout/place_page_denomination" />
+
+    <include layout="@layout/place_page_elevation" />
+
+    <include layout="@layout/place_page_iata" />
+
 
 
     <!-- ToDo: Address is missing compared with iOS. It's shown in title but anyway .. -->

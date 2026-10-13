@@ -328,4 +328,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:layout="@layout/placepage_track_fragment" />
+
+  <!-- Visible affordance for the details section: tapping it expands the bottom sheet. -->
+  <LinearLayout
+    android:id="@+id/details_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?ppBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/margin_base"
+    android:paddingEnd="@dimen/margin_base"
+    android:paddingTop="@dimen/margin_half_plus"
+    android:paddingBottom="@dimen/margin_half_plus">
+
+    <TextView
+      android:id="@+id/tv__details_header"
+      android:textAlignment="viewStart"
+      style="@style/PlacePageMetadataText.Button"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/details" />
+
+    <ImageView
+      android:id="@+id/iv__details_header_chevron"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:contentDescription="@string/details"
+      android:scaleType="centerInside"
+      app:srcCompat="@drawable/ic_expand_more"
+      app:tint="?iconTint" />
+  </LinearLayout>
 </LinearLayout>

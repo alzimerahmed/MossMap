@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_base"
         android:gravity="center"
-        android:textColor="?android:colorAccent"
+        android:textColor="?android:textColorPrimary"
         tools:text="Germany" />
 
       <TextView

@@ -50,4 +50,10 @@
       android:entries="@array/speed_cameras"
       android:entryValues="@array/speed_cameras_values"
       android:defaultValue="@string/auto_enum_value" />
+  <SwitchPreferenceCompat
+      android:key="@string/pref_tts_hazard_warnings"
+      android:title="@string/pref_tts_hazard_warnings_title"
+      android:summary="@string/pref_tts_hazard_warnings_summary"
+      app:singleLineTitle="false"
+      android:defaultValue="true" />
 </androidx.preference.PreferenceScreen>

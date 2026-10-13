@@ -260,6 +260,17 @@ public:
   routing::SpeedCameraManager & GetSpeedCamManager() { return m_routingSession.GetSpeedCamManager(); }
   bool IsSpeedCamLimitExceeded() const;
 
+  void SetHazardWarningsEnabled(bool enabled) { m_routingSession.SetHazardWarningsEnabled(enabled); }
+  bool IsHazardWarningsEnabled() const { return m_routingSession.GetHazardWarningsManager().Enabled(); }
+  /// \brief Feeds hazard positions to the warning manager. Deliberate API seam:
+  /// OSM hazard=* has no classificator type or mwm section yet, so no producer
+  /// exists — wiring a data pipeline (generator + indexer) is a planned phase.
+  /// Until then hazard warnings are inert; speed-camera warnings are fully live.
+  void SetRouteHazards(std::vector<routing::HazardOnRoute> hazards)
+  {
+    m_routingSession.SetRouteHazards(std::move(hazards));
+  }
+
   void SetTurnNotificationsUnits(measurement_utils::Units const units)
   {
     m_routingSession.SetTurnNotificationsUnits(units);

@@ -101,4 +101,47 @@
       android:inputType="textMultiLine|textCapSentences"
       android:minLines="3" />
   </com.google.android.material.textfield.TextInputLayout>
+
+  <!-- Media notes: audio/video/photo files attached to the bookmark (bookmarks only). -->
+  <LinearLayout
+    android:id="@+id/media_notes_section"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/margin_base"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/media_notes_title"
+        android:textAppearance="@style/MwmTextAppearance.Body2" />
+
+      <ImageView
+        android:id="@+id/btn_attach_media"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/media_notes_attach"
+        android:focusable="true"
+        android:padding="@dimen/margin_half"
+        app:srcCompat="@drawable/ic_plus"
+        app:tint="?colorAccent" />
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/media_notes_list"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical" />
+  </LinearLayout>
 </LinearLayout>

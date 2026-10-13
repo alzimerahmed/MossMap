@@ -44142,3 +44142,290 @@ en = Search along route
 [from_route]
 tags = android-app
 en = %@ from route
+
+[fax]
+comment = Fax number of a place on the place page details section.
+tags = android-app
+en = Fax: %@
+
+[brand]
+comment = Brand of a place (shop, hotel chain, etc.) on the place page details section.
+tags = android-app
+en = Brand: %@
+
+[height]
+comment = Height of a building or structure on the place page details section.
+tags = android-app
+en = Height: %@
+
+[building_levels]
+comment = Number of levels of a building on the place page details section.
+tags = android-app
+en = Building levels: %@
+
+[denomination]
+comment = Religious denomination of a place of worship on the place page details section.
+tags = android-app
+en = Denomination: %@
+
+[elevation]
+comment = Elevation above sea level of a natural feature on the place page details section.
+tags = android-app
+en = Elevation: %@
+
+[airport_iata]
+comment = IATA code of an airport on the place page details section.
+tags = android-app
+en = IATA: %@
+
+[pref_tts_hazard_warnings_title]
+comment = Settings title for the road hazard warnings toggle (navigation voice instructions).
+tags = android-app
+en = Hazard warnings
+
+[pref_tts_hazard_warnings_summary]
+comment = Settings summary for the road hazard warnings toggle (navigation voice instructions).
+tags = android-app
+en = Warn about road hazards during navigation
+
+[hazard_warning_ahead]
+comment = Voice and visual warning shown when the driver approaches a road hazard on the route.
+tags = android-app
+en = Hazard ahead
+
+[speed_camera_ahead]
+comment = Visual warning shown when the driver approaches a speed camera on the route.
+tags = android-app
+en = Speed camera ahead
+
+[placepage_street_level_imagery]
+comment = Place page button that opens street-level imagery (Mapillary) near the selected point in an external browser.
+tags = android-app
+en = Street-level imagery
+
+[tile_sources_hint]
+comment = Settings «Tile sources»: intro text explaining what custom tile sources are.
+tags = android-app
+en = Add your own online raster tile sources (XYZ or WMS) and overlay them on the map.
+
+[tile_sources_single_active_hint]
+comment = Settings «Tile sources»: note that only one source can be rendered at a time.
+tags = android-app
+en = Only one source can be active at a time. Tap a source to make it active.
+
+[tile_sources_empty]
+comment = Settings «Tile sources»: shown when the list of user tile sources is empty.
+tags = android-app
+en = No custom tile sources yet. Add one to overlay imagery on the map.
+
+[tile_sources_add]
+comment = Settings «Tile sources»: button that opens the add-source dialog.
+tags = android-app
+en = Add tile source
+
+[tile_sources_edit]
+comment = Settings «Tile sources»: button/dialog title for editing an existing tile source.
+tags = android-app
+en = Edit tile source
+
+[tile_sources_name_title]
+comment = Settings «Tile sources»: title of the source name input field.
+tags = android-app
+en = Name
+
+[tile_sources_url_title]
+comment = Settings «Tile sources»: title of the tile URL input field.
+tags = android-app
+en = Tile URL
+
+[tile_sources_type_xyz]
+comment = Settings «Tile sources»: radio button for the XYZ tile URL type ({z}/{x}/{y} placeholders).
+tags = android-app
+en = XYZ tiles ({z}/{x}/{y})
+
+[tile_sources_type_wms]
+comment = Settings «Tile sources»: radio button for the WMS tile URL type ({bbox} placeholder).
+tags = android-app
+en = WMS ({bbox})
+
+[tile_sources_opacity_title]
+comment = Settings «Tile sources»: title of the per-source imagery opacity slider.
+tags = android-app
+en = Layer opacity
+
+[tile_sources_opacity_value]
+comment = Settings «Tile sources»: current value of the per-source imagery opacity slider, in percent. %@ is the number.
+tags = android-app
+en = %@%
+
+[tile_sources_delete]
+comment = Settings «Tile sources»: content description of the delete button on a source row.
+tags = android-app
+en = Delete
+
+[tile_sources_url_error]
+comment = Settings «Tile sources»: shown under the Tile URL field when its value is malformed (must start with https:// and contain the {z}/{x}/{y} or {bbox} placeholders).
+tags = android-app
+en = Enter a valid https URL with {z}/{x}/{y} or {bbox}
+
+[tile_sources_url_error_wms]
+comment = Settings «Tile sources»: shown under the Tile URL field when the WMS type is selected but the URL has no {bbox} placeholder.
+tags = android-app
+en = A WMS source URL must contain {bbox}
+
+[tile_sources_url_error_xyz]
+comment = Settings «Tile sources»: shown under the Tile URL field when the XYZ type is selected but the URL lacks the {z}/{x}/{y} placeholders.
+tags = android-app
+en = An XYZ source URL must contain {z}/{x}/{y}
+
+[pref_tile_sources_title]
+comment = Settings: title of the tile sources management screen (list of user XYZ/WMS raster sources).
+tags = android-app
+en = Tile Sources
+
+[layers_opacity_title]
+comment = Layers bottom sheet: title of the imagery opacity slider for the active raster tile source.
+tags = android-app
+en = Imagery opacity
+
+[layers_opacity_value]
+comment = Layers bottom sheet: current value of the imagery opacity slider, in percent. %@ is the number.
+tags = android-app
+en = %@%
+
+# --- Weather (Feature Gap #17: weather overlay + forecast at point) ---
+
+[weather]
+comment = Title of the weather forecast panel.
+tags = android-app
+en = Weather
+
+[weather_loading]
+comment = Shown in the weather panel while the forecast is being fetched.
+tags = android-app
+en = Loading forecast…
+
+[weather_hourly_forecast]
+comment = Section header above the hourly forecast rows in the weather panel.
+tags = android-app
+en = Next hours
+
+[weather_error]
+comment = Generic error shown in the weather panel when the forecast cannot be fetched (offline or service unavailable).
+tags = android-app
+en = Could not load the forecast. Check your connection and try again.
+
+[weather_retry]
+comment = Retry button in the weather panel after a failed forecast fetch.
+tags = android-app
+en = Retry
+
+[weather_error_detail]
+comment = Detailed error line in the weather panel; %@ is the technical failure reason.
+tags = android-app
+en = Could not load the forecast (%@).
+
+[weather_current_format]
+comment = Current conditions summary in the weather panel. %@ placeholders: temperature, feels like, precipitation, wind.
+tags = android-app
+en = %@, %@, %@, %@
+
+[weather_feels_like]
+comment = "Feels like" temperature part of the current conditions; %@ is the temperature.
+tags = android-app
+en = feels like %@
+
+[weather_temperature_c]
+comment = Temperature value in degrees Celsius; %@ is the number.
+tags = android-app
+en = %@°C
+
+[weather_precipitation_mm]
+comment = Precipitation amount in millimetres; %@ is the number.
+tags = android-app
+en = %@ mm
+
+[weather_wind_kmh]
+comment = Wind speed in kilometres per hour; %@ is the number.
+tags = android-app
+en = %@ km/h
+
+[weather_hourly_row_format]
+comment = One hourly forecast row. %@ placeholders: time, temperature, precipitation, wind.
+tags = android-app
+en = %@ · %@ · %@ · %@
+
+[weather_layer_toggle]
+comment = Map layers menu entry that toggles the weather (radar) raster overlay on the map.
+tags = android-app
+en = Weather layer
+
+[weather_layer_error]
+comment = Shown when enabling the weather raster layer fails (offline or service unavailable).
+tags = android-app
+en = Weather layer is unavailable right now.
+
+[wikivoyage_guide]
+comment = Place page link to the Wikivoyage travel-guide article for this place.
+tags = android-app
+en = Wikivoyage travel guide
+
+[media_notes_title]
+comment = Header of the media notes section in the bookmark editor (audio/video/photo files attached to a bookmark).
+tags = android-app
+en = Media notes
+
+[media_notes_attach]
+comment = Button that attaches an audio/video/photo file to a bookmark.
+tags = android-app
+en = Attach media file
+
+[media_notes_open]
+comment = Opens an attached media note file with an external app.
+tags = android-app
+en = Open media note
+
+[media_notes_remove]
+comment = Removes an attached media note from a bookmark.
+tags = android-app
+en = Remove media note
+
+[backup_restore_title]
+comment = Settings screen entry for file-based backup and restore of app settings.
+tags = android-app
+en = Backup & restore
+
+[backup_restore_summary]
+comment = Summary under the Backup & restore settings entry; explains it saves a file the user chooses (no cloud).
+tags = android-app
+en = Save your settings to a file on this device or restore them from one. No cloud, no account.
+
+[backup_restore_export]
+comment = Action that exports app settings to a user-chosen file.
+tags = android-app
+en = Export settings to file
+
+[backup_restore_import]
+comment = Action that imports app settings from a previously exported file.
+tags = android-app
+en = Restore settings from file
+
+[backup_export_done]
+comment = Shown after app settings were successfully exported to a file.
+tags = android-app
+en = Settings exported
+
+[backup_export_failed]
+comment = Shown when exporting app settings to a file failed.
+tags = android-app
+en = Could not export settings
+
+[backup_import_done]
+comment = Shown after app settings were successfully restored from a file.
+tags = android-app
+en = Settings restored. Restart the app to apply all of them.
+
+[backup_import_failed]
+comment = Shown when restoring app settings from a file failed (missing or invalid file).
+tags = android-app
+en = Could not restore settings from this file

@@ -2,11 +2,15 @@ package app.organicmaps.settings;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -41,6 +45,12 @@ import java.util.Locale;
 
 public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements LanguagesFragment.Listener
 {
+  // File-based settings backup (Feature Gap #24): user-chosen destination via SAF, no cloud.
+  private final ActivityResultLauncher<String> mExportSettingsLauncher =
+    registerForActivityResult(new ActivityResultContracts.CreateDocument("application/json"), this::onSettingsExported);
+  private final ActivityResultLauncher<String[]> mImportSettingsLauncher =
+    registerForActivityResult(new ActivityResultContracts.OpenDocument(), this::onSettingsImported);
+
   @Override
   protected int getXmlResources()
   {
@@ -74,6 +84,49 @@ public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements La
     initShowOnLockScreenPrefsCallbacks();
     initNightNavigationPrefsCallbacks();
     initTrackRecordingPrefsCallbacks();
+    initBackupRestorePrefsCallbacks();
+  }
+
+  private void initBackupRestorePrefsCallbacks()
+  {
+    final Preference pref = getPreference(getString(R.string.pref_backup_restore));
+    pref.setOnPreferenceClickListener(p -> {
+      final String[] actions = new String[] {
+        getString(R.string.backup_restore_export),
+        getString(R.string.backup_restore_import),
+      };
+      new MaterialAlertDialogBuilder(requireContext())
+        .setTitle(R.string.backup_restore_title)
+        .setItems(actions, (dialog, which) -> {
+          if (which == 0)
+            mExportSettingsLauncher.launch(getString(R.string.backup_file_name));
+          else
+            mImportSettingsLauncher.launch(new String[] { "application/json" });
+        })
+        .setNegativeButton(R.string.cancel, null)
+        .show();
+      return true;
+    });
+  }
+
+  private void onSettingsExported(@Nullable Uri uri)
+  {
+    if (uri == null)
+      return;
+    final boolean ok = SettingsBackup.export(requireContext(),
+        getString(app.organicmaps.sdk.R.string.pref_file_name), uri);
+    Toast.makeText(requireContext(),
+        ok ? R.string.backup_export_done : R.string.backup_export_failed, Toast.LENGTH_LONG).show();
+  }
+
+  private void onSettingsImported(@Nullable Uri uri)
+  {
+    if (uri == null)
+      return;
+    final boolean ok = SettingsBackup.import(requireContext(),
+        getString(app.organicmaps.sdk.R.string.pref_file_name), uri);
+    Toast.makeText(requireContext(),
+        ok ? R.string.backup_import_done : R.string.backup_import_failed, Toast.LENGTH_LONG).show();
   }
 
   private void updateVoiceInstructionsPrefsSummary()
@@ -137,6 +190,11 @@ public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements La
       {
         getSettingsActivity().stackFragment(BgTilesSettingsFragment.class, getString(R.string.pref_bg_tiles_title),
                                             null);
+      }
+      else if (key.equals(getString(R.string.pref_tile_sources_screen)))
+      {
+        getSettingsActivity().stackFragment(TileSourcesSettingsFragment.class,
+                                            getString(R.string.pref_tile_sources_title), null);
       }
       else if (key.equals(getString(R.string.pref_help)))
       {
@@ -552,14 +610,14 @@ public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements La
   {
     // The core settings file is the source of truth; the preferences only mirror it for the UI.
     final ListPreference intervalPref = getPreference(getString(R.string.pref_track_recording_interval));
-    setListPreferenceValue(intervalPref, (int) TrackRecorder.nativeGetTrackRecordingInterval());
+    setListPreferenceValue(intervalPref, (int) TrackRecorder.nativeGetTrackRecordingInterval(), 1);
     intervalPref.setOnPreferenceChangeListener((preference, newValue) -> {
       TrackRecorder.nativeSetTrackRecordingInterval(parseIntOrNull((String) newValue, 1));
       return true;
     });
 
     final ListPreference accuracyPref = getPreference(getString(R.string.pref_track_recording_accuracy));
-    setListPreferenceValue(accuracyPref, (int) TrackRecorder.nativeGetTrackRecordingAccuracy());
+    setListPreferenceValue(accuracyPref, (int) TrackRecorder.nativeGetTrackRecordingAccuracy(), 250);
     accuracyPref.setOnPreferenceChangeListener((preference, newValue) -> {
       TrackRecorder.nativeSetTrackRecordingAccuracy(parseIntOrNull((String) newValue, 250));
       return true;
@@ -568,11 +626,13 @@ public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements La
 
   // A core-stored value outside the entry list would make ListPreference.setValue a silent no-op,
   // leaving the UI desynced from the core; fall back to the given default instead.
-  private static void setListPreferenceValue(@NonNull ListPreference pref, int value)
+  private static void setListPreferenceValue(@NonNull ListPreference pref, int value, int fallback)
   {
     final String v = String.valueOf(value);
     if (pref.findIndexOfValue(v) >= 0)
       pref.setValue(v);
+    else
+      pref.setValue(String.valueOf(fallback));
   }
 
   private static int parseIntOrNull(@Nullable String value, int fallback)

@@ -925,4 +925,64 @@
     <string name="track_recording_accuracy_relaxed">Battery friendly (fewer points)</string>
     <string name="search_along_route">Search along route</string>
     <string name="from_route">%s from route</string>
+    <!-- Fax number of a place on the place page details section. -->
+    <string name="fax">Fax: %s</string>
+    <!-- Brand of a place (shop, hotel chain, etc.) on the place page details section. -->
+    <string name="brand">Brand: %s</string>
+    <!-- Height of a building or structure on the place page details section. -->
+    <string name="height">Height: %s</string>
+    <!-- Number of levels of a building on the place page details section. -->
+    <string name="building_levels">Building levels: %s</string>
+    <!-- Religious denomination of a place of worship on the place page details section. -->
+    <string name="denomination">Denomination: %s</string>
+    <!-- Elevation above sea level of a natural feature on the place page details section. -->
+    <string name="elevation">Elevation: %s</string>
+    <!-- IATA code of an airport on the place page details section. -->
+    <string name="airport_iata">IATA: %s</string>
+    <string name="placepage_street_level_imagery">Street-level imagery</string>
+    <string name="tile_sources_hint">Add your own online raster tile sources (XYZ or WMS) and overlay them on the map.</string>
+    <string name="tile_sources_single_active_hint">Only one source can be active at a time. Tap a source to make it active.</string>
+    <string name="tile_sources_empty">No custom tile sources yet. Add one to overlay imagery on the map.</string>
+    <string name="tile_sources_add">Add tile source</string>
+    <string name="tile_sources_edit">Edit tile source</string>
+    <string name="tile_sources_name_title">Name</string>
+    <string name="tile_sources_url_title">Tile URL</string>
+    <string name="tile_sources_type_xyz">XYZ tiles ({z}/{x}/{y})</string>
+    <string name="tile_sources_type_wms">WMS ({bbox})</string>
+    <string name="tile_sources_opacity_title">Layer opacity</string>
+    <string name="tile_sources_opacity_value">%s%</string>
+    <string name="tile_sources_delete">Delete</string>
+    <string name="tile_sources_url_error">Enter a valid https URL with {z}/{x}/{y} or {bbox}</string>
+    <string name="tile_sources_url_error_wms">A WMS source URL must contain {bbox}</string>
+    <string name="tile_sources_url_error_xyz">An XYZ source URL must contain {z}/{x}/{y}</string>
+    <string name="pref_tile_sources_title">Tile Sources</string>
+    <string name="layers_opacity_title">Imagery opacity</string>
+    <string name="layers_opacity_value">%s%</string>
+    <string name="weather">Weather</string>
+    <string name="weather_loading">Loading forecast…</string>
+    <string name="weather_hourly_forecast">Next hours</string>
+    <string name="weather_error">Could not load the forecast. Check your connection and try again.</string>
+    <string name="weather_retry">Retry</string>
+    <string name="weather_error_detail">Could not load the forecast (%s).</string>
+    <string name="weather_current_format">%s, %s, %s, %s</string>
+    <string name="weather_feels_like">feels like %s</string>
+    <string name="weather_temperature_c">%s°C</string>
+    <string name="weather_precipitation_mm">%s mm</string>
+    <string name="weather_wind_kmh">%s km/h</string>
+    <string name="weather_hourly_row_format">%s · %s · %s · %s</string>
+    <string name="weather_layer_toggle">Weather layer</string>
+    <string name="weather_layer_error">Weather layer is unavailable right now.</string>
+    <string name="wikivoyage_guide">Wikivoyage travel guide</string>
+    <string name="media_notes_title">Media notes</string>
+    <string name="media_notes_attach">Attach media file</string>
+    <string name="media_notes_open">Open media note</string>
+    <string name="media_notes_remove">Remove media note</string>
+    <string name="backup_restore_title">Backup &amp; restore</string>
+    <string name="backup_restore_summary">Save your settings to a file on this device or restore them from one. No cloud, no account.</string>
+    <string name="backup_restore_export">Export settings to file</string>
+    <string name="backup_restore_import">Restore settings from file</string>
+    <string name="backup_export_done">Settings exported</string>
+    <string name="backup_export_failed">Could not export settings</string>
+    <string name="backup_import_done">Settings restored. Restart the app to apply all of them.</string>
+    <string name="backup_import_failed">Could not restore settings from this file</string>
 </resources>

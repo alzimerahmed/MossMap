@@ -187,6 +187,7 @@ public class VoiceInstructionsSettingsFragment extends BaseXmlSettingsFragment
     initVolume();
     initTtsLangInfoLink();
     initSpeedCamerasPrefs();
+    initHazardWarningsPrefs();
     updateTts();
   }
 
@@ -389,5 +390,16 @@ public class VoiceInstructionsSettingsFragment extends BaseXmlSettingsFragment
   private void onSpeedCamerasPrefChanged(@NonNull SpeedCameraMode newCamMode)
   {
     Framework.setSpeedCamerasMode(newCamMode);
+  }
+
+  private void initHazardWarningsPrefs()
+  {
+    final TwoStatePreference pref = getPreference(getString(R.string.pref_tts_hazard_warnings));
+    pref.setChecked(Framework.areHazardWarningsEnabled());
+    pref.setOnPreferenceChangeListener((preference, newValue) -> {
+      final boolean enabled = (Boolean) newValue;
+      Framework.setHazardWarningsEnabled(enabled);
+      return true;
+    });
   }
 }
