@@ -233,12 +233,12 @@ public class LocationSharingService extends Service implements LocationListener
     }
   }
 
-  @androidx.annotation.RequiresPermission(anyOf = {android.Manifest.permission.ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
   @Override
   public void onDestroy()
   {
     final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    lm.removeUpdates(this);
+    if (checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED)
+      lm.removeUpdates(this);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
       mNetworkThread.quitSafely();
     super.onDestroy();
