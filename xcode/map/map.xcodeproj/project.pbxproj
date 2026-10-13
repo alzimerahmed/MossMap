@@ -51,7 +51,11 @@
 		6753464A1A4054E800A0A8C3 /* bookmark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 675345DB1A4054E800A0A8C3 /* bookmark.cpp */; };
 		6753464B1A4054E800A0A8C3 /* bookmark.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 675345DC1A4054E800A0A8C3 /* bookmark.hpp */; };
 		675346641A4054E800A0A8C3 /* framework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 675345F51A4054E800A0A8C3 /* framework.cpp */; };
+		61C6CD614A99AC0A11A8BC90 /* weather_forecast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651139E2EDBAF085C4B92538 /* weather_forecast.cpp */; };
+		7699337AE570FD23BD6DA9EB /* weather_layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B3342EAB45B65E1513CED4 /* weather_layer.cpp */; };
 		675346651A4054E800A0A8C3 /* framework.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 675345F61A4054E800A0A8C3 /* framework.hpp */; };
+		6072338D19B63C7B98412314 /* weather_forecast.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84D6EDF729FBBB4F2D914596 /* weather_forecast.hpp */; };
+		91602F43CB7DFCF1D622C2BB /* weather_layer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C42BFDC9D08E137DE0498BB5 /* weather_layer.hpp */; };
 		675346741A4054E800A0A8C3 /* mwm_url.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 675346051A4054E800A0A8C3 /* mwm_url.cpp */; };
 		675346751A4054E800A0A8C3 /* mwm_url.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 675346061A4054E800A0A8C3 /* mwm_url.hpp */; };
 		6753469B1A4054E800A0A8C3 /* track.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6753462C1A4054E800A0A8C3 /* track.cpp */; };
@@ -91,6 +95,7 @@
 		BBFC7E3B202D29C000531BE7 /* user_mark_layer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BBFC7E39202D29BF00531BE7 /* user_mark_layer.hpp */; };
 		E33C8282A09F1E34262634CA /* share.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85CC440929C9CFA473FDE565 /* share.cpp */; };
 		ED49D74C2CEF3D69004AF27E /* elevation_info_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED49D74B2CEF3CE3004AF27E /* elevation_info_tests.cpp */; };
+		1203308A058F0F313EF2DA1D /* weather_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33CCBDC82146DE9E3FF86C4E /* weather_tests.cpp */; };
 		ED85D1CC2D5F4B5B00D8075D /* track_statistics.hpp in Headers */ = {isa = PBXBuildFile; fileRef = ED85D1CB2D5F4B5B00D8075D /* track_statistics.hpp */; };
 		ED85D1CE2D5F4B7200D8075D /* track_statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED85D1CD2D5F4B6600D8075D /* track_statistics.cpp */; };
 		ED85D1D02D5F508700D8075D /* track_statistics_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED85D1CF2D5F508700D8075D /* track_statistics_tests.cpp */; };
@@ -201,7 +206,11 @@
 		675345DB1A4054E800A0A8C3 /* bookmark.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bookmark.cpp; sourceTree = "<group>"; };
 		675345DC1A4054E800A0A8C3 /* bookmark.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bookmark.hpp; sourceTree = "<group>"; };
 		675345F51A4054E800A0A8C3 /* framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framework.cpp; sourceTree = "<group>"; };
+		651139E2EDBAF085C4B92538 /* weather_forecast.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = weather_forecast.cpp; sourceTree = "<group>"; };
+		75B3342EAB45B65E1513CED4 /* weather_layer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = weather_layer.cpp; sourceTree = "<group>"; };
 		675345F61A4054E800A0A8C3 /* framework.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = framework.hpp; sourceTree = "<group>"; };
+		84D6EDF729FBBB4F2D914596 /* weather_forecast.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = weather_forecast.hpp; sourceTree = "<group>"; };
+		C42BFDC9D08E137DE0498BB5 /* weather_layer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = weather_layer.hpp; sourceTree = "<group>"; };
 		675346051A4054E800A0A8C3 /* mwm_url.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mwm_url.cpp; sourceTree = "<group>"; };
 		675346061A4054E800A0A8C3 /* mwm_url.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mwm_url.hpp; sourceTree = "<group>"; };
 		6753462C1A4054E800A0A8C3 /* track.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = track.cpp; sourceTree = "<group>"; };
@@ -239,6 +248,7 @@
 		BBFC7E39202D29BF00531BE7 /* user_mark_layer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = user_mark_layer.hpp; sourceTree = "<group>"; };
 		CE6D8A55305278317BD00A6C /* share.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = share.hpp; sourceTree = "<group>"; };
 		ED49D74B2CEF3CE3004AF27E /* elevation_info_tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = elevation_info_tests.cpp; sourceTree = "<group>"; };
+		33CCBDC82146DE9E3FF86C4E /* weather_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = weather_tests.cpp; sourceTree = "<group>"; };
 		ED85D1CB2D5F4B5B00D8075D /* track_statistics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = track_statistics.hpp; sourceTree = "<group>"; };
 		ED85D1CD2D5F4B6600D8075D /* track_statistics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = track_statistics.cpp; sourceTree = "<group>"; };
 		ED85D1CF2D5F508700D8075D /* track_statistics_tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = track_statistics_tests.cpp; sourceTree = "<group>"; };
@@ -349,6 +359,7 @@
 				674A29EE1B26FD5F001A525C /* testingmain.cpp */,
 				BB421D6A1E8C0026005BFA4D /* transliteration_test.cpp */,
 				ED49D74B2CEF3CE3004AF27E /* elevation_info_tests.cpp */,
+				33CCBDC82146DE9E3FF86C4E /* weather_tests.cpp */,
 				ED85D1CF2D5F508700D8075D /* track_statistics_tests.cpp */,
 			);
 			name = map_tests;
@@ -400,7 +411,11 @@
 				39E3C60223312BA800FB0C37 /* features_fetcher.cpp */,
 				39E3C60123312BA800FB0C37 /* features_fetcher.hpp */,
 				675345F51A4054E800A0A8C3 /* framework.cpp */,
+				651139E2EDBAF085C4B92538 /* weather_forecast.cpp */,
+				75B3342EAB45B65E1513CED4 /* weather_layer.cpp */,
 				675345F61A4054E800A0A8C3 /* framework.hpp */,
+				84D6EDF729FBBB4F2D914596 /* weather_forecast.hpp */,
+				C42BFDC9D08E137DE0498BB5 /* weather_layer.hpp */,
 				F6B282FB1C1B03320081957A /* gps_track_collection.cpp */,
 				F6B282FC1C1B03320081957A /* gps_track_collection.hpp */,
 				F6B282FD1C1B03320081957A /* gps_track_filter.cpp */,
@@ -508,6 +523,8 @@
 				0831F23C200E53600034C365 /* bookmarks_search_params.hpp in Headers */,
 				6753469C1A4054E800A0A8C3 /* track.hpp in Headers */,
 				675346651A4054E800A0A8C3 /* framework.hpp in Headers */,
+				6072338D19B63C7B98412314 /* weather_forecast.hpp in Headers */,
+				91602F43CB7DFCF1D622C2BB /* weather_layer.hpp in Headers */,
 				BBA014B120754997007402E4 /* user_mark_id_storage.hpp in Headers */,
 				ED85D1CC2D5F4B5B00D8075D /* track_statistics.hpp in Headers */,
 				3DEE1ADF21EE03B400054A91 /* power_manager.hpp in Headers */,
@@ -644,6 +661,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED49D74C2CEF3D69004AF27E /* elevation_info_tests.cpp in Sources */,
+				1203308A058F0F313EF2DA1D /* weather_tests.cpp in Sources */,
 				67F183761BD5045700AB1840 /* bookmarks_test.cpp in Sources */,
 				FAA8387626BB3C17002E54C6 /* extrapolator_tests.cpp in Sources */,
 				BB421D6C1E8C0031005BFA4D /* transliteration_test.cpp in Sources */,
@@ -686,6 +704,8 @@
 				674C38621BFF3095000D603B /* user_mark.cpp in Sources */,
 				3DA5723320C195ED007BDE27 /* viewport_search_callback.cpp in Sources */,
 				675346641A4054E800A0A8C3 /* framework.cpp in Sources */,
+				61C6CD614A99AC0A11A8BC90 /* weather_forecast.cpp in Sources */,
+				7699337AE570FD23BD6DA9EB /* weather_layer.cpp in Sources */,
 				3DBD7B92240D523400ED9FE8 /* elevation_info.cpp in Sources */,
 				BB1C0197241BF73C0067FD5C /* track_mark.cpp in Sources */,
 				3DEE1AE021EE03B400054A91 /* power_manager.cpp in Sources */,

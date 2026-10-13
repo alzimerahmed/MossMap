@@ -148,7 +148,9 @@
 		670D049E1B0B4A970013A7AC /* nearest_edge_finder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 670D049C1B0B4A970013A7AC /* nearest_edge_finder.cpp */; };
 		670D049F1B0B4A970013A7AC /* nearest_edge_finder.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 670D049D1B0B4A970013A7AC /* nearest_edge_finder.hpp */; };
 		670EE55D1B6001E7001E8064 /* routing_session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 670EE55A1B6001E7001E8064 /* routing_session.cpp */; };
+		74CA732ABAC60301628D5D2F /* hazard_warnings_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B47D0257E9702502486360D5 /* hazard_warnings_manager.cpp */; };
 		670EE55E1B6001E7001E8064 /* routing_session.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 670EE55B1B6001E7001E8064 /* routing_session.hpp */; };
+		6BDFB7D59DE1D83419FF710F /* hazard_warnings_manager.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B640E58B922FA53D03C7C90F /* hazard_warnings_manager.hpp */; };
 		670EE55F1B6001E7001E8064 /* routing_settings.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 670EE55C1B6001E7001E8064 /* routing_settings.hpp */; };
 		670EE5721B664796001E8064 /* directions_engine.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 670EE56E1B664796001E8064 /* directions_engine.hpp */; };
 		670EE5731B664796001E8064 /* pedestrian_directions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 670EE56F1B664796001E8064 /* pedestrian_directions.cpp */; };
@@ -169,6 +171,7 @@
 		6742AD311C68A9DF009CB89E /* road_graph_nearest_edges_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6742ACB11C68A0B1009CB89E /* road_graph_nearest_edges_test.cpp */; };
 		6742AD321C68A9DF009CB89E /* route_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6742ACB21C68A0B1009CB89E /* route_tests.cpp */; };
 		6742AD341C68A9DF009CB89E /* routing_session_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6742ACB41C68A0B1009CB89E /* routing_session_test.cpp */; };
+		4D3895187C83DAD504D95453 /* hazard_warnings_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B663CEB987C4231F989BE639 /* hazard_warnings_tests.cpp */; };
 		6742AD351C68A9DF009CB89E /* turns_generator_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6742ACB51C68A0B1009CB89E /* turns_generator_test.cpp */; };
 		6742AD361C68A9DF009CB89E /* turns_sound_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6742ACB61C68A0B1009CB89E /* turns_sound_test.cpp */; };
 		6742AD371C68A9DF009CB89E /* turns_tts_text_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6742ACB71C68A0B1009CB89E /* turns_tts_text_tests.cpp */; };
@@ -432,7 +435,9 @@
 		670D049C1B0B4A970013A7AC /* nearest_edge_finder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nearest_edge_finder.cpp; sourceTree = "<group>"; };
 		670D049D1B0B4A970013A7AC /* nearest_edge_finder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = nearest_edge_finder.hpp; sourceTree = "<group>"; };
 		670EE55A1B6001E7001E8064 /* routing_session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = routing_session.cpp; sourceTree = "<group>"; };
+		B47D0257E9702502486360D5 /* hazard_warnings_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hazard_warnings_manager.cpp; sourceTree = "<group>"; };
 		670EE55B1B6001E7001E8064 /* routing_session.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = routing_session.hpp; sourceTree = "<group>"; };
+		B640E58B922FA53D03C7C90F /* hazard_warnings_manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = hazard_warnings_manager.hpp; sourceTree = "<group>"; };
 		670EE55C1B6001E7001E8064 /* routing_settings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = routing_settings.hpp; sourceTree = "<group>"; };
 		670EE56E1B664796001E8064 /* directions_engine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = directions_engine.hpp; sourceTree = "<group>"; };
 		670EE56F1B664796001E8064 /* pedestrian_directions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pedestrian_directions.cpp; sourceTree = "<group>"; };
@@ -453,6 +458,7 @@
 		6742ACB11C68A0B1009CB89E /* road_graph_nearest_edges_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = road_graph_nearest_edges_test.cpp; sourceTree = "<group>"; };
 		6742ACB21C68A0B1009CB89E /* route_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = route_tests.cpp; sourceTree = "<group>"; };
 		6742ACB41C68A0B1009CB89E /* routing_session_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = routing_session_test.cpp; sourceTree = "<group>"; };
+		B663CEB987C4231F989BE639 /* hazard_warnings_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hazard_warnings_tests.cpp; sourceTree = "<group>"; };
 		6742ACB51C68A0B1009CB89E /* turns_generator_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = turns_generator_test.cpp; sourceTree = "<group>"; };
 		6742ACB61C68A0B1009CB89E /* turns_sound_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = turns_sound_test.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		6742ACB71C68A0B1009CB89E /* turns_tts_text_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = turns_tts_text_tests.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -633,6 +639,7 @@
 				568194741F03A32400450EC3 /* routing_helpers_tests.cpp */,
 				4418327F222D45BB00C70BD9 /* routing_options_tests.cpp */,
 				6742ACB41C68A0B1009CB89E /* routing_session_test.cpp */,
+				B663CEB987C4231F989BE639 /* hazard_warnings_tests.cpp */,
 				44F45B272136B069001B1618 /* speed_cameras_tests.cpp */,
 				6742ACDE1C68A13F009CB89E /* testingmain.cpp */,
 				5661A5CD20DE51C500C6B1D1 /* tools.hpp */,
@@ -799,7 +806,9 @@
 				44C56C0922296498006C2A1D /* routing_options.cpp */,
 				56099E261CC7C97D00A7772A /* routing_result_graph.hpp */,
 				670EE55B1B6001E7001E8064 /* routing_session.hpp */,
+				B640E58B922FA53D03C7C90F /* hazard_warnings_manager.hpp */,
 				670EE55A1B6001E7001E8064 /* routing_session.cpp */,
+				B47D0257E9702502486360D5 /* hazard_warnings_manager.cpp */,
 				670EE55C1B6001E7001E8064 /* routing_settings.hpp */,
 				0C45D7381F2F75500065C3ED /* routing_settings.cpp */,
 				44642D2B29CDA44600F8813A /* ruler_router.hpp */,
@@ -917,6 +926,7 @@
 				67C7D42E1B4EB48F00FE41AA /* turns_sound_settings.hpp in Headers */,
 				560A273B233BB18900B20E8F /* following_info.hpp in Headers */,
 				670EE55E1B6001E7001E8064 /* routing_session.hpp in Headers */,
+				6BDFB7D59DE1D83419FF710F /* hazard_warnings_manager.hpp in Headers */,
 				56099E291CC7C97D00A7772A /* loaded_path_segment.hpp in Headers */,
 				56FA20471FBF23A90045DE78 /* cross_mwm_ids.hpp in Headers */,
 				670EE55F1B6001E7001E8064 /* routing_settings.hpp in Headers */,
@@ -1150,6 +1160,7 @@
 				56CBED5822E9CFB600D51AF7 /* position_accumulator_tests.cpp in Sources */,
 				FAA838A826BB4B21002E54C6 /* routing_helpers_tests.cpp in Sources */,
 				6742AD341C68A9DF009CB89E /* routing_session_test.cpp in Sources */,
+				4D3895187C83DAD504D95453 /* hazard_warnings_tests.cpp in Sources */,
 				6742AD261C68A9DF009CB89E /* testingmain.cpp in Sources */,
 				FAA838A626BB4B16002E54C6 /* checkpoint_predictor_test.cpp in Sources */,
 				FAA838A926BB4B24002E54C6 /* applying_traffic_test.cpp in Sources */,
@@ -1228,6 +1239,7 @@
 				4432C5B624067E6700C9E445 /* road_access_serialization.cpp in Sources */,
 				671F58BD1B874EC80032311E /* followed_polyline.cpp in Sources */,
 				670EE55D1B6001E7001E8064 /* routing_session.cpp in Sources */,
+				74CA732ABAC60301628D5D2F /* hazard_warnings_manager.cpp in Sources */,
 				4652D9162BAA3C5600C71046 /* turns_tts_text_i18n.cpp in Sources */,
 				40C645161F8D167F002E05A0 /* fake_ending.cpp in Sources */,
 				0C08AA341DF83223004195DD /* index_graph_serialization.cpp in Sources */,
