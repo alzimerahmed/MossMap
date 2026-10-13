@@ -812,7 +812,7 @@ public:
   static bool ParseBackgroundTilesSources(std::string const & json, std::vector<BackgroundTilesSource> & out);
   // Persists the list and the active index (-1 = none) and applies the active source to the engine.
   void SetBackgroundTilesSources(std::vector<BackgroundTilesSource> sources, int activeIndex);
-  int GetActiveBackgroundTilesSourceIndex();
+  static int GetActiveBackgroundTilesSourceIndex();
   // Switches the active source (reconfigures the provider; clears the tile cache on URL change).
   void SetActiveBackgroundTilesSource(int index);
   // Updates one source's opacity (clamped to 0..100) and applies it live.
