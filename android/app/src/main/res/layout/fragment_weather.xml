@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Weather forecast bottom sheet (Feature Gap #17). Uses only theme attributes so it adapts to
+     dark mode automatically; start/end paddings keep it RTL-safe. -->
+<androidx.core.widget.NestedScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="?cardBackground"
+  android:clickable="true"
+  android:focusable="true">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/margin_base"
+    android:paddingEnd="@dimen/margin_base"
+    android:paddingTop="@dimen/margin_base"
+    android:paddingBottom="@dimen/margin_base">
+
+    <TextView
+      android:id="@+id/weather_title"
+      style="?fontHeadline6"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/weather" />
+
+    <TextView
+      android:id="@+id/weather_point"
+      style="?fontBody2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_quarter"
+      android:textColor="?android:textColorSecondary"
+      tools:text="52.5200, 13.4050" />
+
+    <ViewFlipper
+      android:id="@+id/weather_flipper"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_half">
+
+      <!-- View 0: loading -->
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
+        android:text="@string/weather_loading"
+        android:textColor="?android:textColorSecondary" />
+
+      <!-- View 1: content -->
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+          android:id="@+id/weather_current"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="?android:textColorPrimary"
+          tools:text="12.3°C (feels like 10.1°C) · 0.4 mm · 17 km/h" />
+
+        <TextView
+          android:id="@+id/weather_hourly_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/margin_base"
+          android:text="@string/weather_hourly_forecast"
+          android:textColor="?android:textColorSecondary" />
+
+        <!-- Hourly rows are populated programmatically (one row per forecast hour). -->
+        <LinearLayout
+          android:id="@+id/weather_hourly_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/margin_half"
+          android:orientation="vertical" />
+      </LinearLayout>
+
+      <!-- View 2: error -->
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+          android:id="@+id/weather_error"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:minHeight="48dp"
+          android:gravity="center_vertical"
+          android:text="@string/weather_error"
+          android:textColor="?android:textColorPrimary" />
+
+        <Button
+          android:id="@+id/weather_retry"
+          android:layout_width="wrap_content"
+          android:layout_height="48dp"
+          android:layout_marginTop="@dimen/margin_half"
+          android:text="@string/weather_retry"
+          android:contentDescription="@string/weather_retry" />
+      </LinearLayout>
+    </ViewFlipper>
+  </LinearLayout>
+</androidx.core.widget.NestedScrollView>

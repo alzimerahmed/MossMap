@@ -15,9 +15,9 @@ public class LayersUtils
     availableLayers.add(Mode.HIKING);
     availableLayers.add(Mode.CYCLING);
     availableLayers.add(Mode.SUBWAY);
-    // The Satellite toggle is a quick on/off for an already-configured source; configuration lives in
-    // Settings, so only offer the button once a server URL is set.
-    if (!Framework.nativeGetBackgroundTilesUrl().isEmpty())
+    // The Satellite toggle is a quick on/off for the active tile source; source management lives in
+    // Settings, so only offer the button once a source is configured and picked as active.
+    if (Framework.nativeGetActiveBackgroundTilesSourceIndex() >= 0)
       availableLayers.add(Mode.SATELLITE);
     return availableLayers;
   }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_base">
+
+    <TextView
+      android:id="@+id/tile_sources_hint"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/tile_sources_hint"
+      android:textAppearance="?fontBody1" />
+
+    <TextView
+      android:id="@+id/tile_sources_single_active"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_half"
+      android:text="@string/tile_sources_single_active_hint"
+      android:textAppearance="?fontCaption" />
+
+    <LinearLayout
+      android:id="@+id/tile_sources_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_base"
+      android:orientation="vertical" />
+
+    <TextView
+      android:id="@+id/tile_sources_empty"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_base"
+      android:text="@string/tile_sources_empty"
+      android:textAppearance="?fontBody1"
+      android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/tile_sources_add"
+      style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_base"
+      android:text="@string/tile_sources_add" />
+
+    <TextView
+      android:id="@+id/tile_sources_disclaimer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_base"
+      android:text="@string/pref_bg_tiles_disclaimer"
+      android:textAppearance="?fontCaption" />
+  </LinearLayout>
+</androidx.core.widget.NestedScrollView>

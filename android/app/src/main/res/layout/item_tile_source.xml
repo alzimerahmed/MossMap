@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:baselineAligned="false"
+  android:gravity="center_vertical"
+  android:minHeight="?listPreferredItemHeight"
+  android:orientation="horizontal"
+  android:paddingStart="@dimen/margin_base"
+  android:paddingEnd="@dimen/margin_base">
+
+  <RadioButton
+    android:id="@+id/tile_source_active"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="false"
+    android:focusable="false" />
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/margin_half"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/tile_source_name"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textAppearance="?fontBody1" />
+
+    <TextView
+      android:id="@+id/tile_source_url"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textAppearance="?fontCaption" />
+
+    <TextView
+      android:id="@+id/tile_source_opacity"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textAppearance="?fontCaption" />
+  </LinearLayout>
+
+  <ImageButton
+    android:id="@+id/tile_source_edit"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:contentDescription="@string/tile_sources_edit"
+    android:src="@drawable/ic_edit" />
+
+  <ImageButton
+    android:id="@+id/tile_source_delete"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:contentDescription="@string/tile_sources_delete"
+    android:src="@drawable/ic_delete" />
+</LinearLayout>

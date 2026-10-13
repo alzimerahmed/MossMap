@@ -51,6 +51,11 @@ public:
     double m_maxLat = 90.0;
     double m_minLon = -180.0;
     double m_maxLon = 180.0;
+    // Raster opacity applied to the delivered imagery (0 = invisible, 1 = opaque). The on-disk
+    // cache always stores the original (opaque) pixels; the alpha is scaled only at delivery,
+    // so changing the opacity does not invalidate the cache. Vector area fills over the imagery
+    // use a separate opacity (see Params-free Framework::GetBackgroundTilesAreaOpacity).
+    float m_opacity = 1.0f;
     // Upper bound on the on-disk tile cache. Once exceeded, least-recently-used tiles are evicted.
     uint64_t m_maxCacheBytes = 100ull * 1024 * 1024;  // 100 MB
   };
@@ -73,11 +78,15 @@ public:
   // request so it is neither bound nor uploaded once it finishes.
   void CancelTile(df::TileKey const & tileKey, dp::BackgroundMode mode);
 
-  // Live-updates m_params.m_urlTemplate and m_params.m_maxCacheBytes (thread-safe). The provider
-  // object is never destroyed (in-flight async tasks capture it), so reconfiguring rather than
-  // recreating is safe. When the URL changes the on-disk cache is cleared, since cached z/x/y now
-  // map to a different source.
-  void Reconfigure(std::string urlTemplate, uint64_t maxCacheBytes);
+  // Live-updates m_params.m_urlTemplate, m_params.m_maxCacheBytes and m_params.m_opacity
+  // (thread-safe). The provider object is never destroyed (in-flight async tasks capture it), so
+  // reconfiguring rather than recreating is safe. When the URL changes the on-disk cache is
+  // cleared, since cached z/x/y now map to a different source. Changing only the opacity keeps
+  // the cache (opacity is applied at delivery, not at cache time).
+  void Reconfigure(std::string urlTemplate, uint64_t maxCacheBytes, float opacity);
+
+  // Current raster opacity (guarded by m_cacheMutex, same as the field it reads).
+  float GetOpacity();
 
 private:
   // Source web-mercator XYZ tile plus the UV sub-rect within it that the given OM tile maps to.

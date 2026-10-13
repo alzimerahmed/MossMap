@@ -79,6 +79,10 @@ set(SRC
   viewport_search_params.hpp
   viewport_search_callback.cpp
   viewport_search_callback.hpp
+  weather_forecast.cpp
+  weather_forecast.hpp
+  weather_layer.cpp
+  weather_layer.hpp
 )
 
 if (PLATFORM_DESKTOP)

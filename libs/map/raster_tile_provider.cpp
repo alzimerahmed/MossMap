@@ -11,6 +11,7 @@
 #include "base/assert.hpp"
 #include "base/exception.hpp"
 #include "base/logging.hpp"
+#include "base/math.hpp"
 
 #include "3party/stb_image/stb_image.h"
 
@@ -41,6 +42,48 @@ std::string SubstituteZXY(std::string tmpl, int z, int x, int y)
   replace("{x}", x);
   replace("{y}", y);
   return tmpl;
+}
+
+// Web-mercator (OM mercator, degrees-based) extent of a source XYZ tile at z/x/y.
+// x spans [-180, 180] linearly; y is the web-mercator y in degrees (LatToY convention:
+// y_deg = RadToDeg(pi * (1 - 2 * normalizedTileY))).
+m2::RectD SourceTileRect(int z, int x, int y)
+{
+  double const n = static_cast<double>(1 << z);
+  double const inv = 1.0 / n;
+  double const xMin = -180.0 + 360.0 * static_cast<double>(x) * inv;
+  double const yTop = math::RadToDeg(math::pi * (1.0 - 2.0 * static_cast<double>(y) * inv));
+  double const yBottom = math::RadToDeg(math::pi * (1.0 - 2.0 * (static_cast<double>(y) + 1.0) * inv));
+  return m2::RectD(xMin, yBottom, xMin + 360.0 * inv, yTop);
+}
+
+// Substitutes the {bbox} placeholder used by simple WMS GetMap URLs. The value is the tile's
+// extent in EPSG:3857 (web-mercator) meters, "minx,miny,maxx,maxy" — the axis order WMS 1.3.0
+// prescribes for EPSG:3857. OM mercator coordinates are degrees-based (x = lon in [-180, 180],
+// y = web-mercator y in degrees), so scale by meters-per-degree: the half-world extent (20037508.34 m)
+// spans 180 mercator units.
+std::string SubstituteBBox(std::string tmpl, m2::RectD const & mercatorRect)
+{
+  double constexpr kMetersPerMercatorUnit = 20037508.34 / 180.0;
+  auto const toMeters = [](double v) { return v * kMetersPerMercatorUnit; };
+  std::string const bbox = std::to_string(toMeters(mercatorRect.minX())) + "," +
+                           std::to_string(toMeters(mercatorRect.minY())) + "," +
+                           std::to_string(toMeters(mercatorRect.maxX())) + "," +
+                           std::to_string(toMeters(mercatorRect.maxY()));
+  auto const pos = tmpl.find("{bbox}");
+  if (pos != std::string::npos)
+    tmpl.replace(pos, 6, bbox);
+  return tmpl;
+}
+
+// Scales every pixel's alpha by [0, 1] opacity, in place. RGBA8 layout, size = w * h * 4 bytes.
+void ApplyOpacity(std::vector<uint8_t> & rgba, float opacity)
+{
+  if (opacity >= 1.0f)
+    return;
+  float const clamped = std::clamp(opacity, 0.0f, 1.0f);
+  for (size_t i = 3; i < rgba.size(); i += 4)
+    rgba[i] = static_cast<uint8_t>(rgba[i] * clamped + 0.5f);
 }
 
 #ifdef ENABLE_STATUS_PLACEHOLDERS
@@ -292,7 +335,11 @@ bool RasterTileProvider::RequestTile(df::TileKey const & tileKey, dp::Background
       return true;  // already in flight
   }
 
-  std::string const url = SubstituteZXY(std::move(urlTemplate), src.m_z, src.m_x, src.m_y);
+  std::string url = SubstituteZXY(std::move(urlTemplate), src.m_z, src.m_x, src.m_y);
+  // {bbox} must describe the SOURCE tile extent (what the downloaded image covers and what
+  // the cache key z/x/y refers to), not the OM tile extent — deeper OM tiles reuse one
+  // ancestor source tile, and the image is UV-mapped onto the source rect.
+  url = SubstituteBBox(std::move(url), SourceTileRect(src.m_z, src.m_x, src.m_y));
   std::string const uid = std::to_string(src.m_z) + "/" + std::to_string(src.m_x) + "/" + std::to_string(src.m_y);
   // Cache file name = the cache index key (the dir prefix is added only for filesystem ops).
   // Format-neutral extension: the bytes may be PNG or JPEG depending on the endpoint, and stb_image
@@ -319,7 +366,10 @@ bool RasterTileProvider::RequestTile(df::TileKey const & tileKey, dp::Background
     {
       TouchCacheEntry(fileName);
       if (DropActive(tileKey))
+      {
+        ApplyOpacity(rgba, GetOpacity());
         m_onReady(tileKey, mode, uid, width, height, rect, std::move(rgba));
+      }
       return;
     }
 
@@ -382,7 +432,10 @@ void RasterTileProvider::StartDownload(df::TileKey const & tileKey, dp::Backgrou
 
     // Deliver only if the request was not cancelled while it was in flight.
     if (DropActive(tileKey))
+    {
+      ApplyOpacity(rgba, GetOpacity());
       m_onReady(tileKey, mode, uid, width, height, rect, std::move(rgba));
+    }
   });
 }
 
@@ -493,7 +546,7 @@ void RasterTileProvider::ClearDiskCacheLocked()
   m_cacheBytes = 0;
 }
 
-void RasterTileProvider::Reconfigure(std::string urlTemplate, uint64_t maxCacheBytes)
+void RasterTileProvider::Reconfigure(std::string urlTemplate, uint64_t maxCacheBytes, float opacity)
 {
   bool urlChanged = false;
   {
@@ -504,12 +557,19 @@ void RasterTileProvider::Reconfigure(std::string urlTemplate, uint64_t maxCacheB
 
   std::lock_guard lock(m_cacheMutex);
   m_params.m_maxCacheBytes = maxCacheBytes;
+  m_params.m_opacity = std::clamp(opacity, 0.0f, 1.0f);
   // A different source reuses the same z/x/y file names for different imagery, so drop the cache.
   // Same source with a smaller cap just needs eviction down to the new limit.
   if (urlChanged)
     ClearDiskCacheLocked();
   else
     EvictDiskCacheLocked();
+}
+
+float RasterTileProvider::GetOpacity()
+{
+  std::lock_guard lock(m_cacheMutex);
+  return m_params.m_opacity;
 }
 
 #ifdef ENABLE_STATUS_PLACEHOLDERS

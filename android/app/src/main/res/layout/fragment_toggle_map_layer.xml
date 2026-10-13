@@ -46,4 +46,78 @@
     android:minHeight="@dimen/toggle_map_layer_frame_height"
     android:paddingStart="@dimen/margin_half_plus_eight"
     android:paddingEnd="@dimen/margin_half_plus_eight" />
+
+  <!-- Imagery opacity for the active raster tile source; visible only while the Satellite
+       layer is on (single raster overlay constraint: one source at a time). -->
+  <LinearLayout
+    android:id="@+id/layers_opacity_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/margin_base"
+    android:paddingEnd="@dimen/margin_base"
+    android:paddingBottom="@dimen/margin_base"
+    android:visibility="gone">
+
+    <TextView
+      android:id="@+id/layers_opacity_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/layers_opacity_title"
+      android:textAppearance="?fontBody2" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:baselineAligned="false"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <com.google.android.material.slider.Slider
+        android:id="@+id/layers_opacity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:stepSize="5"
+        android:valueFrom="0"
+        android:valueTo="100" />
+
+      <TextView
+        android:id="@+id/layers_opacity_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_half"
+        android:minWidth="48dp"
+        android:gravity="end"
+        android:textAppearance="?fontCaption" />
+    </LinearLayout>
+  </LinearLayout>
+
+  <!-- Weather radar overlay: switch toggles the raster layer, tapping the row opens the
+       forecast panel. Shares the single tile-background slot with the user tile source. -->
+  <LinearLayout
+    android:id="@+id/layers_weather_row"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="?attr/selectableItemBackground"
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/margin_base"
+    android:paddingEnd="@dimen/margin_base">
+
+    <TextView
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/weather_layer_toggle"
+      android:textAppearance="?fontBody2" />
+
+    <androidx.appcompat.widget.SwitchCompat
+      android:id="@+id/layers_weather_switch"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:minWidth="48dp"
+      android:minHeight="48dp" />
+  </LinearLayout>
 </LinearLayout>

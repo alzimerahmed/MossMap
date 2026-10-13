@@ -18,6 +18,7 @@
 #include "map/share.hpp"
 #include "map/track.hpp"
 #include "map/track_statistics.hpp"
+#include "map/weather_forecast.hpp"
 #include "map/traffic_manager.hpp"
 #include "map/transit/transit_reader.hpp"
 
@@ -61,6 +62,7 @@
 
 #include "std/target_os.hpp"
 
+#include <atomic>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -171,6 +173,17 @@ protected:
   // POC source of raster background tiles (see tileBackgroundReadFn in CreateDrapeEngine).
   std::unique_ptr<RasterTileProvider> m_rasterTileProvider;
 
+  // Built-in weather raster overlay (see SetWeatherLayerEnabled). Shares the single
+  // tile-background overlay slot with m_rasterTileProvider; active weather wins.
+  // The provider is created lazily and NEVER destroyed (in-flight async tasks capture
+  // it — same policy as m_rasterTileProvider); m_weatherLayerActive encodes whether
+  // it currently wins the slot.
+  std::unique_ptr<RasterTileProvider> m_weatherTileProvider;
+  std::atomic<bool> m_weatherLayerActive{false};
+  void CreateWeatherTileProvider(std::string const & urlTemplate);
+  // Bumped on every weather-layer toggle; in-flight async completions check it before applying.
+  std::atomic<int> m_weatherToggleGeneration{0};
+
   StorageDownloadingPolicy m_storageDownloadingPolicy;
   storage::Storage m_storage;
   bool m_enabledDiffs;
@@ -213,8 +226,11 @@ protected:
 
   void InitTransliteration();
 
-  // Builds m_rasterTileProvider for the given XYZ source and the "bg_tiles" disk cache.
-  void CreateBackgroundTilesProvider(std::string const & url, uint32_t cacheSizeMB);
+  // Builds m_rasterTileProvider for the given XYZ/WMS source and the "bg_tiles" disk cache.
+  void CreateBackgroundTilesProvider(std::string const & url, uint32_t cacheSizeMB, uint32_t opacityPct);
+  // Single apply point for the source list: resolves the active source (enabled flag + active
+  // index), creates/reconfigures the provider and switches the rendered background mode.
+  void ApplyBackgroundTilesConfig();
 
 public:
   explicit Framework(FrameworkParams const & params = {}, bool loadMaps = true);
@@ -755,6 +771,60 @@ public:
   // and all three {z}/{x}/{y} placeholders present literally (the braces must not be percent-encoded).
   // The settings UI calls this before committing and refuses to close on an enabled, malformed URL.
   static bool IsWellFormedBackgroundTilesURL(std::string const & url);
+
+  // Built-in weather raster overlay (keyless RainViewer radar tiles) + point forecast
+  // (keyless Open-Meteo JSON). Weather and the user tile-source layer share the single
+  // tile-background overlay slot: while the weather layer is enabled it takes precedence,
+  // and disabling it restores the user source via ApplyBackgroundTilesConfig().
+  using TWeatherLayerResultFn = std::function<void(bool success)>;
+  // Asynchronously resolves the latest radar tile URL template, persists it and switches the
+  // rendered background mode. onDone (called on the Gui thread) reports whether the layer
+  // actually became active (false on network/parse failure — the flag is not persisted then).
+  void SetWeatherLayerEnabled(bool enabled, TWeatherLayerResultFn const & onDone = {});
+  static bool IsWeatherLayerEnabled();
+
+  // Fetches the point forecast asynchronously (Open-Meteo). `fn` is invoked exactly once on the
+  // Gui thread; on any failure it receives an empty forecast and a non-empty error description.
+  using TWeatherForecastFn = std::function<void(weather::Forecast const & forecast, std::string const & error)>;
+  void GetWeatherForecast(double latDeg, double lonDeg, TWeatherForecastFn const & fn);
+
+  // @name User tile sources (Feature: multiple custom raster/online sources + layer opacity).
+  // A source is a named XYZ ({z}/{x}/{y}) or simple WMS ({bbox}) URL template. The list is
+  // persisted as a JSON array under kBgTilesSourcesKey; the active entry index (-1 = none) under
+  // kBgTilesActiveSourceKey. DESIGN CONSTRAINT: the tile-background renderer supports exactly one
+  // raster overlay at a time (single dp::BackgroundMode), so the "layer stack" is a selectable
+  // list with per-source opacity — only the active source is rendered over the vector base map.
+  // Per-source opacity is applied by scaling the delivered tiles' alpha in RasterTileProvider
+  // (the disk cache keeps the original opaque pixels).
+  struct BackgroundTilesSource
+  {
+    std::string mName;
+    std::string mUrl;
+    std::string mType;  // "xyz" or "wms"
+    uint32_t mOpacityPct = 100;
+  };
+
+  // The full list of user tile sources. On first call, migrates the legacy single-URL setting
+  // (kBgTilesUrlKey) into a one-entry list so pre-existing configurations keep working.
+  std::vector<BackgroundTilesSource> GetBackgroundTilesSources();
+  static std::string SerializeBackgroundTilesSources(std::vector<BackgroundTilesSource> const & sources);
+  // Returns false (and leaves out untouched-ish/empty) on malformed JSON.
+  static bool ParseBackgroundTilesSources(std::string const & json, std::vector<BackgroundTilesSource> & out);
+  // Persists the list and the active index (-1 = none) and applies the active source to the engine.
+  void SetBackgroundTilesSources(std::vector<BackgroundTilesSource> sources, int activeIndex);
+  int GetActiveBackgroundTilesSourceIndex();
+  // Switches the active source (reconfigures the provider; clears the tile cache on URL change).
+  void SetActiveBackgroundTilesSource(int index);
+  // Updates one source's opacity (clamped to 0..100) and applies it live.
+  void SetBackgroundTilesSourceOpacity(int index, uint32_t opacityPct);
+  // Opacity (0..100) of the active source, or 100 when none is active.
+  uint32_t GetActiveBackgroundTilesSourceOpacity();
+
+private:
+  // Loads the persisted list into sources (with legacy migration), without persisting.
+  static void TryGetBackgroundTilesSources(std::vector<BackgroundTilesSource> & sources);
+
+public:
 
   void SetLargeFontsSize(bool isLargeSize);
   // Multiplied on top of the SetLargeFontsSize (Large Fonts) factor.

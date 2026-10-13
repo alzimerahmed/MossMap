@@ -7,18 +7,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import app.organicmaps.MwmApplication;
 import app.organicmaps.R;
 import app.organicmaps.sdk.maplayer.Mode;
+import app.organicmaps.sdk.Framework;
 import app.organicmaps.sdk.util.SharedPropertiesUtils;
+import app.organicmaps.weather.WeatherFragment;
 import app.organicmaps.util.ThemeSwitcher;
 import app.organicmaps.util.Utils;
 import app.organicmaps.util.bottomsheet.MenuBottomSheetFragment;
 import app.organicmaps.widget.recycler.SpanningLinearLayoutManager;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.slider.Slider;
+import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +33,9 @@ public class ToggleMapLayerFragment extends Fragment
   @Nullable
   private LayersAdapter mAdapter;
   private MapButtonsController mMapButtonsController;
+  @Nullable
+  private View mRoot;
+  private boolean mOpacityListenerAdded;
 
   @Nullable
   @Override
@@ -35,6 +43,7 @@ public class ToggleMapLayerFragment extends Fragment
                            @Nullable Bundle savedInstanceState)
   {
     View mRoot = inflater.inflate(R.layout.fragment_toggle_map_layer, container, false);
+    this.mRoot = mRoot;
 
     mMapButtonsController =
         (MapButtonsController) requireActivity().getSupportFragmentManager().findFragmentById(R.id.map_buttons);
@@ -42,7 +51,63 @@ public class ToggleMapLayerFragment extends Fragment
     mCloseButton.setOnClickListener(view -> closeLayerBottomSheet());
 
     initRecycler(mRoot);
+    initOpacityRow(mRoot);
+    initWeatherRow(mRoot);
     return mRoot;
+  }
+
+  // Imagery opacity slider for the active raster tile source. Shown only while the Satellite
+  // layer is on; changes are applied live to the core (no commit step needed).
+  private void initOpacityRow(@NonNull View root)
+  {
+    View row = root.findViewById(R.id.layers_opacity_row);
+    Slider slider = root.findViewById(R.id.layers_opacity);
+    TextView label = root.findViewById(R.id.layers_opacity_value);
+    boolean satelliteOn = Mode.SATELLITE.isEnabled(requireContext());
+    row.setVisibility(satelliteOn ? View.VISIBLE : View.GONE);
+    if (!satelliteOn)
+      return;
+
+    int opacityPct = Framework.nativeGetActiveBackgroundTilesSourceOpacity();
+    // Slider.setValue throws outside [valueFrom, valueTo]; clamp at the boundary.
+    int clamped = Math.max((int) slider.getValueFrom(), Math.min(opacityPct, (int) slider.getValueTo()));
+    slider.setValue(clamped);
+    label.setText(getString(R.string.layers_opacity_value, Integer.toString((int) slider.getValue())));
+    // Register the change listener exactly once (initOpacityRow re-runs on layer toggles);
+    // re-adding it would stack listeners and fire N native calls per drag.
+    if (!mOpacityListenerAdded)
+    {
+      mOpacityListenerAdded = true;
+      slider.addOnChangeListener((s, value, fromUser) -> {
+        label.setText(getString(R.string.layers_opacity_value, Integer.toString((int) value)));
+        if (fromUser)
+        {
+          int index = Framework.nativeGetActiveBackgroundTilesSourceIndex();
+          if (index >= 0)
+            Framework.nativeSetBackgroundTilesSourceOpacity(index, (int) value);
+        }
+      });
+    }
+  }
+
+  // Weather radar overlay row: toggle for the raster layer, tap on the label opens the
+  // forecast panel. The weather layer and the user tile source share the single
+  // tile-background slot — enabling one disables the other in the core.
+  private void initWeatherRow(@NonNull View root)
+  {
+    View row = root.findViewById(R.id.layers_weather_row);
+    SwitchCompat weatherSwitch = root.findViewById(R.id.layers_weather_switch);
+    weatherSwitch.setChecked(Framework.nativeIsWeatherLayerEnabled());
+    weatherSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+        Framework.nativeSetWeatherLayerEnabled(isChecked, success -> {
+          if (!success && isAdded())
+            Utils.showSnackbar(requireContext(), mRoot, R.string.weather_layer_error);
+        }));
+    row.setOnClickListener(v -> {
+      if (!isAdded())
+        return;
+      WeatherFragment.show(requireActivity().getSupportFragmentManager());
+    });
   }
 
   private void initRecycler(@NonNull View root)
@@ -78,7 +143,9 @@ public class ToggleMapLayerFragment extends Fragment
       ThemeSwitcher.INSTANCE.synchronizeMapStyle(v.getContext(), true);
     mAdapter.notifyDataSetChanged();
     mMapButtonsController.updateLayerButton();
-    if (MwmApplication.from(context).getIsolinesManager().shouldShowNotification())
+    // Show/hide the imagery opacity slider with the Satellite layer.
+    if (mode == Mode.SATELLITE && mRoot != null)
+      initOpacityRow(mRoot);    if (MwmApplication.from(context).getIsolinesManager().shouldShowNotification())
       Utils.showSnackbar(context, v.getRootView(), R.string.isolines_toast_zooms_1_10);
   }
 

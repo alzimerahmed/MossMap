@@ -5,6 +5,8 @@
 #include "map/place_page_info.hpp"
 #include "map/raster_tile_provider.hpp"
 #include "map/relation_track.hpp"
+#include "map/weather_forecast.hpp"
+#include "map/weather_layer.hpp"
 #include "map/track_mark.hpp"
 #include "map/user_mark.hpp"
 
@@ -45,6 +47,7 @@
 #include "indexer/transliteration_loader.hpp"
 
 #include "platform/localization.hpp"
+#include "platform/http_client.hpp"
 #include "platform/measurement_utils.hpp"
 #include "platform/platform.hpp"
 #include "platform/preferred_languages.hpp"
@@ -68,7 +71,12 @@
 
 #include "std/target_os.hpp"
 
+#include <glaze/json.hpp>
+
 #include <algorithm>
+#include <cstdio>
+#include <string>
+#include <vector>
 
 using namespace location;
 using namespace routing;
@@ -89,11 +97,34 @@ namespace
 {
 std::string_view constexpr kMapStyleKey = "MapStyleKeyV1";
 std::string_view constexpr kBgTilesEnabledKey = "BgTilesEnabled";          // custom raster tiles layer on/off
-std::string_view constexpr kBgTilesUrlKey = "BgTilesUrl";                  // custom raster tiles URL template
+std::string_view constexpr kBgTilesUrlKey = "BgTilesUrl";                  // legacy single raster tiles URL template
 std::string_view constexpr kBgTilesCacheSizeMBKey = "BgTilesCacheMB";      // custom raster tiles disk cache cap
 std::string_view constexpr kBgTilesAreaOpacityKey = "BgTilesAreaOpacity";  // area-fill opacity over satellite tiles, %
+std::string_view constexpr kBgTilesSourcesKey = "BgTilesSources";          // JSON list of user tile sources
+std::string_view constexpr kBgTilesActiveSourceKey = "BgTilesActiveSource";  // active source index, -1 = none
 uint32_t constexpr kDefaultBgTilesCacheSizeMB = 50;
 uint32_t constexpr kDefaultBgTilesAreaOpacityPct = 50;  // half-transparent area fills by default in Satellite mode
+int constexpr kNoActiveBgTilesSource = -1;
+std::string_view constexpr kBgTilesTypeXyz = "xyz";
+std::string_view constexpr kBgTilesTypeWms = "wms";
+
+std::string_view constexpr kWeatherLayerEnabledKey = "WeatherLayerEnabled";  // weather overlay on/off
+std::string_view constexpr kWeatherTileUrlKey = "WeatherTileUrl";            // resolved radar tile URL template
+double constexpr kWeatherTileOpacity = 0.6f;
+double constexpr kWeatherRequestTimeoutSec = 10.0;
+
+namespace bg_tiles_json
+{
+// Wire format of the persisted tile-source list (kBgTilesSourcesKey). Kept separate from
+// Framework::BackgroundTilesSource so the glaze reflection keys stay clean and stable.
+struct SourceJson
+{
+  std::string name;
+  std::string url;
+  std::string type;
+  uint32_t opacity = 100;
+};
+}  // namespace bg_tiles_json
 std::string_view constexpr kAllow3dKey = "Allow3d";
 std::string_view constexpr kAllow3dBuildingsKey = "Buildings3d";
 std::string_view constexpr kAllowAutoZoom = "AutoZoom";
@@ -1764,20 +1795,37 @@ void Framework::CreateDrapeEngine(ref_ptr<dp::GraphicsContextFactory> contextFac
         break;
   };
 
-  // Custom raster background tiles come from a user-configured XYZ source (Settings -> Map tiles),
-  // persisted via kBgTilesEnabledKey / kBgTilesUrlKey / kBgTilesCacheSizeMBKey. The layer is active
-  // only when enabled AND a URL is set.
-  std::string bgTilesUrl;
-  settings::TryGet(kBgTilesUrlKey, bgTilesUrl);
-  bool bgTilesEnabled = false;
-  settings::TryGet(kBgTilesEnabledKey, bgTilesEnabled);
-  bool const bgTilesActive = bgTilesEnabled && !bgTilesUrl.empty();
+  // Custom raster background tiles come from a user-configured source (Settings -> Tile sources),
+  // persisted via kBgTilesEnabledKey / kBgTilesSourcesKey / kBgTilesActiveSourceKey. The layer is
+  // active only when enabled AND a valid active source exists.
+  bool const bgTilesActive = IsBackgroundTilesEnabled() && GetActiveBackgroundTilesSourceIndex() != kNoActiveBgTilesSource;
 
   if (bgTilesActive && !m_rasterTileProvider)
-    CreateBackgroundTilesProvider(bgTilesUrl, GetBackgroundTilesCacheSize());
+    CreateBackgroundTilesProvider(GetBackgroundTilesURL(), GetBackgroundTilesCacheSize(),
+                                  GetActiveBackgroundTilesSourceOpacity());
 
+  // The built-in weather overlay shares the single tile-background slot with the user tile
+  // sources; while enabled it takes precedence (see SetWeatherLayerEnabled).
+  bool weatherActive = IsWeatherLayerEnabled();
+  if (weatherActive)
+  {
+    std::string weatherUrl;
+    if (!settings::TryGet(kWeatherTileUrlKey, weatherUrl) || weatherUrl.empty())
+      weatherActive = false;  // no resolved radar template yet (first toggle still in flight)
+    else
+    {
+      if (!m_weatherTileProvider)
+        CreateWeatherTileProvider(weatherUrl);
+      m_weatherLayerActive = true;
+    }
+  }
+
+  // Dispatch on the live flag, not a captured copy: the weather layer can be toggled
+  // mid-session, long after this lambda was created.
   auto tileBackgroundReadFn = [this](df::TileKey const & tileKey, dp::BackgroundMode mode) -> bool
   {
+    if (m_weatherLayerActive.load(std::memory_order_relaxed) && m_weatherTileProvider)
+      return m_weatherTileProvider->RequestTile(tileKey, mode);
     if (m_rasterTileProvider)
       return m_rasterTileProvider->RequestTile(tileKey, mode);
     return false;
@@ -1785,6 +1833,8 @@ void Framework::CreateDrapeEngine(ref_ptr<dp::GraphicsContextFactory> contextFac
 
   auto cancelTileBackgroundReadingFn = [this](df::TileKey const & tileKey, dp::BackgroundMode mode) -> void
   {
+    if (m_weatherTileProvider)
+      m_weatherTileProvider->CancelTile(tileKey, mode);
     if (m_rasterTileProvider)
       m_rasterTileProvider->CancelTile(tileKey, mode);
   };
@@ -1829,7 +1879,8 @@ void Framework::CreateDrapeEngine(ref_ptr<dp::GraphicsContextFactory> contextFac
   auto const fontsScaleFactor = (LoadLargeFontsSize() ? kLargeFontsScaleFactor : 1.0) * m_fontScaleFactor;
 
   // Enable the raster background layer iff the custom tile source is enabled and configured.
-  auto const tileBackgroundMode = bgTilesActive ? dp::BackgroundMode::Satellite : dp::BackgroundMode::Default;
+  auto const tileBackgroundMode =
+      (weatherActive || bgTilesActive) ? dp::BackgroundMode::Satellite : dp::BackgroundMode::Default;
   float const satelliteAreaOpacity = GetBackgroundTilesAreaOpacity() / 100.0f;
 
   df::DrapeEngine::Params p(
@@ -2797,13 +2848,14 @@ void Framework::SetMapLanguageCode(std::string const & langCode)
     m_searchAPI->SetLocale(langCode);
 }
 
-void Framework::CreateBackgroundTilesProvider(std::string const & url, uint32_t cacheSizeMB)
+void Framework::CreateBackgroundTilesProvider(std::string const & url, uint32_t cacheSizeMB, uint32_t opacityPct)
 {
   RasterTileProvider::Params rp;
   rp.m_urlTemplate = url;
   rp.m_cacheSubdir = "bg_tiles";
   rp.m_maxZoom = 19;  // standard web-mercator detail; deeper OM tiles reuse the ancestor sub-rect.
   rp.m_maxCacheBytes = static_cast<uint64_t>(cacheSizeMB) * 1024 * 1024;
+  rp.m_opacity = opacityPct / 100.0f;
   // Global coverage (whole world) — min zoom and the lat/lon box keep their defaults.
 
   m_rasterTileProvider = std::make_unique<RasterTileProvider>(
@@ -2820,12 +2872,42 @@ void Framework::CreateBackgroundTilesProvider(std::string const & url, uint32_t 
   });
 }
 
+void Framework::ApplyBackgroundTilesConfig()
+{
+  // Single apply point for the source list: resolve the active source (enabled flag + active
+  // index), create/reconfigure the provider and switch the rendered background mode.
+  bool const enabled = IsBackgroundTilesEnabled();
+  int const activeIndex = GetActiveBackgroundTilesSourceIndex();
+  std::vector<BackgroundTilesSource> sources;
+  TryGetBackgroundTilesSources(sources);
+  bool const active = enabled && activeIndex >= 0 && activeIndex < static_cast<int>(sources.size()) &&
+                      !sources[activeIndex].mUrl.empty();
+
+  uint32_t opacityPct = 100;
+  if (active)
+    opacityPct = sources[activeIndex].mOpacityPct;
+
+  if (active)
+  {
+    auto const cacheBytes = static_cast<uint64_t>(GetBackgroundTilesCacheSize()) * 1024 * 1024;
+    if (m_rasterTileProvider)
+      m_rasterTileProvider->Reconfigure(sources[activeIndex].mUrl, cacheBytes, opacityPct / 100.0f);
+    else
+      CreateBackgroundTilesProvider(sources[activeIndex].mUrl, GetBackgroundTilesCacheSize(), opacityPct);
+  }
+
+  if (m_drapeEngine)
+    m_drapeEngine->SetTileBackgroundMode(active ? dp::BackgroundMode::Satellite : dp::BackgroundMode::Default,
+                                         GetBackgroundTilesAreaOpacity() / 100.0f);
+}
+
 void Framework::SetBackgroundTiles(bool enabled, std::string url, uint32_t cacheSizeMB, uint32_t areaOpacityPct)
 {
-  // Single entry point for the settings UI: persist all values and apply them at once. We only persist
-  // the URL/cache/opacity when enabling — when disabled, keep the previously stored values untouched and
-  // just flip the off-flag. Otherwise editing the URL while the layer is off would persist it and then
-  // resurface as a stale RasterTileProvider on the next enable (enable -> edit -> disable -> close).
+  // Legacy single-source entry point, kept for the old settings screen: persist all values and
+  // apply them at once. The URL is upserted into the source list and made active. We only persist
+  // the URL/cache/opacity when enabling — when disabled, keep the previously stored values untouched
+  // and just flip the off-flag. Otherwise editing the URL while the layer is off would persist it
+  // and then resurface as a stale RasterTileProvider on the next enable (enable -> edit -> disable).
   if (!enabled)
   {
     SetBackgroundTilesEnabled(false);
@@ -2839,19 +2921,29 @@ void Framework::SetBackgroundTiles(bool enabled, std::string url, uint32_t cache
   settings::Set(kBgTilesCacheSizeMBKey, cacheSizeMB);
   settings::Set(kBgTilesAreaOpacityKey, areaOpacityPct);
 
-  bool const active = !url.empty();
-  if (active)
+  if (!url.empty())
   {
-    auto const cacheBytes = static_cast<uint64_t>(cacheSizeMB) * 1024 * 1024;
-    if (m_rasterTileProvider)
-      m_rasterTileProvider->Reconfigure(url, cacheBytes);  // clears the cache if the URL changed
-    else
-      CreateBackgroundTilesProvider(url, cacheSizeMB);
+    // Upsert the URL as the active source in the list.
+    auto sources = GetBackgroundTilesSources();
+    int index = kNoActiveBgTilesSource;
+    for (int i = 0; i < static_cast<int>(sources.size()); ++i)
+    {
+      if (sources[i].mUrl == url)
+      {
+        index = i;
+        break;
+      }
+    }
+    if (index == kNoActiveBgTilesSource)
+    {
+      sources.push_back({std::string("Satellite"), std::move(url), std::string(kBgTilesTypeXyz), 100});
+      index = static_cast<int>(sources.size()) - 1;
+    }
+    settings::Set(kBgTilesSourcesKey, SerializeBackgroundTilesSources(sources));
+    settings::Set(kBgTilesActiveSourceKey, index);
   }
 
-  if (m_drapeEngine)
-    m_drapeEngine->SetTileBackgroundMode(active ? dp::BackgroundMode::Satellite : dp::BackgroundMode::Default,
-                                         areaOpacityPct / 100.0f);
+  ApplyBackgroundTilesConfig();
 }
 
 uint32_t Framework::GetBackgroundTilesCacheSize()
@@ -2865,25 +2957,19 @@ uint32_t Framework::GetBackgroundTilesCacheSize()
 
 void Framework::SetBackgroundTilesEnabled(bool enabled)
 {
-  // Toggle the layer on/off without touching the persisted URL / cache size / area opacity.
+  // Toggle the layer on/off without touching the persisted source list / cache size / area opacity.
   settings::Set(kBgTilesEnabledKey, enabled);
-
-  std::string url;
-  settings::TryGet(kBgTilesUrlKey, url);
-  bool const active = enabled && !url.empty();
-
-  // The provider is created lazily at startup only when the layer was already on; create it here on
-  // the first enable so SetTileBackgroundMode(Satellite) has tiles to render.
-  if (active && !m_rasterTileProvider)
-    CreateBackgroundTilesProvider(url, GetBackgroundTilesCacheSize());
-
-  if (m_drapeEngine)
-    m_drapeEngine->SetTileBackgroundMode(active ? dp::BackgroundMode::Satellite : dp::BackgroundMode::Default,
-                                         GetBackgroundTilesAreaOpacity() / 100.0f);
+  ApplyBackgroundTilesConfig();
 }
 
 std::string Framework::GetBackgroundTilesURL()
 {
+  // The active source's URL; falls back to the legacy single-URL setting when no list exists yet.
+  std::vector<BackgroundTilesSource> sources;
+  TryGetBackgroundTilesSources(sources);
+  int const index = GetActiveBackgroundTilesSourceIndex();
+  if (index >= 0 && index < static_cast<int>(sources.size()))
+    return sources[index].mUrl;
   std::string url;
   settings::TryGet(kBgTilesUrlKey, url);
   return url;
@@ -2902,6 +2988,137 @@ uint32_t Framework::GetBackgroundTilesAreaOpacity()
   if (!settings::Get(kBgTilesAreaOpacityKey, opacityPct) || opacityPct > kBackgroundTilesMaxAreaOpacityPct)
     opacityPct = kDefaultBgTilesAreaOpacityPct;
   return opacityPct;
+}
+
+std::vector<Framework::BackgroundTilesSource> Framework::GetBackgroundTilesSources()
+{
+  std::vector<BackgroundTilesSource> sources;
+  TryGetBackgroundTilesSources(sources);
+  return sources;
+}
+
+void Framework::TryGetBackgroundTilesSources(std::vector<BackgroundTilesSource> & sources)
+{
+  sources.clear();
+  std::string json;
+  settings::TryGet(kBgTilesSourcesKey, json);
+  if (!json.empty())
+  {
+    ParseBackgroundTilesSources(json, sources);
+    return;
+  }
+
+  // Migration: a pre-existing single-URL configuration becomes a one-entry list. The migrated
+  // list is persisted so the legacy key can be retired later.
+  std::string legacyUrl;
+  settings::TryGet(kBgTilesUrlKey, legacyUrl);
+  if (!legacyUrl.empty())
+  {
+    sources.push_back({std::string("Satellite"), std::move(legacyUrl), std::string(kBgTilesTypeXyz), 100});
+    settings::Set(kBgTilesSourcesKey, SerializeBackgroundTilesSources(sources));
+    int activeIndex = kNoActiveBgTilesSource;
+    settings::TryGet(kBgTilesActiveSourceKey, activeIndex);
+    if (activeIndex == kNoActiveBgTilesSource)
+      settings::Set(kBgTilesActiveSourceKey, 0);
+  }
+}
+
+std::string Framework::SerializeBackgroundTilesSources(std::vector<BackgroundTilesSource> const & sources)
+{
+  std::vector<bg_tiles_json::SourceJson> json;
+  json.reserve(sources.size());
+  for (auto const & s : sources)
+    json.push_back({s.mName, s.mUrl, s.mType, s.mOpacityPct});
+
+  std::string buffer;
+  if (auto const error = glz::write_json(json, buffer); error)
+  {
+    LOG(LWARNING, ("Framework: failed to serialize tile sources", glz::format_error(error)));
+    return {};
+  }
+  return buffer;
+}
+
+bool Framework::ParseBackgroundTilesSources(std::string const & json, std::vector<BackgroundTilesSource> & out)
+{
+  out.clear();
+  std::vector<bg_tiles_json::SourceJson> parsed;
+  glz::opts constexpr opts{.error_on_unknown_keys = false, .error_on_missing_keys = false};
+  if (auto const error = glz::read<opts>(parsed, json); error)
+    return false;
+
+  out.reserve(parsed.size());
+  for (auto const & s : parsed)
+  {
+    BackgroundTilesSource src;
+    src.mName = s.name;
+    src.mUrl = s.url;
+    src.mType = s.type;
+    src.mOpacityPct = math::Clamp(s.opacity, kBackgroundTilesMinAreaOpacityPct, kBackgroundTilesMaxAreaOpacityPct);
+    out.push_back(std::move(src));
+  }
+  return true;
+}
+
+int Framework::GetActiveBackgroundTilesSourceIndex()
+{
+  int index = kNoActiveBgTilesSource;
+  settings::TryGet(kBgTilesActiveSourceKey, index);
+  return index;
+}
+
+void Framework::SetBackgroundTilesSources(std::vector<BackgroundTilesSource> sources, int activeIndex)
+{
+  // Drop empty-URL entries (they can never render) and clamp the active index.
+  std::vector<BackgroundTilesSource> cleaned;
+  cleaned.reserve(sources.size());
+  for (auto & s : sources)
+  {
+    if (s.mUrl.empty())
+      continue;
+    s.mOpacityPct = math::Clamp(s.mOpacityPct, kBackgroundTilesMinAreaOpacityPct, kBackgroundTilesMaxAreaOpacityPct);
+    cleaned.push_back(std::move(s));
+  }
+  if (activeIndex >= static_cast<int>(cleaned.size()))
+    activeIndex = cleaned.empty() ? kNoActiveBgTilesSource : static_cast<int>(cleaned.size()) - 1;
+
+  settings::Set(kBgTilesSourcesKey, SerializeBackgroundTilesSources(cleaned));
+  settings::Set(kBgTilesActiveSourceKey, activeIndex);
+  ApplyBackgroundTilesConfig();
+}
+
+void Framework::SetActiveBackgroundTilesSource(int index)
+{
+  auto sources = GetBackgroundTilesSources();
+  if (index < kNoActiveBgTilesSource || index >= static_cast<int>(sources.size()))
+    return;
+  settings::Set(kBgTilesActiveSourceKey, index);
+  ApplyBackgroundTilesConfig();
+}
+
+void Framework::SetBackgroundTilesSourceOpacity(int index, uint32_t opacityPct)
+{
+  auto sources = GetBackgroundTilesSources();
+  if (index < 0 || index >= static_cast<int>(sources.size()))
+    return;
+  opacityPct = math::Clamp(opacityPct, kBackgroundTilesMinAreaOpacityPct, kBackgroundTilesMaxAreaOpacityPct);
+  sources[index].mOpacityPct = opacityPct;
+  settings::Set(kBgTilesSourcesKey, SerializeBackgroundTilesSources(sources));
+
+  // Apply live only if this source is the active one.
+  if (GetActiveBackgroundTilesSourceIndex() == index && m_rasterTileProvider)
+    m_rasterTileProvider->Reconfigure(sources[index].mUrl,
+                                      static_cast<uint64_t>(GetBackgroundTilesCacheSize()) * 1024 * 1024,
+                                      opacityPct / 100.0f);
+}
+
+uint32_t Framework::GetActiveBackgroundTilesSourceOpacity()
+{
+  auto sources = GetBackgroundTilesSources();
+  int const index = GetActiveBackgroundTilesSourceIndex();
+  if (index >= 0 && index < static_cast<int>(sources.size()))
+    return sources[index].mOpacityPct;
+  return 100;
 }
 
 bool Framework::IsWellFormedBackgroundTilesURL(std::string const & url)
@@ -2923,16 +3140,161 @@ bool Framework::IsWellFormedBackgroundTilesURL(std::string const & url)
 
   // Reject userinfo (user:pass@host) and IP-literal / loopback hosts: the URL
   // is user-supplied and must not be usable to probe internal endpoints.
-  std::string const host = url.substr(hostStart, hostEnd - hostStart);
-  if (host.find('@') != std::string::npos)
+  std::string const hostPort = url.substr(hostStart, hostEnd - hostStart);
+  if (hostPort.find('@') != std::string::npos)
     return false;
-  if (host == "localhost" || host.starts_with("127.") || host.starts_with("[") ||
-      host.starts_with("10.") || host.starts_with("192.168."))
+  // Strip the port before matching: "localhost:8080" must not slip past an
+  // exact-match check, and IP-range prefixes are matched on the bare host.
+  size_t const colon = hostPort.find(':');
+  std::string const host = colon == std::string::npos ? hostPort : hostPort.substr(0, colon);
+  if (host.empty())
     return false;
+  if (colon != std::string::npos)
+  {
+    // After the port separator only digits are allowed; a second ':' means an
+    // unbracketed IPv6 literal — reject it (bracketed ones are caught below).
+    std::string const port = hostPort.substr(colon + 1);
+    if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos)
+      return false;
+  }
+  if (host == "localhost" || host == "localhost." || host == "0.0.0.0" ||
+      host.starts_with("[") || host.starts_with("127.") || host.starts_with("10.") ||
+      host.starts_with("192.168.") || host.starts_with("169.254."))
+    return false;
+  // RFC1918 172.16.0.0/12: second octet in [16, 31]. Parse the first two octets
+  // instead of string prefixes, which would also block public 172.2x.x.x hosts.
+  {
+    int o1 = 0, o2 = 0;
+    if (sscanf(host.c_str(), "%3d.%3d", &o1, &o2) == 2 && o1 == 172 && o2 >= 16 && o2 <= 31)
+      return false;
+  }
 
-  // Require all three placeholders present literally (braces must not be percent-encoded).
-  return url.find("{z}") != std::string::npos && url.find("{x}") != std::string::npos &&
-         url.find("{y}") != std::string::npos;
+  // Require the placeholders present literally (braces must not be percent-encoded): either all
+  // three XYZ ones, or the single {bbox} placeholder of a simple WMS GetMap URL.
+  bool const isXyz = url.find("{z}") != std::string::npos && url.find("{x}") != std::string::npos &&
+                     url.find("{y}") != std::string::npos;
+  bool const isWms = url.find("{bbox}") != std::string::npos;
+  return isXyz || isWms;
+}
+
+void Framework::CreateWeatherTileProvider(std::string const & urlTemplate)
+{
+  RasterTileProvider::Params rp;
+  rp.m_urlTemplate = urlTemplate;
+  rp.m_cacheSubdir = "weather_tiles";
+  // Radar tiles are coarse; deeper OM tiles reuse the ancestor sub-rect (over-zoom).
+  rp.m_minZoom = 1;
+  rp.m_maxZoom = 12;
+  rp.m_maxCacheBytes = 32ull * 1024 * 1024;  // weather data goes stale quickly; keep the cache small
+  rp.m_opacity = kWeatherTileOpacity;
+
+  m_weatherTileProvider = std::make_unique<RasterTileProvider>(
+      std::move(rp), [this](df::TileKey const & tileKey, dp::BackgroundMode mode, std::string const & imageUid,
+                            uint32_t width, uint32_t height, m2::RectF const & rect, std::vector<uint8_t> && rgba)
+  {
+    // Same delivery path as the background-tiles provider (safe from any thread).
+    if (m_drapeEngine)
+    {
+      m_drapeEngine->AddTileBackgroundImage(imageUid, width, height, dp::TextureFormat::RGBA8, mode, std::move(rgba));
+      m_drapeEngine->SetTileBackgroundData(tileKey, imageUid, rect);
+    }
+  });
+}
+
+void Framework::SetWeatherLayerEnabled(bool enabled, TWeatherLayerResultFn const & onDone)
+{
+  if (!enabled)
+  {
+    settings::Set(kWeatherLayerEnabledKey, false);
+    m_weatherToggleGeneration.fetch_add(1);  // invalidate any in-flight enable completion
+    // Do NOT destroy the provider: in-flight async tasks and the render thread may
+    // still touch it (same never-destroy policy as m_rasterTileProvider). Deactivating
+    // the flag is enough — dispatch checks it on every request.
+    m_weatherLayerActive = false;
+    // Restore the user tile-source layer (weather was overriding it while enabled).
+    ApplyBackgroundTilesConfig();
+    if (onDone)
+      GetPlatform().RunTask(Platform::Thread::Gui, [onDone]() { onDone(true); });
+    return;
+  }
+
+  // Resolve the latest radar frame: two keyless requests (metadata JSON, then XYZ tiles built
+  // from the returned frame path). Fully async: the metadata fetch runs on the platform's
+  // transport thread pool; the provider is created on the Gui thread (it is read by the render
+  // thread through tileBackgroundReadFn).
+  platform::HttpClient metaRequest("https://api.rainviewer.com/public/weather-maps.json");
+  metaRequest.SetTimeout(kWeatherRequestTimeoutSec);
+  metaRequest.SetFollowRedirects(true);
+  int const generation = m_weatherToggleGeneration.fetch_add(1) + 1;
+  metaRequest.RunHttpRequestAsync([this, onDone, generation](platform::HttpClient::Result result)
+  {
+    std::string tileTemplate;
+    if (result.m_success && result.m_errorCode == 200)
+    {
+      weather::RadarFrame frame;
+      if (weather::ParseRadarMeta(result.m_serverResponse, frame))
+        tileTemplate = weather::BuildRadarTileUrlTemplate(frame.m_path);
+    }
+
+    GetPlatform().RunTask(Platform::Thread::Gui, [this, onDone, tileTemplate, generation]()
+    {
+      // A disable toggle may have raced with this completion; respect the latest user
+      // choice but always deliver a result so the UI never waits forever.
+      if (generation != m_weatherToggleGeneration.load())
+      {
+        if (onDone)
+          onDone(false);
+        return;
+      }
+      bool const active = !tileTemplate.empty();
+      if (active)
+      {
+        settings::Set(kWeatherTileUrlKey, tileTemplate);
+        settings::Set(kWeatherLayerEnabledKey, true);
+        if (m_weatherTileProvider)
+          m_weatherTileProvider->Reconfigure(tileTemplate, 32ull * 1024 * 1024, kWeatherTileOpacity);
+        else
+          CreateWeatherTileProvider(tileTemplate);
+        m_weatherLayerActive = true;
+        if (m_drapeEngine)
+          m_drapeEngine->SetTileBackgroundMode(dp::BackgroundMode::Satellite, kWeatherTileOpacity);
+      }
+      if (onDone)
+        onDone(active);
+    });
+  });
+}
+
+bool Framework::IsWeatherLayerEnabled()
+{
+  bool enabled = false;
+  settings::TryGet(kWeatherLayerEnabledKey, enabled);
+  return enabled;
+}
+
+void Framework::GetWeatherForecast(double latDeg, double lonDeg, TWeatherForecastFn const & fn)
+{
+  ASSERT(fn != nullptr, ());
+  std::string const url = weather::BuildForecastUrl(latDeg, lonDeg);
+
+  platform::HttpClient request(url);
+  request.SetTimeout(kWeatherRequestTimeoutSec);
+  request.SetFollowRedirects(true);
+  request.RunHttpRequestAsync([fn](platform::HttpClient::Result result)
+  {
+    weather::Forecast forecast;
+    std::string error;
+    if (!result.m_success)
+      error = "network";
+    else if (result.m_errorCode != 200)
+      error = "http_" + std::to_string(result.m_errorCode);
+    else if (!weather::ParseForecast(result.m_serverResponse, forecast))
+      error = "parse";
+
+    // Deliver on the Gui thread: the Android JNI callback needs an attached, thread-safe env.
+    GetPlatform().RunTask(Platform::Thread::Gui,
+                          [fn, forecast = std::move(forecast), error = std::move(error)]() { fn(forecast, error); });
+  });
 }
 
 void Framework::ApplyMapLanguageCode(std::string const & langCode)
