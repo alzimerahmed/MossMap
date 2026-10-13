@@ -64,7 +64,7 @@ void HazardWarningsManager::SetEnabled(bool enabled)
   m_enabled = enabled;
   settings::Set(kHazardWarningsEnabledKey, enabled);
 
-  if (!enabled)
+  if (!enabled && m_activeHazard)
   {
     m_activeHazard = false;
     m_clearCallback();

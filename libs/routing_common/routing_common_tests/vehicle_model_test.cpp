@@ -391,8 +391,8 @@ UNIT_CLASS_TEST(VehicleModelTest, PedestrianModel_Speeds)
       {footway, pavedBad},    // TODO: should be lower than previous, but is equal
       {footway, yesBicycle},  // TODO: should be lower than previous, but is equal
       {path, yesFoot},        // TODO: should be higher than previous, but is equal
-      {path, unpavedGood},    // TODO: should be lower than previous, but is equal
-      {path, yesBicycle},     // TODO: should be lower than previous, but is equal
+      {path, yesBicycle},     // no surface factor for pedestrians: equal to plain path
+      {path, unpavedGood},    // now strictly lower: unpaved_good gets a 0.95 weight factor
       {cycleway},
       {path, unpavedBad},
       {cycleway, unpavedBad},

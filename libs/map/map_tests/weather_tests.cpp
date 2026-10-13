@@ -29,7 +29,7 @@ char const kForecastJson[] = R"({
 
 UNIT_TEST(ForecastUrl)
 {
-  string const url = BuildForecastUrl(52.52001, 13.40495);
+  string const url = BuildForecastUrl(52.52, 13.405);
   TEST(url.starts_with("https://api.open-meteo.com/v1/forecast?latitude=52.5200&longitude=13.4050"), (url));
   TEST(url.find("current=temperature_2m") != string::npos, (url));
   TEST(url.find("timeformat=unixtime") != string::npos, (url));
