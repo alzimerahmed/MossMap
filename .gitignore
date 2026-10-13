@@ -119,3 +119,7 @@ AGENTS.frostgram.bak
 # Test-only data (restored from upstream in CI)
 /data/test_data/
 /.gemini/
+
+# Release signing (generated in CI from secrets; never commit)
+keystore.properties
+keystore.jks

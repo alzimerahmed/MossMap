@@ -145,6 +145,24 @@ android {
       // To learn more, go to the documentation section about R8 configuration files.
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
+      // Release signing when keystore.properties exists (CI writes it from secrets;
+      // local releases read it from the developer's keystore directory). Falls back to
+      // the debug key when absent so assembleDebug-style flows never break.
+      def keystorePropsFile = rootProject.file('keystore.properties')
+      if (keystorePropsFile.exists()) {
+        def keystoreProps = new Properties()
+        keystorePropsFile.withInputStream { keystoreProps.load(it) }
+        signingConfigs {
+          release {
+            storeFile = file(keystoreProps['storeFile'])
+            storePassword = keystoreProps['storePassword']
+            keyAlias = keystoreProps['keyAlias']
+            keyPassword = keystoreProps['keyPassword']
+          }
+        }
+        signingConfig = signingConfigs.release
+      }
+
       if (googleFirebaseServicesEnabled) {
         firebaseCrashlytics {
           nativeSymbolUploadEnabled true

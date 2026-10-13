@@ -1,0 +1,89 @@
+name: Android Release
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
+
+jobs:
+  android-release:
+    name: Build Signed Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install build tools and dependencies
+        shell: bash
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ninja-build
+
+      - name: Checkout sources
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 200
+
+      - name: Parallel submodules checkout
+        shell: bash
+        run: git submodule update --depth 1 --init --recursive --jobs=$(($(nproc) * 20))
+
+      - name: Configure ccache
+        uses: hendrikmuhs/ccache-action@v1.2.24
+        with:
+          key: ${{ github.workflow }}-FdroidRelease
+          save: false
+
+      - name: Decode release keystore
+        shell: bash
+        env:
+          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
+        run: |
+          test -n "$RELEASE_KEYSTORE" || { echo "::error::RELEASE_KEYSTORE secret is not set"; exit 1; }
+          echo "$RELEASE_KEYSTORE" | base64 -d > keystore.jks
+
+      - name: Write keystore.properties
+        shell: bash
+        env:
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+        run: |
+          cat > android/keystore.properties <<'EOF'
+          storeFile=../keystore.jks
+          storePassword=PLACEHOLDER_STORE
+          keyAlias=PLACEHOLDER_ALIAS
+          keyPassword=PLACEHOLDER_KEY
+          EOF
+          sed -i "s/PLACEHOLDER_STORE/$RELEASE_STORE_PASSWORD/; s/PLACEHOLDER_ALIAS/$RELEASE_KEY_ALIAS/; s/PLACEHOLDER_KEY/$RELEASE_KEY_PASSWORD/" android/keystore.properties
+
+      - name: Compile FdroidRelease
+        shell: bash
+        working-directory: android
+        env:
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
+        run: ./gradlew -Parm64 assembleFdroidRelease
+
+      - name: Verify APK signature
+        shell: bash
+        run: |
+          APK=$(ls android/app/build/outputs/apk/fdroid/release/*.apk | head -1)
+          "$JAVA_HOME/bin/jarsigner" -verify "$APK" > /dev/null
+          echo "Signed APK: $APK"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: mossmap-release-apk
+          path: android/app/build/outputs/apk/fdroid/release/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Attach APK to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.ref_name }}" android/app/build/outputs/apk/fdroid/release/*.apk --repo "$GITHUB_REPOSITORY" --clobber
