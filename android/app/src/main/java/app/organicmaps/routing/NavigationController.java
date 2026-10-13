@@ -2,6 +2,7 @@ package app.organicmaps.routing;
 
 import static app.organicmaps.sdk.util.Utils.dimen;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Handler;
@@ -194,7 +195,7 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
   private void announceForScreenReader(int textRes)
   {
     final AccessibilityManager am =
-        (AccessibilityManager) mFrame.getContext().getSystemService(AccessibilityManager.class);
+        (AccessibilityManager) mFrame.getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
     if (am == null || !am.isTouchExplorationEnabled() || Config.TTS.isEnabled())
       return;
     mFrame.announceForAccessibility(mFrame.getContext().getString(textRes));
@@ -203,7 +204,7 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
   private void announceTurnForScreenReader(@NonNull RoutingInfo info)
   {
     final AccessibilityManager am =
-        (AccessibilityManager) mFrame.getContext().getSystemService(AccessibilityManager.class);
+        (AccessibilityManager) mFrame.getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
     if (am == null || !am.isTouchExplorationEnabled() || Config.TTS.isEnabled())
       return;
     // update() fires on every position poll; only announce when the street changed or enough
