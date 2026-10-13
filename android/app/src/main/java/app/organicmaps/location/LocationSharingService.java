@@ -233,6 +233,7 @@ public class LocationSharingService extends Service implements LocationListener
     }
   }
 
+  @androidx.annotation.RequiresPermission(anyOf = {android.Manifest.permission.ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
   @Override
   public void onDestroy()
   {

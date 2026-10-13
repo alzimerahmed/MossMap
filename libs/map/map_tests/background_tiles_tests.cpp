@@ -114,7 +114,7 @@ UNIT_TEST(BackgroundTilesSources_ParseClampsOpacity)
   std::vector<Framework::BackgroundTilesSource> parsed;
   TEST(Framework::ParseBackgroundTilesSources(
       R"([{"name":"a","url":"https://h/{z}/{x}/{y}","type":"xyz","opacity":999},
-          {"name":"b","url":"https://h/{z}/{x}/{y}","type":"xyz","opacity":0}])"), ());
+          {"name":"b","url":"https://h/{z}/{x}/{y}","type":"xyz","opacity":0}])", parsed), ());
   TEST_EQUAL(parsed.size(), 2, ());
   TEST_EQUAL(parsed[0].mOpacityPct, Framework::kBackgroundTilesMaxAreaOpacityPct, ());
   TEST_EQUAL(parsed[1].mOpacityPct, Framework::kBackgroundTilesMinAreaOpacityPct, ());
