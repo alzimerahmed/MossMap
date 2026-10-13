@@ -179,6 +179,13 @@ VehicleModel::SurfaceInitList const kBicycleSurface = {
     // Otherwise there is a small chance cycling infra is present though not mapped?
     /// @todo(pastk): this heuristic is controversial, maybe remove completely?
     {{"hwtag", "nocycleway"}, {0.95, 0.95}},
+    // Trail difficulty: the generator encodes sac_scale/trail_visibility as
+    // "highway|path|difficult" and "highway|path|expert". Default (non-MTB) routing
+    // strongly avoids difficult/expert trails; a dedicated MTB profile that prefers
+    // them is a follow-up. See vehicle_model.cpp for the full-type surface factor
+    // lookup that makes these 3-level types work.
+    {{"highway", "path", "difficult"}, {0.5, 0.7}},
+    {{"highway", "path", "expert"}, {0.25, 0.5}},
 };
 }  // namespace bicycle_model
 

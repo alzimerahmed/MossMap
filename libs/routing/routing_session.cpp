@@ -50,6 +50,7 @@ RoutingSession::RoutingSession()
   // To call |m_changeSessionStateCallback| on |m_state| initialization.
   SetState(SessionState::NoValidRoute);
   m_speedCameraManager.SetRoute(m_route);
+  m_hazardWarningsManager.SetRoute(m_route);
 }
 
 void RoutingSession::Init(PointCheckCallback const & pointCheckCallback)
@@ -121,6 +122,8 @@ void RoutingSession::RemoveRoute()
   m_lastResult.reset();
   m_speedCameraManager.Reset();
   m_speedCameraManager.SetRoute(m_route);
+  m_hazardWarningsManager.Reset();
+  m_hazardWarningsManager.SetRoute(m_route);
 }
 
 void RoutingSession::RebuildRouteOnTrafficUpdate()
@@ -278,6 +281,7 @@ SessionState RoutingSession::OnLocationPositionChanged(GpsInfo const & info)
     {
       SetState(SessionState::OnRoute);
       m_speedCameraManager.OnLocationPositionChanged(info);
+      m_hazardWarningsManager.OnLocationPositionChanged(info);
     }
 
     if (m_userCurrentPositionValid)
@@ -452,6 +456,10 @@ void RoutingSession::GetRouteFollowingInfo(FollowingInfo & info) const
   // Pedestrian info.
   info.m_pedestrianTurn =
       (distanceToTurnMeters < kShowPedestrianTurnInMeters) ? turn.m_pedestrianTurn : turns::PedestrianDirection::None;
+
+  // Hazard warning: monotonic announcement id; consumers dedupe by last-seen id
+  // (several clients poll FollowingInfo, so a consume-once flag would race).
+  info.m_hazardAnnouncementId = m_hazardWarningsManager.GetAnnouncementId();
 }
 
 double RoutingSession::GetCompletionPercent() const
@@ -562,6 +570,8 @@ void RoutingSession::AssignRoute(std::shared_ptr<RoutesResult> const & result, R
 
   m_speedCameraManager.Reset();
   m_speedCameraManager.SetRoute(m_route);
+  m_hazardWarningsManager.Reset();
+  m_hazardWarningsManager.SetRoute(m_route);
 }
 
 bool RoutingSession::SwapActiveAlternative(size_t idx)
@@ -588,6 +598,8 @@ bool RoutingSession::SwapActiveAlternative(size_t idx)
 
   m_speedCameraManager.Reset();
   m_speedCameraManager.SetRoute(m_route);
+  m_hazardWarningsManager.Reset();
+  m_hazardWarningsManager.SetRoute(m_route);
   if (m_router)
     m_router->SwapAltRouteToActive();
   return true;
@@ -733,6 +745,18 @@ void RoutingSession::SetSpeedCamClearCallback(SpeedCameraClearCallback && callba
 {
   CHECK_THREAD_CHECKER(m_threadChecker, ());
   m_speedCameraManager.SetSpeedCamClearCallback(std::move(callback));
+}
+
+void RoutingSession::SetRouteHazards(std::vector<HazardOnRoute> hazards)
+{
+  CHECK_THREAD_CHECKER(m_threadChecker, ());
+  m_hazardWarningsManager.SetHazards(std::move(hazards));
+}
+
+void RoutingSession::SetHazardWarningsEnabled(bool enabled)
+{
+  CHECK_THREAD_CHECKER(m_threadChecker, ());
+  m_hazardWarningsManager.SetEnabled(enabled);
 }
 
 void RoutingSession::SetProgressCallback(ProgressCallback const & progressCallback)

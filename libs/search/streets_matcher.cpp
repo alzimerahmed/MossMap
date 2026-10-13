@@ -5,6 +5,7 @@
 
 #include "indexer/search_string_utils.hpp"
 
+#include "base/string_utils.hpp"
 #include "base/stl_helpers.hpp"
 
 #include <algorithm>
@@ -39,6 +40,14 @@ bool EqualsByHashAndRange(StreetsMatcher::Prediction const & lhs, StreetsMatcher
          lhs.m_hash == rhs.m_hash;
 }
 
+// Tokens that separate two street names in a cross-street (intersection) query,
+// e.g. "Main Street & Oak Avenue" or "High Street at Elm Street".
+bool IsCrossStreetSeparator(strings::UniString const & token)
+{
+  return token == strings::MakeUniString("&") || token == strings::MakeUniString("+") ||
+         token == strings::MakeUniString("and") || token == strings::MakeUniString("at");
+}
+
 void FindStreets(BaseContext const & ctx, CBV const & candidates, FeaturesFilter const & filter,
                  QueryParams const & params, size_t startToken, bool withMisprints,
                  std::vector<StreetsMatcher::Prediction> & predictions)
@@ -64,6 +73,10 @@ void FindStreets(BaseContext const & ctx, CBV const & candidates, FeaturesFilter
   // When true, no bit vectors were intersected with |streets| at all.
   bool emptyIntersection = true;
 
+  // Start of the token range of the street currently being matched. It differs
+  // from |startToken| for the second and later streets in a cross-street query.
+  size_t rangeStart = startToken;
+
   auto emit = [&]()
   {
     if (streets.IsEmpty() || emptyIntersection || lastToken == curToken)
@@ -87,7 +100,7 @@ void FindStreets(BaseContext const & ctx, CBV const & candidates, FeaturesFilter
     predictions.emplace_back();
     auto & prediction = predictions.back();
 
-    prediction.m_tokenRange = TokenRange(startToken, curToken);
+    prediction.m_tokenRange = TokenRange(rangeStart, curToken);
 
     ASSERT_NOT_EQUAL(fs.PopCount(), 0, ());
     ASSERT_LESS_OR_EQUAL(fs.PopCount(), fa.PopCount(), ());
@@ -114,10 +127,31 @@ void FindStreets(BaseContext const & ctx, CBV const & candidates, FeaturesFilter
     emptyIntersection = false;
   }, withMisprints);
 
-  for (; curToken < ctx.NumTokens() && !ctx.IsTokenUsed(curToken) && !streets.IsEmpty(); ++curToken)
+  for (; curToken < ctx.NumTokens() && !ctx.IsTokenUsed(curToken); ++curToken)
   {
     auto const & token = params.GetToken(curToken).GetOriginal();
     bool const isPrefix = params.IsPrefixToken(curToken);
+
+    // Cross-street (intersection) queries, e.g. "Main Street & Oak Avenue": the
+    // separator token ends the current street name and the tokens after it are
+    // matched as another street. Without this the empty intersection on the
+    // separator stopped the whole loop and the second street was never matched.
+    // The separator itself is never part of a street name, so it is left unused
+    // (the geocoder then matches houses for each street prediction separately).
+    if (!isPrefix && curToken > startToken && curToken + 1 < ctx.NumTokens() && !ctx.IsTokenUsed(curToken + 1) &&
+        IsCrossStreetSeparator(token))
+    {
+      emit();
+      rangeStart = curToken + 1;
+      streets = CBV(candidates);
+      all.SetFull();
+      emptyIntersection = true;
+      lastToken = curToken;
+      continue;
+    }
+
+    if (streets.IsEmpty())
+      break;
 
     if (house_numbers::LooksLikeHouseNumber(token, isPrefix))
       emit();

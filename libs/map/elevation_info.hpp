@@ -78,6 +78,22 @@ public:
   /// @param[in] threshold Minimum altitude change for filtered ascent/descent (threshold accumulation).
   AltitudesInfo CalculateAltitudesInfo(Altitude threshold) const;
 
+  /// A single continuous climb of the route/track.
+  struct ClimbSegment
+  {
+    double m_startDistance = 0;  // meters from the start, cumulative across all lines
+    double m_endDistance = 0;
+    Altitude m_startAltitude = 0;
+    Altitude m_endAltitude = 0;
+    uint32_t m_gain = 0;          // total ascent within the segment, meters
+    double m_maxGradient = 0.0;   // steepest point slope within the segment (rise/run)
+  };
+
+  /// Splits the profile into continuous climb segments (ascent phases).
+  /// @param[in] minGainMeters Minimum total ascent for a phase to count as a climb
+  ///            (filters altitude noise; 25 m by default).
+  std::vector<ClimbSegment> CalculateClimbSegments(uint32_t minGainMeters = 25) const;
+
   /// Iterates all points with cumulative distances across all lines.
   /// @param[in] fn Called with (double cumulativeDistance, geometry::Altitude altitude) for each point.
   template <typename Fn>

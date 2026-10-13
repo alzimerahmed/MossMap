@@ -128,12 +128,16 @@ SpeedKMpH VehicleModel::GetTypeSpeedImpl(FeatureTypes const & types, SpeedParams
   std::optional<SpeedKMpH> additionalRoadSpeed;
   for (uint32_t t : types)
   {
+    // Surface factors can be keyed by 3-level types (e.g. "highway|path|difficult"/"expert",
+    // which the generator produces from sac_scale/trail_visibility tags), so look them up
+    // on the full type before it is truncated to 2 levels below.
+    GetSurfaceFactor(t, surfaceFactor);
+
     ftype::TruncValue(t, 2);
 
     if (!hwType)
       hwType = GetHighwayType(t);
 
-    GetSurfaceFactor(t, surfaceFactor);
     GetAdditionalRoadSpeed(t, isCityRoad, additionalRoadSpeed);
   }
 

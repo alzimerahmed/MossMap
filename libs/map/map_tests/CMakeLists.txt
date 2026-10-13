@@ -9,6 +9,7 @@ set(SRC
   coordinate_formats_tests.cpp
   countries_names_tests.cpp
   editor_notes_tests.cpp
+  elevation_info_tests.cpp
   extrapolator_tests.cpp
   feature_getters_tests.cpp
   framework_viewport_tests.cpp
@@ -29,6 +30,7 @@ set(SRC
   relation_track_tests.cpp
   routing_manager_tests.cpp
   track_tests.cpp
+  weather_tests.cpp
 )
 
 omim_add_test(${PROJECT_NAME} ${SRC} REQUIRE_QT REQUIRE_SERVER)

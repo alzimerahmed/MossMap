@@ -249,7 +249,10 @@ public class NavigationScreen extends BaseMapScreen implements RoutingController
     if (result == null || result != DrivingOptionsScreen.DRIVING_OPTIONS_RESULT_CHANGED)
       return;
 
-    // TODO (AndrewShkrob): Need to rebuild the route with updated driving options
+    // Rebuild the route with the updated driving options, same as the phone UI does.
+    // While navigating the rebuild is deferred by RoutingController until navigation
+    // stops, so this is safe to call here.
+    mRoutingController.onRoutingOptionsChanged();
     Logger.d(TAG, "Driving options changed");
   }
 

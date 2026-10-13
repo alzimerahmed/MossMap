@@ -4,6 +4,8 @@
 #include "geometry/mercator.hpp"
 #include "geometry/simplification.hpp"
 
+#include <algorithm>
+
 ElevationInfo::ElevationInfo(std::vector<GeometryLine> const & lines)
 {
   for (auto const & line : lines)
@@ -216,6 +218,68 @@ ElevationInfo::AltitudesInfo ElevationInfo::CalculateAltitudesInfo(Altitude thre
     }
   }
   return info;
+}
+
+std::vector<ElevationInfo::ClimbSegment> ElevationInfo::CalculateClimbSegments(uint32_t minGainMeters) const
+{
+  std::vector<ClimbSegment> segments;
+
+  auto closeSegment = [&segments, minGainMeters](ClimbSegment & seg)
+  {
+    if (seg.m_gain >= minGainMeters)
+      segments.push_back(seg);
+    seg = ClimbSegment{};
+  };
+
+  ClimbSegment seg;
+  bool inClimb = false;
+
+  ForEachPoint([&](double distance, Altitude altitude) {
+    if (!inClimb)
+    {
+      seg.m_startDistance = distance;
+      seg.m_startAltitude = altitude;
+      seg.m_endDistance = distance;
+      seg.m_endAltitude = altitude;
+      inClimb = true;
+      return;
+    }
+
+    auto const prevDistance = seg.m_endDistance;
+    auto const prevAltitude = seg.m_endAltitude;
+    auto const delta = altitude - prevAltitude;
+    auto const run = distance - prevDistance;
+
+    if (delta > 0)
+    {
+      seg.m_gain += static_cast<uint32_t>(delta);
+      if (run > 0)
+        seg.m_maxGradient = std::max(seg.m_maxGradient, double(delta) / run);
+      seg.m_endDistance = distance;
+      seg.m_endAltitude = altitude;
+    }
+    else if (delta < 0 && run > 0)
+    {
+      // A descent closes the current climb at its peak (a flat pause keeps it open)
+      // and starts the next potential climb at the valley bottom (this point).
+      closeSegment(seg);
+      seg.m_startDistance = distance;
+      seg.m_startAltitude = altitude;
+      seg.m_endDistance = distance;
+      seg.m_endAltitude = altitude;
+    }
+    else
+    {
+      seg.m_endDistance = distance;
+      seg.m_endAltitude = altitude;
+    }
+  });
+
+  // Close a climb that reaches the end of the route.
+  if (inClimb)
+    closeSegment(seg);
+
+  return segments;
 }
 
 void GpsTrackElevation::AddGpsPoints(GpsPoints const & points)

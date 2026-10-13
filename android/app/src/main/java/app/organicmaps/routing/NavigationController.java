@@ -4,11 +4,15 @@ import static app.organicmaps.sdk.util.Utils.dimen;
 
 import android.content.res.Configuration;
 import android.location.Location;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,10 +22,12 @@ import androidx.lifecycle.ViewModelProvider;
 import app.organicmaps.MwmApplication;
 import app.organicmaps.R;
 import app.organicmaps.maplayer.MapButtonsViewModel;
+import app.organicmaps.sdk.Framework;
 import app.organicmaps.sdk.Router;
 import app.organicmaps.sdk.maplayer.traffic.TrafficManager;
 import app.organicmaps.sdk.routing.RoutingController;
 import app.organicmaps.sdk.routing.RoutingInfo;
+import app.organicmaps.sdk.sound.TtsPlayer;
 import app.organicmaps.sdk.util.StringUtils;
 import app.organicmaps.sdk.widget.roadshield.RoadShieldUtils;
 import app.organicmaps.sdk.widgets.lanes.LanesView;
@@ -58,6 +64,14 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
   private final NavMenu mNavMenu;
   View.OnClickListener mOnSettingsClickListener;
   View.OnClickListener mOnVoiceSettingsClickListener;
+
+  // Timestamp of the last speed camera toast, to avoid spamming when several
+  // cameras are announced in quick succession.
+  private long mLastSpeedCamToastTime;
+  private long mLastHazardToastTime;
+  private int mLastHazardAnnouncementId;
+  private static final long SPEED_CAM_TOAST_MIN_INTERVAL_MS = 10_000;
+  private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
   public NavigationController(AppCompatActivity activity, View.OnClickListener onSettingsClickListener,
                               View.OnClickListener onVoiceSettingsClickListener,
@@ -124,6 +138,43 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
         navigationBarBackground.setLayoutParams(lp);
       }
     });
+
+    // Speed camera proximity warnings: the core fires these callbacks on the GUI thread
+    // when the driver approaches a camera on the route (see SpeedCameraManager).
+    Framework.setSpeedCamWarningListener(new Framework.SpeedCamWarningListener()
+    {
+      @Override
+      public void onSpeedCamShow(double lat, double lon, double speedKmPH)
+      {
+        mMainHandler.post(() -> showSpeedCamWarning());
+      }
+
+      @Override
+      public void onSpeedCamClear()
+      {
+        // Nothing to clear for a transient toast.
+      }
+    });
+  }
+
+  private void showSpeedCamWarning()
+  {
+    final long now = SystemClock.elapsedRealtime();
+    if (now - mLastSpeedCamToastTime < SPEED_CAM_TOAST_MIN_INTERVAL_MS)
+      return;
+    mLastSpeedCamToastTime = now;
+    Toast.makeText(mFrame.getContext(), R.string.speed_camera_ahead, Toast.LENGTH_LONG).show();
+  }
+
+  private void showHazardWarning()
+  {
+    final long now = SystemClock.elapsedRealtime();
+    if (now - mLastHazardToastTime < SPEED_CAM_TOAST_MIN_INTERVAL_MS)
+      return;
+    mLastHazardToastTime = now;
+    Toast.makeText(mFrame.getContext(), R.string.hazard_warning_ahead, Toast.LENGTH_LONG).show();
+    TtsPlayer.INSTANCE.playTurnNotifications(
+        new String[] {mFrame.getContext().getString(R.string.hazard_warning_ahead)});
   }
 
   // Height the search sheet must clear when expanded over the navigation top frame: the always
@@ -177,6 +228,14 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
 
     updateStreetView(info);
     mNavMenu.update(info);
+
+    // Dedupe by the monotonic announcement id: several clients poll RoutingInfo,
+    // so the warning must not be consumed destructively — announce when it grows.
+    if (info.getHazardAnnouncementId() > mLastHazardAnnouncementId)
+    {
+      mLastHazardAnnouncementId = info.getHazardAnnouncementId();
+      showHazardWarning();
+    }
   }
 
   private void updateStreetView(@NonNull RoutingInfo info)

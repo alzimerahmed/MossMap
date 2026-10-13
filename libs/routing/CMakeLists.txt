@@ -68,6 +68,8 @@ set(SRC
   guides_connections.hpp
   guides_graph.cpp
   guides_graph.hpp
+  hazard_warnings_manager.cpp
+  hazard_warnings_manager.hpp
   index_graph.cpp
   index_graph.hpp
   index_graph_loader.cpp

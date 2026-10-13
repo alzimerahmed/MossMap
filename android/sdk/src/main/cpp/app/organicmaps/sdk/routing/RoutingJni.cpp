@@ -240,6 +240,7 @@ jobject CreateRoutingInfo(JNIEnv * env, routing::FollowingInfo const & info, Rou
     "D"                                                        // speedLimitMps
     "Z"                                                        // speedLimitExceeded
     "Z"                                                        // shouldPlayWarningSignal
+    "I"                                                        // hazardAnnouncementId
     ")V"
   );
   // clang-format on
@@ -262,7 +263,8 @@ jobject CreateRoutingInfo(JNIEnv * env, routing::FollowingInfo const & info, Rou
     CreateLanesInfo(env, info.m_lanes),
     info.m_speedLimitMps,
     static_cast<jboolean>(rm.IsSpeedCamLimitExceeded()),
-    static_cast<jboolean>(rm.GetSpeedCamManager().ShouldPlayBeepSignal())
+    static_cast<jboolean>(rm.GetSpeedCamManager().ShouldPlayBeepSignal()),
+    static_cast<jint>(info.m_hazardAnnouncementId)
   );
   // clang-format on
   ASSERT(result, (DescribeException()));

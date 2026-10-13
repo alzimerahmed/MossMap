@@ -2,6 +2,7 @@
 
 #include "routing/async_router.hpp"
 #include "routing/following_info.hpp"
+#include "routing/hazard_warnings_manager.hpp"
 #include "routing/position_accumulator.hpp"
 #include "routing/route.hpp"
 #include "routing/router.hpp"
@@ -23,6 +24,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace location
 {
@@ -122,6 +124,11 @@ public:
   void SetSpeedCamShowCallback(SpeedCameraShowCallback && callback);
   void SetSpeedCamClearCallback(SpeedCameraClearCallback && callback);
 
+  /// \brief Sets the road hazards (OSM hazard=* features projected on the route) to warn
+  /// the driver about during navigation.
+  void SetRouteHazards(std::vector<HazardOnRoute> hazards);
+  void SetHazardWarningsEnabled(bool enabled);
+
   // Sound notifications for turn instructions.
   void GenerateNotifications(std::vector<std::string> & notifications, bool announceStreets);
   void EnableTurnNotifications(bool enable);
@@ -157,6 +164,9 @@ public:
   bool IsSpeedCamLimitExceeded() const { return m_speedCameraManager.IsSpeedLimitExceeded(); }
   SpeedCameraManager & GetSpeedCamManager() { return m_speedCameraManager; }
   SpeedCameraManager const & GetSpeedCamManager() const { return m_speedCameraManager; }
+
+  HazardWarningsManager & GetHazardWarningsManager() { return m_hazardWarningsManager; }
+  HazardWarningsManager const & GetHazardWarningsManager() const { return m_hazardWarningsManager; }
 
   void SetGuidesForTests(GuidesTracks guides) { m_router->SetGuidesTracks(std::move(guides)); }
 
@@ -205,6 +215,7 @@ private:
   turns::sound::NotificationManager m_turnNotificationsMgr;
 
   SpeedCameraManager m_speedCameraManager;
+  HazardWarningsManager m_hazardWarningsManager;
   RoutingSettings m_routingSettings;
 
   PositionAccumulator m_positionAccumulator;

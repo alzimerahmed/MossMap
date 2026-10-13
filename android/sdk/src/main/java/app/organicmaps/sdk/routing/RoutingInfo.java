@@ -44,6 +44,9 @@ public final class RoutingInfo
   public final double speedLimitMps;
   private final boolean speedCamLimitExceeded;
   private final boolean shouldPlayWarningSignal;
+  // Monotonic id of the last issued hazard warning announcement, 0 = none.
+  // Several clients poll RoutingInfo, so each dedupes against its last-seen id.
+  private final int hazardAnnouncementId;
 
   private RoutingInfo(Distance distToTarget, Distance distToTurn, String currentStreet, String nextStreet,
                       @Nullable RoadShieldInfo nextStreetRoadShields, String nextNextStreet,
@@ -51,7 +54,7 @@ public final class RoutingInfo
                       @NonNull CarDirection carTurnDirection, @NonNull CarDirection carNextTurnDirection,
                       @NonNull PedestrianDirection pedestrianDirection, int exitNum, int totalTime,
                       @Nullable LaneInfo[] lanes, double speedLimitMps, boolean speedLimitExceeded,
-                      boolean shouldPlayWarningSignal)
+                      boolean shouldPlayWarningSignal, int hazardAnnouncementId)
   {
     this.distToTarget = distToTarget;
     this.distToTurn = distToTurn;
@@ -70,6 +73,7 @@ public final class RoutingInfo
     this.speedLimitMps = speedLimitMps;
     this.speedCamLimitExceeded = speedLimitExceeded;
     this.shouldPlayWarningSignal = shouldPlayWarningSignal;
+    this.hazardAnnouncementId = hazardAnnouncementId;
   }
 
   public boolean isSpeedCamLimitExceeded()
@@ -80,6 +84,15 @@ public final class RoutingInfo
   public boolean shouldPlayWarningSignal()
   {
     return shouldPlayWarningSignal;
+  }
+
+  /**
+   * Monotonic id of the last issued hazard warning announcement, 0 = none.
+   * Consumers dedupe against their last-seen id to announce each warning once.
+   */
+  public int getHazardAnnouncementId()
+  {
+    return hazardAnnouncementId;
   }
 
   public boolean hasNextNextTurn()

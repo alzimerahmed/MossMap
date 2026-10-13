@@ -81,5 +81,10 @@ public:
   // Current speed limit in meters per second.
   // If no info about speed limit then m_speedLimitMps < 0.
   double m_speedLimitMps = -1.0;
+
+  // Monotonic id of the last issued hazard warning announcement, 0 = none.
+  // Consumers compare against their last-seen id and announce when it grows —
+  // several clients poll FollowingInfo, so a consume-once flag would race.
+  uint32_t m_hazardAnnouncementId = 0;
 };
 }  // namespace routing

@@ -137,10 +137,18 @@ VehicleModel::SurfaceInitList const kPedestrianSurface = {
     // {{surfaceType}, {weightFactor, etaFactor}}
     {{"psurface", "paved_good"}, {1.0, 1.0}},
     {{"psurface", "paved_bad"}, {1.0, 1.0}},
-    {{"psurface", "unpaved_good"}, {1.0, 1.0}},
+    // Unpaved but well-formed trails are slightly less desirable than paved ways for hiking.
+    {{"psurface", "unpaved_good"}, {0.95, 1.0}},
     {{"psurface", "unpaved_bad"}, {0.8, 0.8}},
     // no dedicated sidewalk, doesn't mean that foot is not allowed, just lower weight
     {{"hwtag", "nosidewalk"}, {0.8, 0.8}},
+    // Hiking difficulty: the generator encodes sac_scale/trail_visibility as
+    // "highway|path|difficult" (demanding_mountain_hiking) and "highway|path|expert"
+    // (alpine_hiking and harder). Prefer easier trails when planning hiking routes,
+    // but keep difficult paths usable as a last resort. See vehicle_model.cpp for the
+    // full-type surface factor lookup that makes these 3-level types work.
+    {{"highway", "path", "difficult"}, {0.6, 0.8}},
+    {{"highway", "path", "expert"}, {0.3, 0.6}},
 };
 }  // namespace pedestrian_model
 

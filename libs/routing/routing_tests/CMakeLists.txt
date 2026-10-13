@@ -18,6 +18,7 @@ set(SRC
   fake_graph_test.cpp
   followed_polyline_test.cpp
   guides_tests.cpp
+  hazard_warnings_tests.cpp
   index_graph_test.cpp
   index_graph_tools.cpp
   index_graph_tools.hpp
