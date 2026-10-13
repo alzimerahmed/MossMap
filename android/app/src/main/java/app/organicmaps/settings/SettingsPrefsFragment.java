@@ -172,7 +172,7 @@ public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements La
   {
     if (uri == null)
       return;
-    final boolean ok = SettingsBackup.import(requireContext(),
+    final boolean ok = SettingsBackup.importSettings(requireContext(),
         getString(app.organicmaps.sdk.R.string.pref_file_name), uri);
     Toast.makeText(requireContext(),
         ok ? R.string.backup_import_done : R.string.backup_import_failed, Toast.LENGTH_LONG).show();

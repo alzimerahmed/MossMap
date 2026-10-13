@@ -508,7 +508,7 @@ std::vector<std::string> BookmarkManager::GetBookmarkMediaNotes(kml::MarkId mark
   if (bookmark == nullptr)
     return {};
 
-  auto const it = bookmark->GetData().m_properties.find(std::string(kMediaNotesPropertyKey));
+  auto const it = bookmark->GetData().m_properties.find(std::string(kml::kMediaNotesPropertyKey));
   if (it == bookmark->GetData().m_properties.end())
     return {};
   return kml::SplitMediaNotes(it->second);
@@ -523,9 +523,9 @@ void BookmarkManager::SetBookmarkMediaNotes(kml::MarkId markId, std::vector<std:
 
   auto data = bookmark->GetData();
   if (notes.empty())
-    data.m_properties.erase(std::string(kMediaNotesPropertyKey));
+    data.m_properties.erase(std::string(kml::kMediaNotesPropertyKey));
   else
-    data.m_properties[std::string(kMediaNotesPropertyKey)] = kml::JoinMediaNotes(notes);
+    data.m_properties[std::string(kml::kMediaNotesPropertyKey)] = kml::JoinMediaNotes(notes);
   GetEditSession().UpdateBookmark(markId, data);
 }
 

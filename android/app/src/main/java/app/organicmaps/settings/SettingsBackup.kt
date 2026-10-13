@@ -80,7 +80,7 @@ object SettingsBackup
     }
   }
 
-  fun import(context: Context, prefsFile: String, source: Uri): Boolean
+  fun importSettings(context: Context, prefsFile: String, source: Uri): Boolean
   {
     val root = try {
       context.contentResolver.openInputStream(source)?.use { input ->

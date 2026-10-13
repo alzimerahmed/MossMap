@@ -763,7 +763,7 @@ public:
   // Flips only the on/off flag, keeping the configured URL / cache size / area opacity. Lighter than
   // SetBackgroundTiles: it just switches the rendered mode (creating the provider on first enable).
   void SetBackgroundTilesEnabled(bool enabled);
-  static std::string GetBackgroundTilesURL();
+  std::string GetBackgroundTilesURL();
   static bool IsBackgroundTilesEnabled();
   static uint32_t GetBackgroundTilesCacheSize();
   static uint32_t GetBackgroundTilesAreaOpacity();

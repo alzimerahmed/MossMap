@@ -1810,7 +1810,8 @@ void Framework::CreateDrapeEngine(ref_ptr<dp::GraphicsContextFactory> contextFac
   if (weatherActive)
   {
     std::string weatherUrl;
-    if (!settings::TryGet(kWeatherTileUrlKey, weatherUrl) || weatherUrl.empty())
+    settings::TryGet(kWeatherTileUrlKey, weatherUrl);
+    if (weatherUrl.empty())
       weatherActive = false;  // no resolved radar template yet (first toggle still in flight)
     else
     {
