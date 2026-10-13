@@ -83,5 +83,9 @@
   <string name="vk" translatable="false">VK</string>
   <string name="backup_file_name" translatable="false">mossmap_settings_backup.json</string>
   <string name="pref_backup_restore" translatable="false">BackupRestore</string>
+  <string name="pref_location_sharing" translatable="false">LocationSharing</string>
+  <string name="pref_location_sharing_endpoint" translatable="false">LocationSharingEndpoint</string>
+  <string name="pref_location_sharing_interval" translatable="false">LocationSharingInterval</string>
+  <string name="pref_location_sharing_device_id" translatable="false">LocationSharingDeviceId</string>
 
 </resources>

@@ -218,6 +218,29 @@
       app:singleLineTitle="false"
       android:defaultValue="true"
       android:order="2" />
+    <SwitchPreferenceCompat
+      android:key="@string/pref_location_sharing"
+      android:title="@string/location_sharing_title"
+      app:singleLineTitle="false"
+      android:summary="@string/location_sharing_summary"
+      android:defaultValue="false"
+      android:order="3" />
+    <EditTextPreference
+      android:key="@string/pref_location_sharing_endpoint"
+      android:title="@string/location_sharing_endpoint_title"
+      app:singleLineTitle="false"
+      android:summary="@string/location_sharing_endpoint_summary"
+      android:dialogTitle="@string/location_sharing_endpoint_title"
+      android:inputType="textUri"
+      android:order="4" />
+    <ListPreference
+      android:key="@string/pref_location_sharing_interval"
+      android:title="@string/location_sharing_interval_title"
+      app:singleLineTitle="false"
+      android:entries="@array/location_sharing_intervals"
+      android:entryValues="@array/location_sharing_intervals_values"
+      android:defaultValue="10"
+      android:order="5" />
   </androidx.preference.PreferenceCategory>
   <androidx.preference.PreferenceCategory
     android:key="@string/pref_information"

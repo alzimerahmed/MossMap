@@ -5,15 +5,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
+import androidx.preference.SwitchPreferenceCompat;
 import androidx.preference.TwoStatePreference;
 import app.organicmaps.MwmApplication;
 import app.organicmaps.R;
@@ -85,6 +88,52 @@ public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements La
     initNightNavigationPrefsCallbacks();
     initTrackRecordingPrefsCallbacks();
     initBackupRestorePrefsCallbacks();
+    initLocationSharingPrefsCallbacks();
+  }
+
+  private void initLocationSharingPrefsCallbacks()
+  {
+    final SwitchPreferenceCompat sharing = getPreference(getString(R.string.pref_location_sharing));
+    final EditTextPreference endpoint = getPreference(getString(R.string.pref_location_sharing_endpoint));
+    updateLocationSharingEndpointSummary(endpoint);
+
+    sharing.setOnPreferenceChangeListener((preference, newValue) -> {
+      final boolean enabled = Boolean.TRUE.equals(newValue);
+      final String url = endpoint.getText();
+      if (enabled && TextUtils.isEmpty(url))
+      {
+        Toast.makeText(requireContext(), R.string.location_sharing_needs_endpoint, Toast.LENGTH_LONG).show();
+        return false;
+      }
+      if (enabled)
+        app.organicmaps.location.LocationSharingService.start(requireContext());
+      else
+        app.organicmaps.location.LocationSharingService.stop(requireContext());
+      return true;
+    });
+
+    endpoint.setOnPreferenceChangeListener((preference, newValue) -> {
+      final String url = newValue == null ? "" : newValue.toString();
+      if (!url.isEmpty() && !url.startsWith("http://") && !url.startsWith("https://"))
+      {
+        Toast.makeText(requireContext(), R.string.location_sharing_invalid_url, Toast.LENGTH_LONG).show();
+        return false;
+      }
+      updateLocationSharingEndpointSummary(endpoint);
+      // Restart so the running service picks up the new endpoint immediately.
+      if (sharing.isChecked())
+      {
+        app.organicmaps.location.LocationSharingService.stop(requireContext());
+        app.organicmaps.location.LocationSharingService.start(requireContext());
+      }
+      return true;
+    });
+  }
+
+  private void updateLocationSharingEndpointSummary(EditTextPreference endpoint)
+  {
+    final String url = endpoint.getText();
+    endpoint.setSummary(TextUtils.isEmpty(url) ? R.string.location_sharing_endpoint_summary : (CharSequence) url);
   }
 
   private void initBackupRestorePrefsCallbacks()

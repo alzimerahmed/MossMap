@@ -41,7 +41,9 @@ public class SearchToolbarController extends ToolbarController
   private ViewTreeObserver.OnWindowFocusChangeListener mShowKeyboardOnFocus;
   @Nullable
   private final View mProgress;
-  private final boolean mVoiceInputSupported = InputUtils.isVoiceInputSupported(requireActivity());
+  private final boolean mVoiceInputSupported =
+      InputUtils.isVoiceInputSupported(requireActivity())
+      || InputUtils.isOnDeviceRecognitionAvailable(requireActivity());
   private final TextWatcher mTextWatcher = new StringUtils.SimpleTextWatcher() {
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count)
@@ -153,6 +155,14 @@ public class SearchToolbarController extends ToolbarController
 
   private void onVoiceInputClick()
   {
+    // On-device SpeechRecognizer first: offline-capable, audio never leaves the phone.
+    if (InputUtils.isOnDeviceRecognitionAvailable(requireActivity()))
+    {
+      InputUtils.startOnDeviceRecognition(requireActivity(),
+          requireActivity().getString(getVoiceInputPrompt()),
+          result -> { if (!TextUtils.isEmpty(result)) setQuery(result); });
+      return;
+    }
     try
     {
       startVoiceRecognition(

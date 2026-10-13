@@ -96,6 +96,21 @@
     <item>30</item>
   </string-array>
 
+  <!-- Seconds between location-sharing POSTs -->
+  <string-array name="location_sharing_intervals">
+    <item>@string/location_sharing_interval_5s</item>
+    <item>@string/location_sharing_interval_10s</item>
+    <item>@string/location_sharing_interval_30s</item>
+    <item>@string/location_sharing_interval_60s</item>
+  </string-array>
+
+  <string-array name="location_sharing_intervals_values" translatable="false">
+    <item>5</item>
+    <item>10</item>
+    <item>30</item>
+    <item>60</item>
+  </string-array>
+
   <string-array name="track_recording_accuracy">
     <item>@string/track_recording_accuracy_best</item>
     <item>@string/track_recording_accuracy_balanced</item>

@@ -44429,3 +44429,68 @@ en = Settings restored. Restart the app to apply all of them.
 comment = Shown when restoring app settings from a file failed (missing or invalid file).
 tags = android-app
 en = Could not restore settings from this file
+
+[location_sharing_title]
+comment = Settings entry and notification title for opt-in live location sharing to a user-chosen endpoint.
+tags = android-app
+en = Live location sharing
+
+[location_sharing_summary]
+comment = Summary for the live location sharing switch; stresses privacy: user-chosen endpoint, no third party.
+tags = android-app
+en = Share your live location to an endpoint you choose (self-hosted or your own server). Off by default; nothing is sent until you enable it and set an endpoint.
+
+[location_sharing_endpoint_title]
+comment = Title for the endpoint URL setting of live location sharing.
+tags = android-app
+en = Sharing endpoint URL
+
+[location_sharing_endpoint_summary]
+comment = Summary for the endpoint URL setting; shown when no URL is set yet.
+tags = android-app
+en = HTTP or HTTPS URL that receives your location as JSON
+
+[location_sharing_interval_title]
+comment = Title for the posting interval setting of live location sharing.
+tags = android-app
+en = Update interval
+
+[location_sharing_interval_5s]
+comment = Interval option: every 5 seconds.
+tags = android-app
+en = Every 5 seconds
+
+[location_sharing_interval_10s]
+comment = Interval option: every 10 seconds.
+tags = android-app
+en = Every 10 seconds
+
+[location_sharing_interval_30s]
+comment = Interval option: every 30 seconds.
+tags = android-app
+en = Every 30 seconds
+
+[location_sharing_interval_60s]
+comment = Interval option: every 60 seconds.
+tags = android-app
+en = Every 60 seconds
+
+[location_sharing_notification_text]
+comment = Foreground-service notification text while location sharing is active.
+tags = android-app
+en = Sharing your location to your endpoint
+
+[location_sharing_needs_endpoint]
+comment = Toast shown when the user tries to enable location sharing without setting an endpoint URL first.
+tags = android-app
+en = Set a sharing endpoint URL first
+
+[location_sharing_invalid_url]
+comment = Toast shown when the entered endpoint URL does not start with http:// or https://.
+tags = android-app
+en = The endpoint must start with http:// or https://
+
+[a11y_turn_announcement]
+comment = Screen-reader navigation announcement when voice guidance is off: distance to the next turn, then the street name.
+tags = android-app
+en = In %1$s, continue to %2$s

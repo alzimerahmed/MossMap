@@ -985,4 +985,17 @@
     <string name="backup_export_failed">Could not export settings</string>
     <string name="backup_import_done">Settings restored. Restart the app to apply all of them.</string>
     <string name="backup_import_failed">Could not restore settings from this file</string>
+    <string name="location_sharing_title">Live location sharing</string>
+    <string name="location_sharing_summary">Share your live location to an endpoint you choose (self-hosted or your own server). Off by default; nothing is sent until you enable it and set an endpoint.</string>
+    <string name="location_sharing_endpoint_title">Sharing endpoint URL</string>
+    <string name="location_sharing_endpoint_summary">HTTP or HTTPS URL that receives your location as JSON</string>
+    <string name="location_sharing_interval_title">Update interval</string>
+    <string name="location_sharing_interval_5s">Every 5 seconds</string>
+    <string name="location_sharing_interval_10s">Every 10 seconds</string>
+    <string name="location_sharing_interval_30s">Every 30 seconds</string>
+    <string name="location_sharing_interval_60s">Every 60 seconds</string>
+    <string name="location_sharing_notification_text">Sharing your location to your endpoint</string>
+    <string name="location_sharing_needs_endpoint">Set a sharing endpoint URL first</string>
+    <string name="location_sharing_invalid_url">The endpoint must start with http:// or https://</string>
+    <string name="a11y_turn_announcement">In %1$s, continue to %2$s</string>
 </resources>

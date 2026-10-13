@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.view.accessibility.AccessibilityManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 import app.organicmaps.MwmApplication;
 import app.organicmaps.R;
 import app.organicmaps.maplayer.MapButtonsViewModel;
+import app.organicmaps.sdk.util.Config;
 import app.organicmaps.sdk.Framework;
 import app.organicmaps.sdk.Router;
 import app.organicmaps.sdk.maplayer.traffic.TrafficManager;
@@ -71,6 +73,10 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
   private long mLastHazardToastTime;
   private int mLastHazardAnnouncementId;
   private static final long SPEED_CAM_TOAST_MIN_INTERVAL_MS = 10_000;
+  private static final long TURN_ANNOUNCE_MIN_INTERVAL_MS = 15_000;
+  @Nullable
+  private String mLastAnnouncedStreet;
+  private long mLastTurnAnnounceTime;
   private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
   public NavigationController(AppCompatActivity activity, View.OnClickListener onSettingsClickListener,
@@ -164,6 +170,7 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
       return;
     mLastSpeedCamToastTime = now;
     Toast.makeText(mFrame.getContext(), R.string.speed_camera_ahead, Toast.LENGTH_LONG).show();
+    announceForScreenReader(R.string.speed_camera_ahead);
   }
 
   private void showHazardWarning()
@@ -173,8 +180,43 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
       return;
     mLastHazardToastTime = now;
     Toast.makeText(mFrame.getContext(), R.string.hazard_warning_ahead, Toast.LENGTH_LONG).show();
+    announceForScreenReader(R.string.hazard_warning_ahead);
     TtsPlayer.INSTANCE.playTurnNotifications(
         new String[] {mFrame.getContext().getString(R.string.hazard_warning_ahead)});
+  }
+
+  /**
+   * Screen-reader navigation calls (phase 11 gap #28): when TalkBack is active and voice
+   * guidance (TTS) is off, the visual-only turn banner is invisible to the user. Mirror the
+   * key navigation events as accessibility announcements. TTS announcements take precedence
+   * when enabled, so we stay silent there to avoid double speech.
+   */
+  private void announceForScreenReader(int textRes)
+  {
+    final AccessibilityManager am =
+        (AccessibilityManager) mFrame.getContext().getSystemService(AccessibilityManager.class);
+    if (am == null || !am.isTouchExplorationEnabled() || Config.TTS.isEnabled())
+      return;
+    mFrame.announceForAccessibility(mFrame.getContext().getString(textRes));
+  }
+
+  private void announceTurnForScreenReader(@NonNull RoutingInfo info)
+  {
+    final AccessibilityManager am =
+        (AccessibilityManager) mFrame.getContext().getSystemService(AccessibilityManager.class);
+    if (am == null || !am.isTouchExplorationEnabled() || Config.TTS.isEnabled())
+      return;
+    // update() fires on every position poll; only announce when the street changed or enough
+    // time passed, so TalkBack is not spammed with the same turn every second.
+    final long now = SystemClock.elapsedRealtime();
+    final boolean streetChanged = !TextUtils.equals(info.nextStreet, mLastAnnouncedStreet);
+    if (!streetChanged && now - mLastTurnAnnounceTime < TURN_ANNOUNCE_MIN_INTERVAL_MS)
+      return;
+    mLastAnnouncedStreet = info.nextStreet;
+    mLastTurnAnnounceTime = now;
+    final String distance = Utils.formatDistance(mFrame.getContext(), info.distToTurn);
+    final String street = TextUtils.isEmpty(info.nextStreet) ? "" : info.nextStreet;
+    mFrame.announceForAccessibility(mFrame.getContext().getString(R.string.a11y_turn_announcement, distance, street));
   }
 
   // Height the search sheet must clear when expanded over the navigation top frame: the always
@@ -228,6 +270,8 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
 
     updateStreetView(info);
     mNavMenu.update(info);
+
+    announceTurnForScreenReader(info);
 
     // Dedupe by the monotonic announcement id: several clients poll RoutingInfo,
     // so the warning must not be consumed destructively — announce when it grows.
