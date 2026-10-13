@@ -133,7 +133,10 @@ public class SettingsPrefsFragment extends BaseXmlSettingsFragment implements La
   private void updateLocationSharingEndpointSummary(EditTextPreference endpoint)
   {
     final String url = endpoint.getText();
-    endpoint.setSummary(TextUtils.isEmpty(url) ? R.string.location_sharing_endpoint_summary : (CharSequence) url);
+    if (TextUtils.isEmpty(url))
+      endpoint.setSummary(R.string.location_sharing_endpoint_summary);
+    else
+      endpoint.setSummary(url);
   }
 
   private void initBackupRestorePrefsCallbacks()

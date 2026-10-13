@@ -214,7 +214,7 @@ public class NavigationController implements TrafficManager.TrafficCallback, Nav
       return;
     mLastAnnouncedStreet = info.nextStreet;
     mLastTurnAnnounceTime = now;
-    final String distance = Utils.formatDistance(mFrame.getContext(), info.distToTurn);
+    final String distance = Utils.formatDistance(mFrame.getContext(), info.distToTurn).toString();
     final String street = TextUtils.isEmpty(info.nextStreet) ? "" : info.nextStreet;
     mFrame.announceForAccessibility(mFrame.getContext().getString(R.string.a11y_turn_announcement, distance, street));
   }

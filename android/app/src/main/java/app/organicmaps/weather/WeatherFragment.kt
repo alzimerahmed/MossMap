@@ -140,6 +140,7 @@ class WeatherFragment : BaseMwmDialogFragment(), WeatherForecastListener
     // Local time: a forecast labeled in UTC misleads the user about "when" it applies.
     private val TIME_FORMAT = SimpleDateFormat("HH:mm", Locale.getDefault())
 
+    @JvmStatic
     fun show(fragmentManager: FragmentManager)
     {
       if (fragmentManager.isStateSaved)

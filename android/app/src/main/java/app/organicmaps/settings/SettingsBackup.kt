@@ -49,6 +49,7 @@ object SettingsBackup
   private fun isExcluded(key: String): Boolean =
     key in EXCLUDED_KEYS || EXCLUDED_PREFIXES.any { key.startsWith(it, ignoreCase = true) }
 
+  @JvmStatic
   fun export(context: Context, prefsFile: String, target: Uri): Boolean
   {
     val prefs = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
@@ -80,6 +81,7 @@ object SettingsBackup
     }
   }
 
+  @JvmStatic
   fun importSettings(context: Context, prefsFile: String, source: Uri): Boolean
   {
     val root = try {

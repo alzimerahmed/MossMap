@@ -107,16 +107,18 @@ uint32_t constexpr kDefaultBgTilesAreaOpacityPct = 50;  // half-transparent area
 int constexpr kNoActiveBgTilesSource = -1;
 std::string_view constexpr kBgTilesTypeXyz = "xyz";
 std::string_view constexpr kBgTilesTypeWms = "wms";
-
 std::string_view constexpr kWeatherLayerEnabledKey = "WeatherLayerEnabled";  // weather overlay on/off
 std::string_view constexpr kWeatherTileUrlKey = "WeatherTileUrl";            // resolved radar tile URL template
 double constexpr kWeatherTileOpacity = 0.6f;
 double constexpr kWeatherRequestTimeoutSec = 10.0;
+}  // namespace
 
-namespace bg_tiles_json
-{
 // Wire format of the persisted tile-source list (kBgTilesSourcesKey). Kept separate from
 // Framework::BackgroundTilesSource so the glaze reflection keys stay clean and stable.
+// Named namespace at external linkage: glaze's static reflection requires the type to have
+// linkage (anonymous-namespace types break its name template).
+namespace bg_tiles_json
+{
 struct SourceJson
 {
   std::string name;
@@ -125,6 +127,9 @@ struct SourceJson
   uint32_t opacity = 100;
 };
 }  // namespace bg_tiles_json
+
+namespace
+{
 std::string_view constexpr kAllow3dKey = "Allow3d";
 std::string_view constexpr kAllow3dBuildingsKey = "Buildings3d";
 std::string_view constexpr kAllowAutoZoom = "AutoZoom";

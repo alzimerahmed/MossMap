@@ -10,7 +10,9 @@
 
 namespace weather
 {
-namespace
+// Named namespace at external linkage: glaze's static reflection requires the type to have
+// linkage (anonymous-namespace types break its name template).
+namespace forecast_json
 {
 // Member names deliberately match the Open-Meteo JSON keys so glaze's static reflection maps
 // them without a custom meta definition.
@@ -39,7 +41,7 @@ struct ForecastJson
   CurrentJson current;
   HourlyJson hourly;
 };
-}  // namespace
+}  // namespace forecast_json
 
 std::string BuildForecastUrl(double latDeg, double lonDeg)
 {
@@ -63,7 +65,7 @@ bool ParseForecast(std::string const & json, Forecast & out)
   if (json.empty())
     return false;
 
-  ForecastJson parsed;
+  forecast_json::ForecastJson parsed;
   glz::opts constexpr opts{.error_on_unknown_keys = false, .error_on_missing_keys = false};
   auto const error = glz::read<opts>(parsed, json);
   if (error)
