@@ -138,10 +138,8 @@ public class LocationSharingService extends Service implements LocationListener
       ServiceCompat.startForeground(this, LOCATION_SHARING_NOTIFICATION_ID, buildNotification(), 0);
 
     final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    if (checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED)
-      lm.removeUpdates(this);
-    // Passive provider piggybacks on other providers' fixes: no extra GPS duty cycles, so sharing
-    // adds near-zero battery cost on top of whatever the app is already doing.
+    // No removeUpdates() here: the service instance has no prior registration, and requesting
+    // passive updates replaces nothing. onDestroy() removes the listener under a permission guard.
     lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, mMinIntervalMs, 0, this, getMainLooper());
     return START_NOT_STICKY;
   }
