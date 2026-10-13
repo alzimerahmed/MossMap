@@ -1,7 +1,9 @@
 package app.organicmaps.settings
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
+import androidx.preference.PreferenceManager
 import app.organicmaps.sdk.util.log.Logger
 import org.json.JSONObject
 import java.io.IOException
@@ -22,7 +24,10 @@ object SettingsBackup
 
   private const val FORMAT_KEY = "format"
   private const val FORMAT_VERSION = 1
-  private const val VALUES_KEY = "values"
+  private const val STORES_KEY = "stores"
+  // androidx Preference widgets write to the default shared-prefs file, which is a different
+  // store than the platform's named file; both are backed up under separate sections.
+  private const val DEFAULT_STORE_KEY = "_default_"
 
   // Credentials and device/session state are excluded on purpose. Prefix filters keep
   // future secret-like keys from leaking even if they aren't added to the denylist.
@@ -52,7 +57,22 @@ object SettingsBackup
   @JvmStatic
   fun export(context: Context, prefsFile: String, target: Uri): Boolean
   {
-    val prefs = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+    val stores = JSONObject()
+    stores.put(prefsFile, dumpStore(context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)))
+    stores.put(DEFAULT_STORE_KEY, dumpStore(PreferenceManager.getDefaultSharedPreferences(context)))
+    val root = JSONObject(mapOf(FORMAT_KEY to FORMAT_VERSION, STORES_KEY to stores))
+    return try {
+      context.contentResolver.openOutputStream(target)?.use { out ->
+        out.write(root.toString(2).toByteArray(Charsets.UTF_8))
+      } != null
+    } catch (e: IOException) {
+      Logger.e(TAG, "Failed to write settings backup", e)
+      false
+    }
+  }
+
+  private fun dumpStore(prefs: SharedPreferences): JSONObject
+  {
     val values = JSONObject()
     for ((key, value) in prefs.all)
     {
@@ -70,15 +90,7 @@ object SettingsBackup
         ),
       )
     }
-    val root = JSONObject(mapOf(FORMAT_KEY to FORMAT_VERSION, VALUES_KEY to values))
-    return try {
-      context.contentResolver.openOutputStream(target)?.use { out ->
-        out.write(root.toString(2).toByteArray(Charsets.UTF_8))
-      } != null
-    } catch (e: IOException) {
-      Logger.e(TAG, "Failed to write settings backup", e)
-      false
-    }
+    return values
   }
 
   @JvmStatic
@@ -95,9 +107,22 @@ object SettingsBackup
 
     if (root.optInt(FORMAT_KEY) != FORMAT_VERSION)
       return false
-    val values = root.optJSONObject(VALUES_KEY) ?: return false
+    val stores = root.optJSONObject(STORES_KEY) ?: return false
 
-    val prefs = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+    for (storeName in stores.keys())
+    {
+      val values = stores.optJSONObject(storeName) ?: continue
+      val prefs = if (storeName == DEFAULT_STORE_KEY)
+        PreferenceManager.getDefaultSharedPreferences(context)
+      else
+        context.getSharedPreferences(storeName, Context.MODE_PRIVATE)
+      restoreStore(prefs, values)
+    }
+    return true
+  }
+
+  private fun restoreStore(prefs: SharedPreferences, values: JSONObject)
+  {
     val editor = prefs.edit()
     for (key in values.keys())
     {
@@ -113,7 +138,6 @@ object SettingsBackup
       }
     }
     editor.apply()
-    return true
   }
 
   private fun typeName(value: Any): String =

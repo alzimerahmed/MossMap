@@ -1,8 +1,6 @@
 package app.organicmaps.location;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -17,7 +15,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
-import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationChannelCompat;
@@ -29,6 +26,7 @@ import androidx.preference.PreferenceManager;
 import app.organicmaps.MwmActivity;
 import app.organicmaps.MwmApplication;
 import app.organicmaps.R;
+import app.organicmaps.sdk.location.LocationUtils;
 import app.organicmaps.sdk.util.log.Logger;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -108,6 +106,7 @@ public class LocationSharingService extends Service implements LocationListener
     }
   }
 
+  @SuppressLint("MissingPermission")
   @Override
   public int onStartCommand(@NonNull Intent intent, int flags, int startId)
   {
@@ -121,7 +120,7 @@ public class LocationSharingService extends Service implements LocationListener
       stopSelf();
       return START_NOT_STICKY;
     }
-    if (checkSelfPermission(ACCESS_FINE_LOCATION) != PERMISSION_GRANTED)
+    if (!LocationUtils.checkFineLocationPermission(this))
     {
       Logger.w(TAG, "ACCESS_FINE_LOCATION not granted, stopping location sharing");
       stopSelf();
@@ -240,7 +239,7 @@ public class LocationSharingService extends Service implements LocationListener
     final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     // Guarded at runtime (lint cannot see the flow through checkSelfPermission); onStartCommand
     // already bails out without location permission, so a listener is only registered when granted.
-    if (checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED)
+    if (LocationUtils.checkFineLocationPermission(this))
       lm.removeUpdates(this);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
       mNetworkThread.quitSafely();
