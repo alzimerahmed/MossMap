@@ -9,7 +9,9 @@
 
 namespace weather
 {
-namespace
+// Named namespace at external linkage: glaze's static reflection requires the type to have
+// linkage (anonymous-namespace types break its name template).
+namespace radar_json
 {
 struct FrameJson
 {
@@ -26,14 +28,14 @@ struct MetaJson
 {
   RadarJson radar;
 };
-}  // namespace
+}  // namespace radar_json
 
 bool ParseRadarMeta(std::string const & json, RadarFrame & out)
 {
   if (json.empty())
     return false;
 
-  MetaJson parsed;
+  radar_json::MetaJson parsed;
   glz::opts constexpr opts{.error_on_unknown_keys = false, .error_on_missing_keys = false};
   auto const error = glz::read<opts>(parsed, json);
   if (error)
@@ -48,7 +50,7 @@ bool ParseRadarMeta(std::string const & json, RadarFrame & out)
     return false;
   }
 
-  FrameJson const & latest = parsed.radar.past.back();
+  radar_json::FrameJson const & latest = parsed.radar.past.back();
   if (latest.path.empty())
     return false;
 
