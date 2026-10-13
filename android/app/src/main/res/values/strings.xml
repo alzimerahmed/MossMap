@@ -939,63 +939,130 @@
     <string name="elevation">Elevation: %s</string>
     <!-- IATA code of an airport on the place page details section. -->
     <string name="airport_iata">IATA: %s</string>
+    <!-- Settings title for the road hazard warnings toggle (navigation voice instructions). -->
+    <string name="pref_tts_hazard_warnings_title">Hazard warnings</string>
+    <!-- Settings summary for the road hazard warnings toggle (navigation voice instructions). -->
+    <string name="pref_tts_hazard_warnings_summary">Warn about road hazards during navigation</string>
+    <!-- Voice and visual warning shown when the driver approaches a road hazard on the route. -->
+    <string name="hazard_warning_ahead">Hazard ahead</string>
+    <!-- Visual warning shown when the driver approaches a speed camera on the route. -->
+    <string name="speed_camera_ahead">Speed camera ahead</string>
+    <!-- Place page button that opens street-level imagery (Mapillary) near the selected point in an external browser. -->
     <string name="placepage_street_level_imagery">Street-level imagery</string>
+    <!-- Settings «Tile sources»: intro text explaining what custom tile sources are. -->
     <string name="tile_sources_hint">Add your own online raster tile sources (XYZ or WMS) and overlay them on the map.</string>
+    <!-- Settings «Tile sources»: note that only one source can be rendered at a time. -->
     <string name="tile_sources_single_active_hint">Only one source can be active at a time. Tap a source to make it active.</string>
+    <!-- Settings «Tile sources»: shown when the list of user tile sources is empty. -->
     <string name="tile_sources_empty">No custom tile sources yet. Add one to overlay imagery on the map.</string>
+    <!-- Settings «Tile sources»: button that opens the add-source dialog. -->
     <string name="tile_sources_add">Add tile source</string>
+    <!-- Settings «Tile sources»: button/dialog title for editing an existing tile source. -->
     <string name="tile_sources_edit">Edit tile source</string>
+    <!-- Settings «Tile sources»: title of the source name input field. -->
     <string name="tile_sources_name_title">Name</string>
+    <!-- Settings «Tile sources»: title of the tile URL input field. -->
     <string name="tile_sources_url_title">Tile URL</string>
+    <!-- Settings «Tile sources»: radio button for the XYZ tile URL type ({z}/{x}/{y} placeholders). -->
     <string name="tile_sources_type_xyz">XYZ tiles ({z}/{x}/{y})</string>
+    <!-- Settings «Tile sources»: radio button for the WMS tile URL type ({bbox} placeholder). -->
     <string name="tile_sources_type_wms">WMS ({bbox})</string>
+    <!-- Settings «Tile sources»: title of the per-source imagery opacity slider. -->
     <string name="tile_sources_opacity_title">Layer opacity</string>
-    <string name="tile_sources_opacity_value">%s%</string>
+    <!-- Settings «Tile sources»: current value of the per-source imagery opacity slider, in percent. %@ is the number. -->
+    <string name="tile_sources_opacity_value">%s%%</string>
+    <!-- Settings «Tile sources»: content description of the delete button on a source row. -->
     <string name="tile_sources_delete">Delete</string>
+    <!-- Settings «Tile sources»: shown under the Tile URL field when its value is malformed (must start with https:// and contain the {z}/{x}/{y} or {bbox} placeholders). -->
     <string name="tile_sources_url_error">Enter a valid https URL with {z}/{x}/{y} or {bbox}</string>
+    <!-- Settings «Tile sources»: shown under the Tile URL field when the WMS type is selected but the URL has no {bbox} placeholder. -->
     <string name="tile_sources_url_error_wms">A WMS source URL must contain {bbox}</string>
+    <!-- Settings «Tile sources»: shown under the Tile URL field when the XYZ type is selected but the URL lacks the {z}/{x}/{y} placeholders. -->
     <string name="tile_sources_url_error_xyz">An XYZ source URL must contain {z}/{x}/{y}</string>
+    <!-- Settings: title of the tile sources management screen (list of user XYZ/WMS raster sources). -->
     <string name="pref_tile_sources_title">Tile Sources</string>
+    <!-- Layers bottom sheet: title of the imagery opacity slider for the active raster tile source. -->
     <string name="layers_opacity_title">Imagery opacity</string>
-    <string name="layers_opacity_value">%s%</string>
+    <!-- Layers bottom sheet: current value of the imagery opacity slider, in percent. %@ is the number. -->
+    <string name="layers_opacity_value">%s%%</string>
+    <!-- Title of the weather forecast panel. -->
     <string name="weather">Weather</string>
+    <!-- Shown in the weather panel while the forecast is being fetched. -->
     <string name="weather_loading">Loading forecast…</string>
+    <!-- Section header above the hourly forecast rows in the weather panel. -->
     <string name="weather_hourly_forecast">Next hours</string>
+    <!-- Generic error shown in the weather panel when the forecast cannot be fetched (offline or service unavailable). -->
     <string name="weather_error">Could not load the forecast. Check your connection and try again.</string>
+    <!-- Retry button in the weather panel after a failed forecast fetch. -->
     <string name="weather_retry">Retry</string>
+    <!-- Detailed error line in the weather panel; %@ is the technical failure reason. -->
     <string name="weather_error_detail">Could not load the forecast (%s).</string>
-    <string name="weather_current_format">%s, %s, %s, %s</string>
+    <!-- Current conditions summary in the weather panel. %@ placeholders: temperature, feels like, precipitation, wind. -->
+    <string name="weather_current_format">%1$s, %2$s, %3$s, %4$s</string>
+    <!-- "Feels like" temperature part of the current conditions; %@ is the temperature. -->
     <string name="weather_feels_like">feels like %s</string>
+    <!-- Temperature value in degrees Celsius; %@ is the number. -->
     <string name="weather_temperature_c">%s°C</string>
+    <!-- Precipitation amount in millimetres; %@ is the number. -->
     <string name="weather_precipitation_mm">%s mm</string>
+    <!-- Wind speed in kilometres per hour; %@ is the number. -->
     <string name="weather_wind_kmh">%s km/h</string>
-    <string name="weather_hourly_row_format">%s · %s · %s · %s</string>
+    <!-- One hourly forecast row. %@ placeholders: time, temperature, precipitation, wind. -->
+    <string name="weather_hourly_row_format">%1$s · %2$s · %3$s · %4$s</string>
+    <!-- Map layers menu entry that toggles the weather (radar) raster overlay on the map. -->
     <string name="weather_layer_toggle">Weather layer</string>
+    <!-- Shown when enabling the weather raster layer fails (offline or service unavailable). -->
     <string name="weather_layer_error">Weather layer is unavailable right now.</string>
+    <!-- Place page link to the Wikivoyage travel-guide article for this place. -->
     <string name="wikivoyage_guide">Wikivoyage travel guide</string>
+    <!-- Header of the media notes section in the bookmark editor (audio/video/photo files attached to a bookmark). -->
     <string name="media_notes_title">Media notes</string>
+    <!-- Button that attaches an audio/video/photo file to a bookmark. -->
     <string name="media_notes_attach">Attach media file</string>
+    <!-- Opens an attached media note file with an external app. -->
     <string name="media_notes_open">Open media note</string>
+    <!-- Removes an attached media note from a bookmark. -->
     <string name="media_notes_remove">Remove media note</string>
+    <!-- Settings screen entry for file-based backup and restore of app settings. -->
     <string name="backup_restore_title">Backup &amp; restore</string>
+    <!-- Summary under the Backup & restore settings entry; explains it saves a file the user chooses (no cloud). -->
     <string name="backup_restore_summary">Save your settings to a file on this device or restore them from one. No cloud, no account.</string>
+    <!-- Action that exports app settings to a user-chosen file. -->
     <string name="backup_restore_export">Export settings to file</string>
+    <!-- Action that imports app settings from a previously exported file. -->
     <string name="backup_restore_import">Restore settings from file</string>
+    <!-- Shown after app settings were successfully exported to a file. -->
     <string name="backup_export_done">Settings exported</string>
+    <!-- Shown when exporting app settings to a file failed. -->
     <string name="backup_export_failed">Could not export settings</string>
+    <!-- Shown after app settings were successfully restored from a file. -->
     <string name="backup_import_done">Settings restored. Restart the app to apply all of them.</string>
+    <!-- Shown when restoring app settings from a file failed (missing or invalid file). -->
     <string name="backup_import_failed">Could not restore settings from this file</string>
+    <!-- Settings entry and notification title for opt-in live location sharing to a user-chosen endpoint. -->
     <string name="location_sharing_title">Live location sharing</string>
+    <!-- Summary for the live location sharing switch; stresses privacy: user-chosen endpoint, no third party. -->
     <string name="location_sharing_summary">Share your live location to an endpoint you choose (self-hosted or your own server). Off by default; nothing is sent until you enable it and set an endpoint.</string>
+    <!-- Title for the endpoint URL setting of live location sharing. -->
     <string name="location_sharing_endpoint_title">Sharing endpoint URL</string>
+    <!-- Summary for the endpoint URL setting; shown when no URL is set yet. -->
     <string name="location_sharing_endpoint_summary">HTTP or HTTPS URL that receives your location as JSON</string>
+    <!-- Title for the posting interval setting of live location sharing. -->
     <string name="location_sharing_interval_title">Update interval</string>
+    <!-- Interval option: every 5 seconds. -->
     <string name="location_sharing_interval_5s">Every 5 seconds</string>
+    <!-- Interval option: every 10 seconds. -->
     <string name="location_sharing_interval_10s">Every 10 seconds</string>
+    <!-- Interval option: every 30 seconds. -->
     <string name="location_sharing_interval_30s">Every 30 seconds</string>
+    <!-- Interval option: every 60 seconds. -->
     <string name="location_sharing_interval_60s">Every 60 seconds</string>
+    <!-- Foreground-service notification text while location sharing is active. -->
     <string name="location_sharing_notification_text">Sharing your location to your endpoint</string>
+    <!-- Toast shown when the user tries to enable location sharing without setting an endpoint URL first. -->
     <string name="location_sharing_needs_endpoint">Set a sharing endpoint URL first</string>
+    <!-- Toast shown when the entered endpoint URL does not start with http:// or https://. -->
     <string name="location_sharing_invalid_url">The endpoint must start with http:// or https://</string>
+    <!-- Screen-reader navigation announcement when voice guidance is off: distance to the next turn, then the street name. -->
     <string name="a11y_turn_announcement">In %1$s, continue to %2$s</string>
 </resources>
