@@ -50,6 +50,7 @@ public class PlacePageLinksFragment extends Fragment implements Observer<MapObje
   private TextView mTvEmail;
   private View mWikimedia;
   private TextView mTvWikimedia;
+  private View mWikivoyage;
 
   private PlacePageViewModel mViewModel;
   private MapObject mMapObject;
@@ -130,6 +131,10 @@ public class PlacePageLinksFragment extends Fragment implements Observer<MapObje
     mWikimedia.setOnClickListener((v) -> openUrl(Metadata.MetadataType.FMD_WIKIMEDIA_COMMONS));
     mWikimedia.setOnLongClickListener((v) -> copyUrl(mWikimedia, Metadata.MetadataType.FMD_WIKIMEDIA_COMMONS));
 
+    mWikivoyage = mFrame.findViewById(R.id.ll__place_wikivoyage);
+    mWikivoyage.setOnClickListener((v) -> openUrl(Metadata.MetadataType.FMD_WIKIVOYAGE));
+    mWikivoyage.setOnLongClickListener((v) -> copyUrl(mWikivoyage, Metadata.MetadataType.FMD_WIKIVOYAGE));
+
     mFacebookPage = mFrame.findViewById(R.id.ll__place_facebook);
     mTvFacebookPage = mFrame.findViewById(R.id.tv__place_facebook_page);
     mFacebookPage.setOnClickListener((v) -> openUrl(Metadata.MetadataType.FMD_CONTACT_FACEBOOK));
@@ -203,6 +208,12 @@ public class PlacePageLinksFragment extends Fragment implements Observer<MapObje
     String wikimedia_commons_text =
         TextUtils.isEmpty(wikimedia_commons) ? "" : getResources().getString(R.string.wikimedia_commons);
     refreshMetadataOrHide(wikimedia_commons_text, mWikimedia, mTvWikimedia);
+    // The Wikivoyage URL arrives as synthetic FMD_WIKIVOYAGE metadata (see InjectWikivoyageUrl);
+    // the row shows a fixed label, the URL itself is opened on tap.
+    final String wikivoyage = mMapObject.getMetadata(Metadata.MetadataType.FMD_WIKIVOYAGE);
+    final String wikivoyageText =
+        TextUtils.isEmpty(wikivoyage) ? "" : getResources().getString(R.string.wikivoyage_guide);
+    refreshMetadataOrHide(wikivoyageText, mWikivoyage, mFrame.findViewById(R.id.tv__place_wikivoyage));
     refreshMetadataOrHide(mMapObject.getMetadata(Metadata.MetadataType.FMD_EMAIL), mEmail, mTvEmail);
 
     final String facebook = mMapObject.getMetadata(Metadata.MetadataType.FMD_CONTACT_FACEBOOK);

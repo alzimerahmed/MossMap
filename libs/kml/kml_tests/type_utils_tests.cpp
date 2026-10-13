@@ -99,4 +99,21 @@ UNIT_TEST(GetPreferredBookmarkName_NoMatchingLanguage)
   for (auto const & bookmark : {named, renamed, nameless})
     TEST_EQUAL(GetPreferredBookmarkName(bookmark, "fr"), GetPreferredBookmarkName(bookmark, "default"), ());
 }
+
+UNIT_TEST(MediaNotes_SplitJoinRoundTrip)
+{
+  std::vector<std::string> const notes = {"photo_1.jpg", "voice memo 2.m4a", "clip-3.mp4"};
+
+  std::string const joined = kml::JoinMediaNotes(notes);
+  TEST_EQUAL(joined, "photo_1.jpg\nvoice memo 2.m4a\nclip-3.mp4", ());
+  TEST(kml::SplitMediaNotes(joined) == notes, ());
+
+  // Empty pieces and empty input never produce phantom notes.
+  TEST(kml::SplitMediaNotes("").empty(), ());
+  TEST(kml::SplitMediaNotes("\n\n").empty(), ());
+  TEST_EQUAL(kml::JoinMediaNotes({}), "", ());
+
+  // The property key is namespaced so it cannot collide with upstream keys.
+  TEST(std::string(kml::kMediaNotesPropertyKey).starts_with("mossmap:"), ());
+}
 }  // namespace type_utils_tests

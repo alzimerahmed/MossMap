@@ -41,6 +41,7 @@ jobject CreateBookmark(JNIEnv * env, place_page::Info const & info, jni::TScoped
   // clang-format on
   if (info.HasMetadata())
     InjectMetadata(env, g_mapObjectClazz, mapObject, info);
+  InjectWikivoyageUrl(env, g_mapObjectClazz, mapObject, info);
   return mapObject;
 }
 
@@ -87,5 +88,33 @@ JNIEXPORT void Java_app_organicmaps_sdk_bookmarks_data_Bookmark_nativeChangeCate
 {
   g_framework->MoveBookmark(static_cast<kml::MarkId>(bookmarkId), static_cast<kml::MarkGroupId>(oldCatId),
                             static_cast<kml::MarkGroupId>(newCatId));
+}
+
+JNIEXPORT jobjectArray Java_app_organicmaps_sdk_bookmarks_data_Bookmark_nativeGetMediaNotes(JNIEnv * env, jclass,
+                                                                                            jlong bookmarkId)
+{
+  auto const notes = frm()->GetBookmarkManager().GetBookmarkMediaNotes(static_cast<kml::MarkId>(bookmarkId));
+  return jni::ToJavaStringArray(env, notes);
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_bookmarks_data_Bookmark_nativeSetMediaNotes(JNIEnv * env, jclass,
+                                                                                    jlong bookmarkId,
+                                                                                    jobjectArray notes)
+{
+  std::vector<std::string> mediaNotes;
+  if (notes != nullptr)
+  {
+    size_t const count = env->GetArrayLength(notes);
+    mediaNotes.reserve(count);
+    for (jsize i = 0; i < count; ++i)
+    {
+      jobject const element = env->GetObjectArrayElement(notes, i);
+      if (element == nullptr || env->ExceptionCheck() == JNI_TRUE)
+        continue;
+      jni::TScopedLocalRef note(env, element);
+      mediaNotes.push_back(jni::ToNativeString(env, static_cast<jstring>(note.get())));
+    }
+  }
+  frm()->GetBookmarkManager().SetBookmarkMediaNotes(static_cast<kml::MarkId>(bookmarkId), mediaNotes);
 }
 }  // extern "C"

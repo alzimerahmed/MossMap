@@ -143,4 +143,16 @@ public class BookmarkInfo
   {
     Bookmark.nativeChangeCategory(mCategoryId, newCategoryId, mBookmarkId);
   }
+
+  /** Media notes (audio/video/photo attachments) carried in the bookmark's KML extended data. */
+  @Nullable
+  public static String[] getMediaNotes(@IntRange(from = 0) long bookmarkId)
+  {
+    return Bookmark.nativeGetMediaNotes(bookmarkId);
+  }
+
+  public static void setMediaNotes(@IntRange(from = 0) long bookmarkId, @Nullable String[] notes)
+  {
+    Bookmark.nativeSetMediaNotes(bookmarkId, notes);
+  }
 }

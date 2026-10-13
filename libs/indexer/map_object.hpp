@@ -86,6 +86,7 @@ public:
       switch (id)
       {
       case MetadataID::FMD_WIKIPEDIA: fn(id, feature::Metadata::ToWikiURL(value)); break;
+      case MetadataID::FMD_WIKIVOYAGE: fn(id, feature::Metadata::ToWikivoyageURL(value)); break;
       case MetadataID::FMD_WIKIMEDIA_COMMONS: fn(id, feature::Metadata::ToWikimediaCommonsURL(value)); break;
       /// @todo Clients should make separate processing of non-string values, skip for now.
       /// @see EditableMapObject::ForEachMetadataItem.

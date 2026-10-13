@@ -44,6 +44,7 @@ import app.organicmaps.sdk.routing.RoutingController;
 import app.organicmaps.sdk.settings.RoadType;
 import app.organicmaps.sdk.util.log.Logger;
 import app.organicmaps.util.UiUtils;
+import app.organicmaps.util.Utils;
 import app.organicmaps.util.bottomsheet.MenuBottomSheetFragment;
 import app.organicmaps.util.bottomsheet.MenuBottomSheetItem;
 import app.organicmaps.widget.colorpicker.ColorPickerFragment;
@@ -518,7 +519,21 @@ public class PlacePageController
     case ROUTE_AVOID_TOLL -> onAvoidTollBtnClicked();
     case ROUTE_AVOID_UNPAVED -> onAvoidUnpavedBtnClicked();
     case ROUTE_AVOID_FERRY -> onAvoidFerryBtnClicked();
+    case STREET_LEVEL_IMAGERY -> onStreetLevelImageryBtnClicked();
     }
+  }
+
+  private void onStreetLevelImageryBtnClicked()
+  {
+    if (mMapObject == null)
+      return;
+    // Mapillary's public web viewer, no API key / SDK needed. Opened in the external
+    // browser like other external-content links (wikipedia, websites) — no tracking,
+    // nothing is sent from the app beyond the coordinates in the URL the user asked for.
+    final String url = String.format(java.util.Locale.US,
+        "https://www.mapillary.com/app/?lat=%f&lng=%f&zoom=17&focus=photo",
+        mMapObject.getLat(), mMapObject.getLon());
+    Utils.openUrl(requireContext(), url);
   }
 
   private void onBookmarkBtnClicked()
@@ -759,6 +774,7 @@ public class PlacePageController
           if (mapObject.isTrack() && !((Track) mapObject).isRelationTrack())
             buttons.add(PlacePageButtons.ButtonType.TRACK_DELETE);
         }
+        buttons.add(PlacePageButtons.ButtonType.STREET_LEVEL_IMAGERY);
 
         if (needToShowRoutingButtons)
         {

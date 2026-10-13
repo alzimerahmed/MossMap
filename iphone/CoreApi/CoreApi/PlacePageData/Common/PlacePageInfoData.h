@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly, nullable) NSString * website;
 @property(nonatomic, readonly, nullable) NSString * heritageWebsite;
 @property(nonatomic, readonly, nullable) NSString * wikipedia;
+@property(nonatomic, readonly, nullable) NSString * wikivoyage;
 @property(nonatomic, readonly, nullable) NSString * wikimediaCommons;
 @property(nonatomic, readonly, nullable) NSString * facebook;
 @property(nonatomic, readonly, nullable) NSString * instagram;

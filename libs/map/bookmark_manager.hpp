@@ -225,6 +225,11 @@ public:
   Bookmark const * GetBookmark(kml::MarkId markId) const;
   Track const * GetTrack(kml::TrackId trackId) const;
 
+  /// Media notes (audio/video/photo attachments, Feature Gap #19) carried in the bookmark's
+  /// kml::Properties under kMediaNotesPropertyKey. Files live in the app's private media dir.
+  std::vector<std::string> GetBookmarkMediaNotes(kml::MarkId markId) const;
+  void SetBookmarkMediaNotes(kml::MarkId markId, std::vector<std::string> const & notes);
+
   kml::MarkIdSet const & GetUserMarkIds(kml::MarkGroupId groupId) const;
   kml::TrackIdSet const & GetTrackIds(kml::MarkGroupId groupId) const;
 

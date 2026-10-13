@@ -25,6 +25,19 @@ static constexpr int kSearch = 4;
 static constexpr int kTrack = 5;
 }  // namespace
 
+// The Wikivoyage link is computed by the core (place_page::Info) rather than stored in feature
+// metadata, so it is injected here as a synthetic FMD_WIKIVOYAGE metadata entry for the UI.
+void InjectWikivoyageUrl(JNIEnv * env, jclass const clazz, jobject const mapObject, place_page::Info const & info)
+{
+  static jmethodID const addId = env->GetMethodID(clazz, "addMetadata", "(ILjava/lang/String;)V");
+  ASSERT(addId, ());
+  auto const url = info.GetWikivoyageUrl();
+  if (url.empty())
+    return;
+  jni::TScopedLocalRef jUrl(env, jni::ToJavaString(env, url));
+  env->CallVoidMethod(mapObject, addId, static_cast<jint>(osm::MapObject::MetadataID::FMD_WIKIVOYAGE), jUrl.get());
+}
+
 jobject CreateMapObject(JNIEnv * env, place_page::Info const & info, int mapObjectType, double lat, double lon,
                         bool parseMeta, bool parseApi, jobject const & routingPointInfo, jobjectArray jrawTypes)
 {
@@ -69,6 +82,7 @@ jobject CreateMapObject(JNIEnv * env, place_page::Info const & info, int mapObje
 
   if (parseMeta)
     InjectMetadata(env, g_mapObjectClazz, mapObject, info);
+  InjectWikivoyageUrl(env, g_mapObjectClazz, mapObject, info);
   return mapObject;
 }
 

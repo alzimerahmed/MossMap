@@ -120,6 +120,10 @@ public:
     FMD_NETWORK = 49,
     FMD_SCHEDULE_ID = 50,
     FMD_HERITAGE_WEBSITE = 51,
+    // Wikivoyage travel-guide article ("wikivoyage" OSM tag, "lang:Title" like FMD_WIKIPEDIA).
+    // Runtime/link metadata: not yet emitted by the map generator (needs generator + mwm regen),
+    // but parsed from OSM data and used by the place page to link the online travel guide.
+    FMD_WIKIVOYAGE = 52,
     FMD_COUNT
   };
 
@@ -149,6 +153,7 @@ public:
 
   static std::string ToWikiURL(std::string v);
   std::string GetWikiURL() const;
+  static std::string ToWikivoyageURL(std::string v);
   static std::string ToWikimediaCommonsURL(std::string v);
   static void EncodeWikiURL(size_t startIndex, std::string & url);
 

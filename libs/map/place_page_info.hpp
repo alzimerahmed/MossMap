@@ -175,6 +175,9 @@ public:
 
   std::string const & GetWikiDescription() const { return m_wikiDescription; }
   std::string const & GetOSMDescription() const { return m_osmDescription; }
+  /// Wikivoyage travel-guide URL: from the "wikivoyage" metadata when present, otherwise a
+  /// name-based link for cities/towns/villages. Empty when no guide link can be built.
+  std::string const & GetWikivoyageUrl() const { return m_wikivoyageUrl; }
   /// @returns the display string for the format (see FormatCoordinateDisplay), or empty if it is
   /// unavailable at this location. Used by the iOS place page (which keeps the array id-indexed).
   std::string GetFormattedCoordinate(CoordinatesFormat format) const;
@@ -294,6 +297,7 @@ private:
   std::string m_uiTrackStatistics;
   std::string m_wikiDescription;
   std::string m_osmDescription;
+  std::string m_wikivoyageUrl;
   /// Booking rating string
   std::string m_localizedRatingString;
 

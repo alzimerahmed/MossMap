@@ -132,6 +132,12 @@
       app:singleLineTitle="false"
       android:persistent="false"
       android:order="20"/>
+    <Preference
+      android:key="@string/pref_tile_sources_screen"
+      android:title="@string/pref_tile_sources_title"
+      app:singleLineTitle="false"
+      android:persistent="false"
+      android:order="21"/>
     <ListPreference
       android:key="@string/pref_track_recording_interval"
       android:title="@string/pref_track_recording_interval_title"
@@ -150,6 +156,12 @@
       android:entryValues="@array/track_recording_accuracy_values"
       android:defaultValue="250"
       android:order="22" />
+    <Preference
+      android:key="@string/pref_backup_restore"
+      android:title="@string/backup_restore_title"
+      android:summary="@string/backup_restore_summary"
+      app:singleLineTitle="false"
+      android:order="23" />
   </androidx.preference.PreferenceCategory>
 
   <androidx.preference.PreferenceCategory

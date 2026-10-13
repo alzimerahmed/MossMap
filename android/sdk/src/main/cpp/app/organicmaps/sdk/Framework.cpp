@@ -15,6 +15,7 @@
 #include "map/place_page_info.hpp"
 #include "map/routing_mark.hpp"
 #include "map/user_mark.hpp"
+#include "map/weather_forecast.hpp"
 
 #include "storage/country_info_getter.hpp"
 #include "storage/storage_defines.hpp"
@@ -805,6 +806,20 @@ void CallSetRoutingLoadPointsListener(std::shared_ptr<jobject> listener, bool su
   env->CallVoidMethod(*listener, methodId, static_cast<jboolean>(success));
 }
 
+void CallSpeedCamShowListener(std::shared_ptr<jobject> listener, m2::PointD const & point, double speedKmPH)
+{
+  JNIEnv * env = jni::GetEnv();
+  jmethodID const methodId = jni::GetMethodID(env, *listener, "onSpeedCamShow", "(DDD)V");
+  env->CallVoidMethod(*listener, methodId, mercator::YToLat(point.y), mercator::XToLon(point.x), speedKmPH);
+}
+
+void CallSpeedCamClearListener(std::shared_ptr<jobject> listener)
+{
+  JNIEnv * env = jni::GetEnv();
+  jmethodID const methodId = jni::GetMethodID(env, *listener, "onSpeedCamClear", "()V");
+  env->CallVoidMethod(*listener, methodId);
+}
+
 RoutingManager::LoadRouteHandler g_loadRouteHandler;
 
 /// @name JNI EXPORTS
@@ -911,6 +926,139 @@ JNIEXPORT jboolean Java_app_organicmaps_sdk_Framework_nativeIsBackgroundTilesEna
 JNIEXPORT jint Java_app_organicmaps_sdk_Framework_nativeGetBackgroundTilesAreaOpacity(JNIEnv *, jclass)
 {
   return static_cast<jint>(frm()->GetBackgroundTilesAreaOpacity());
+}
+
+// User tile sources: JSON list [{name,url,type,opacity}] + active index (-1 = none).
+JNIEXPORT jstring Java_app_organicmaps_sdk_Framework_nativeGetBackgroundTilesSourcesJson(JNIEnv * env, jclass)
+{
+  return jni::ToJavaString(env, Framework::SerializeBackgroundTilesSources(frm()->GetBackgroundTilesSources()));
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeSetBackgroundTilesSources(JNIEnv * env, jclass, jstring json,
+                                                                                  jint activeIndex)
+{
+  std::vector<Framework::BackgroundTilesSource> sources;
+  // Reject malformed input: persisting an empty parse result would wipe the user's list.
+  if (!Framework::ParseBackgroundTilesSources(jni::ToNativeString(env, json), sources))
+  {
+    LOG(LWARNING, ("Ignoring malformed background tiles sources JSON"));
+    return;
+  }
+  frm()->SetBackgroundTilesSources(std::move(sources), static_cast<int>(activeIndex));
+}
+
+JNIEXPORT jint Java_app_organicmaps_sdk_Framework_nativeGetActiveBackgroundTilesSourceIndex(JNIEnv *, jclass)
+{
+  return static_cast<jint>(frm()->GetActiveBackgroundTilesSourceIndex());
+}
+
+/// Weather (built-in radar overlay + point forecast). See libs/map/weather_forecast.hpp.
+void CallWeatherForecastListener(std::shared_ptr<jobject> listener, weather::Forecast const & forecast,
+                                 std::string const & error)
+{
+  JNIEnv * env = jni::GetEnv();
+
+  static jclass const forecastClazz =
+      jni::GetGlobalClassRef(env, "app/organicmaps/sdk/weather/WeatherForecast");
+  static jmethodID const forecastCtor = jni::GetConstructorID(env, forecastClazz, "([D[D[D[D[D)V");
+
+  auto const makeArray = [&env](std::vector<double> const & values)
+  {
+    jdoubleArray const arr = env->NewDoubleArray(static_cast<jsize>(values.size()));
+    if (!values.empty())
+      env->SetDoubleArrayRegion(arr, 0, static_cast<jsize>(values.size()), values.data());
+    return arr;
+  };
+
+  std::vector<double> current{static_cast<double>(forecast.m_current.m_timeUnix),
+                              forecast.m_current.m_temperatureC,
+                              forecast.m_current.m_apparentTemperatureC,
+                              forecast.m_current.m_precipitationMm,
+                              static_cast<double>(forecast.m_current.m_weatherCode),
+                              forecast.m_current.m_windSpeedKmh,
+                              forecast.m_current.m_windDirectionDeg};
+  std::vector<double> times, temps, precip, wind;
+  times.reserve(forecast.m_hourly.size());
+  temps.reserve(forecast.m_hourly.size());
+  precip.reserve(forecast.m_hourly.size());
+  wind.reserve(forecast.m_hourly.size());
+  for (auto const & h : forecast.m_hourly)
+  {
+    times.push_back(static_cast<double>(h.m_timeUnix));
+    temps.push_back(h.m_temperatureC);
+    precip.push_back(h.m_precipitationMm);
+    wind.push_back(h.m_windSpeedKmh);
+  }
+
+  jni::TScopedLocalRef jCurrent(env, makeArray(current));
+  jni::TScopedLocalRef jTimes(env, makeArray(times));
+  jni::TScopedLocalRef jTemps(env, makeArray(temps));
+  jni::TScopedLocalRef jPrecip(env, makeArray(precip));
+  jni::TScopedLocalRef jWind(env, makeArray(wind));
+
+  jobject jForecast = nullptr;
+  if (error.empty())
+    jForecast = env->NewObject(forecastClazz, forecastCtor, jCurrent.get(), jTimes.get(), jTemps.get(),
+                               jPrecip.get(), jWind.get());
+  jni::TScopedLocalRef jForecastRef(env, jForecast);
+
+  jmethodID const method =
+      jni::GetMethodID(env, *listener, "onForecast", "(Lapp/organicmaps/sdk/weather/WeatherForecast;Ljava/lang/String;)V");
+  // On success the error must be null (see WeatherForecastListener contract).
+  jni::TScopedLocalRef jError(env, error.empty() ? nullptr : jni::ToJavaString(env, error));
+  env->CallVoidMethod(*listener, method, jForecastRef.get(), jError.get());
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeGetWeatherForecast(JNIEnv * env, jclass, jdouble lat,
+                                                                           jdouble lon, jobject jListener)
+{
+  auto const listener = jni::make_global_ref(jListener);
+  frm()->GetWeatherForecast(lat, lon, [listener](weather::Forecast const & forecast, std::string const & error)
+  { CallWeatherForecastListener(listener, forecast, error); });
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeSetWeatherLayerEnabled(JNIEnv * env, jclass, jboolean enabled,
+                                                                               jobject jListener)
+{
+  auto const listener = jni::make_global_ref(jListener);
+  frm()->SetWeatherLayerEnabled(static_cast<bool>(enabled), [listener](bool success)
+  {
+    if (*listener == nullptr)
+      return;
+    JNIEnv * env = jni::GetEnv();
+    jmethodID const method = jni::GetMethodID(env, *listener, "onResult", "(Z)V");
+    env->CallVoidMethod(*listener, method, static_cast<jboolean>(success));
+  });
+}
+
+JNIEXPORT jboolean Java_app_organicmaps_sdk_Framework_nativeIsWeatherLayerEnabled(JNIEnv *, jclass)
+{
+  return static_cast<jboolean>(Framework::IsWeatherLayerEnabled());
+}
+
+JNIEXPORT jdoubleArray Java_app_organicmaps_sdk_Framework_nativeGetViewportCenterLatLon(JNIEnv * env, jclass)
+{
+  m2::PointD const center = frm()->GetViewportCenter();
+  double const latLon[] = {mercator::YToLat(center.y), mercator::XToLon(center.x)};
+  jdoubleArray const arr = env->NewDoubleArray(2);
+  env->SetDoubleArrayRegion(arr, 0, 2, latLon);
+  return arr;
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeSetActiveBackgroundTilesSource(JNIEnv *, jclass, jint index)
+{
+  frm()->SetActiveBackgroundTilesSource(static_cast<int>(index));
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeSetBackgroundTilesSourceOpacity(JNIEnv *, jclass, jint index,
+                                                                                        jint opacityPct)
+{
+  frm()->SetBackgroundTilesSourceOpacity(static_cast<int>(index), static_cast<uint32_t>(opacityPct));
+}
+
+JNIEXPORT jint Java_app_organicmaps_sdk_Framework_nativeGetActiveBackgroundTilesSourceOpacity(JNIEnv *, jclass)
+{
+  return static_cast<jint>(frm()->GetActiveBackgroundTilesSourceOpacity());
 }
 
 JNIEXPORT jstring Java_app_organicmaps_sdk_Framework_nativeGetParsedBackUrl(JNIEnv * env, jclass)
@@ -1433,6 +1581,33 @@ JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeSetRoutingLoadPointsList
         std::bind(&CallSetRoutingLoadPointsListener, jni::make_global_ref(listener), std::placeholders::_1);
   else
     g_loadRouteHandler = nullptr;
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeSetSpeedCamWarningListener(JNIEnv * env, jclass,
+                                                                                   jobject listener)
+{
+  auto & rm = frm()->GetRoutingManager();
+  if (listener == nullptr)
+  {
+    rm.SetRouteSpeedCamShowListener({});
+    rm.SetRouteSpeedCamsClearListener({});
+    return;
+  }
+
+  auto const rf = jni::make_global_ref(listener);
+  rm.SetRouteSpeedCamShowListener(
+      [rf](m2::PointD const & point, double speedKmPH) { CallSpeedCamShowListener(rf, point, speedKmPH); });
+  rm.SetRouteSpeedCamsClearListener([rf]() { CallSpeedCamClearListener(rf); });
+}
+
+JNIEXPORT jboolean Java_app_organicmaps_sdk_Framework_nativeAreHazardWarningsEnabled(JNIEnv *, jclass)
+{
+  return static_cast<jboolean>(frm()->GetRoutingManager().IsHazardWarningsEnabled());
+}
+
+JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeSetHazardWarningsEnabled(JNIEnv *, jclass, jboolean enabled)
+{
+  frm()->GetRoutingManager().SetHazardWarningsEnabled(enabled != JNI_FALSE);
 }
 
 JNIEXPORT jboolean Java_app_organicmaps_sdk_Framework_nativeDeactivatePopup(JNIEnv * env, jclass)

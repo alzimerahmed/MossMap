@@ -2,6 +2,8 @@
 
 #include "map/bookmark_helpers.hpp"
 
+#include "coding/url.hpp"
+
 #include "indexer/feature_utils.hpp"
 #include "indexer/ftypes_matcher.hpp"
 #include "indexer/road_shields_parser.hpp"
@@ -260,6 +262,15 @@ void Info::SetFromFeatureType(FeatureType & ft)
 
   // apply to all types after checks
   m_isHotel = ftypes::IsHotelChecker::Instance()(ft);
+
+  // Wikivoyage travel-guide link: prefer the explicit "wikivoyage" tag; fall back to a
+  // name-based link for cities/towns/villages (the usual scope of Wikivoyage articles).
+  m_wikivoyageUrl.clear();
+  if (auto const wikiVoyage = GetMetadata(feature::Metadata::FMD_WIKIVOYAGE); !wikiVoyage.empty())
+    m_wikivoyageUrl = feature::Metadata::ToWikivoyageURL(std::string(wikiVoyage));
+  else if (ftypes::IsCityTownOrVillageChecker::Instance()(ft) && !m_uiTitle.empty() && !emptyTitle)
+    m_wikivoyageUrl = "https://en.wikivoyage.org/wiki/" + url::UrlEncode(m_uiTitle);
+
 
   for (uint32_t id : ft.GetRelations())
   {

@@ -138,6 +138,21 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
   private TextView mTvCuisine;
   private View mOutdoorSeating;
   private TextView mTvOutdoorSeating;
+  private View mFax;
+  private TextView mTvFax;
+  private View mBrand;
+  private TextView mTvBrand;
+  private View mHeight;
+  private TextView mTvHeight;
+  private View mBuildingLevels;
+  private TextView mTvBuildingLevels;
+  private View mDenomination;
+  private TextView mTvDenomination;
+  private View mElevation;
+  private TextView mTvElevation;
+  private View mIata;
+  private TextView mTvIata;
+  private View mDetailsHeader;
   private View mEntrance;
   private TextView mTvEntrance;
   private View mRouteRef;
@@ -324,6 +339,22 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
     mTvWiFi = mFrame.findViewById(R.id.tv__place_wifi);
     mOutdoorSeating = mFrame.findViewById(R.id.ll__place_outdoor_seating);
     mTvOutdoorSeating = mFrame.findViewById(R.id.tv__place_outdoor_seating);
+    mFax = mFrame.findViewById(R.id.ll__place_fax);
+    mTvFax = mFrame.findViewById(R.id.tv__place_fax);
+    mBrand = mFrame.findViewById(R.id.ll__place_brand);
+    mTvBrand = mFrame.findViewById(R.id.tv__place_brand);
+    mHeight = mFrame.findViewById(R.id.ll__place_height);
+    mTvHeight = mFrame.findViewById(R.id.tv__place_height);
+    mBuildingLevels = mFrame.findViewById(R.id.ll__place_building_levels);
+    mTvBuildingLevels = mFrame.findViewById(R.id.tv__place_building_levels);
+    mDenomination = mFrame.findViewById(R.id.ll__place_denomination);
+    mTvDenomination = mFrame.findViewById(R.id.tv__place_denomination);
+    mElevation = mFrame.findViewById(R.id.ll__place_elevation);
+    mTvElevation = mFrame.findViewById(R.id.tv__place_elevation);
+    mIata = mFrame.findViewById(R.id.ll__place_iata);
+    mTvIata = mFrame.findViewById(R.id.tv__place_iata);
+    mDetailsHeader = mFrame.findViewById(R.id.details_header);
+    mDetailsHeader.setOnClickListener(this);
     mOperator = mFrame.findViewById(R.id.ll__place_operator);
     mOperator.setOnClickListener(this);
     mTvOperator = mFrame.findViewById(R.id.tv__place_operator);
@@ -368,6 +399,13 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
     mDriveThrough.setOnLongClickListener(this);
     mSelfService.setOnLongClickListener(this);
     mOutdoorSeating.setOnLongClickListener(this);
+    mFax.setOnLongClickListener(this);
+    mBrand.setOnLongClickListener(this);
+    mHeight.setOnLongClickListener(this);
+    mBuildingLevels.setOnLongClickListener(this);
+    mDenomination.setOnLongClickListener(this);
+    mElevation.setOnLongClickListener(this);
+    mIata.setOnLongClickListener(this);
 
     mDownloaderIcon = new DownloaderStatusIcon(mPreview.findViewById(R.id.downloader_status_frame));
 
@@ -550,6 +588,8 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
     {
       UiUtils.hide(mIvTitleChevron);
     }
+    // Visible affordance for the details section: tracks and track recordings have no details rows.
+    UiUtils.hideIf(mMapObject.isTrack() || mMapObject.isTrackRecording(), mDetailsHeader);
     if (mMapObject.isTrackRecording())
     {
       TrackRecording trackRecording = (TrackRecording) mMapObject;
@@ -700,6 +740,32 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
     final String outdoorSeating = mMapObject.getMetadata(Metadata.MetadataType.FMD_OUTDOOR_SEATING);
     refreshMetadataOrHide(outdoorSeating.equals("yes") ? getString(R.string.outdoor_seating) : "", mOutdoorSeating,
                           mTvOutdoorSeating);
+
+    final String fax = mMapObject.getMetadata(Metadata.MetadataType.FMD_FAX_NUMBER);
+    refreshMetadataOrHide(!TextUtils.isEmpty(fax) ? getString(R.string.fax, fax) : "", mFax, mTvFax);
+
+    final String brand = mMapObject.getMetadata(Metadata.MetadataType.FMD_BRAND);
+    refreshMetadataOrHide(!TextUtils.isEmpty(brand) ? getString(R.string.brand, brand) : "", mBrand, mTvBrand);
+
+    final String height = mMapObject.getMetadata(Metadata.MetadataType.FMD_HEIGHT);
+    refreshMetadataOrHide(!TextUtils.isEmpty(height) ? getString(R.string.height, height) : "", mHeight, mTvHeight);
+
+    final String buildingLevels = mMapObject.getMetadata(Metadata.MetadataType.FMD_BUILDING_LEVELS);
+    refreshMetadataOrHide(
+        !TextUtils.isEmpty(buildingLevels) ? getString(R.string.building_levels, buildingLevels) : "",
+        mBuildingLevels, mTvBuildingLevels);
+
+    final String denomination = mMapObject.getMetadata(Metadata.MetadataType.FMD_DENOMINATION);
+    refreshMetadataOrHide(
+        !TextUtils.isEmpty(denomination) ? getString(R.string.denomination, denomination) : "", mDenomination,
+        mTvDenomination);
+
+    final String elevation = mMapObject.getMetadata(Metadata.MetadataType.FMD_ELE);
+    refreshMetadataOrHide(!TextUtils.isEmpty(elevation) ? getString(R.string.elevation, elevation) : "", mElevation,
+                          mTvElevation);
+
+    final String iata = mMapObject.getMetadata(Metadata.MetadataType.FMD_AIRPORT_IATA);
+    refreshMetadataOrHide(!TextUtils.isEmpty(iata) ? getString(R.string.airport_iata, iata) : "", mIata, mTvIata);
 
     // showTaxiOffer(mapObject);
     mRoutes = Framework.nativeGetActiveObjectRoutes();
@@ -891,6 +957,8 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
       showBookmarkEditFragment();
     else if (id == R.id.tv__category)
       showCategoryList();
+    else if (id == R.id.details_header)
+      mPlacePageViewListener.onPlacePageRequestToggleState();
     else if (id == R.id.ll__place_route_ref_content)
       showRoutesPopup(v);
   }
@@ -1033,6 +1101,20 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
       items.add(mTvDriveThrough.getText().toString());
     else if (id == R.id.ll__place_outdoor_seating)
       items.add(mTvOutdoorSeating.getText().toString());
+    else if (id == R.id.ll__place_fax)
+      items.add(mTvFax.getText().toString());
+    else if (id == R.id.ll__place_brand)
+      items.add(mTvBrand.getText().toString());
+    else if (id == R.id.ll__place_height)
+      items.add(mTvHeight.getText().toString());
+    else if (id == R.id.ll__place_building_levels)
+      items.add(mTvBuildingLevels.getText().toString());
+    else if (id == R.id.ll__place_denomination)
+      items.add(mTvDenomination.getText().toString());
+    else if (id == R.id.ll__place_elevation)
+      items.add(mTvElevation.getText().toString());
+    else if (id == R.id.ll__place_iata)
+      items.add(mTvIata.getText().toString());
 
     final Context context = requireContext();
     if (items.size() == 1)

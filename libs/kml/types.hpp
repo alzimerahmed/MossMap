@@ -7,6 +7,7 @@
 #include "base/assert.hpp"
 #include "base/internal/message.hpp"  // DebugPrint(Timestamp)
 #include "base/stl_helpers.hpp"
+#include "base/string_utils.hpp"
 #include "base/visitor.hpp"
 
 #include "drape/color.hpp"
@@ -591,6 +592,35 @@ struct FileData
 };
 
 void SetBookmarksMinZoom(FileData & fileData, double countPerTile, int maxZoom);
+
+// Media notes (audio/video/photo attachments on bookmarks, Feature Gap #19) are stored as a
+// bookmark property: one key, value = newline-separated media file names. Files themselves live
+// in the app's private media directory (platform-managed); only the names travel in KML/KMB so
+// exports stay small and file-system-agnostic. Header-only: no binary-format changes.
+inline std::string_view constexpr kMediaNotesPropertyKey = "mossmap:media";
+
+inline std::vector<std::string> SplitMediaNotes(std::string const & value)
+{
+  std::vector<std::string> notes;
+  strings::Tokenize(value, "\n", [&notes](std::string_view v)
+  {
+    if (!v.empty())
+      notes.emplace_back(v);
+  });
+  return notes;
+}
+
+inline std::string JoinMediaNotes(std::vector<std::string> const & notes)
+{
+  std::string value;
+  for (auto const & note : notes)
+  {
+    if (!value.empty())
+      value += '\n';
+    value += note;
+  }
+  return value;
+}
 
 inline std::string DebugPrint(BookmarkIcon icon)
 {

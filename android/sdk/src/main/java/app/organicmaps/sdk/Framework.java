@@ -21,6 +21,8 @@ import app.organicmaps.sdk.routing.RoutingProgressListener;
 import app.organicmaps.sdk.routing.RoutingRecommendationListener;
 import app.organicmaps.sdk.routing.TransitRouteInfo;
 import app.organicmaps.sdk.settings.SpeedCameraMode;
+import app.organicmaps.sdk.weather.WeatherForecastListener;
+import app.organicmaps.sdk.weather.WeatherLayerResultListener;
 import app.organicmaps.sdk.widget.placepage.CoordinatesFormatEntry;
 import app.organicmaps.sdk.widget.placepage.RouteInfo;
 import dalvik.annotation.optimization.FastNative;
@@ -86,6 +88,43 @@ public class Framework
   {
     nativeSetSpeedCamManagerMode(mode.ordinal());
   }
+
+  /** Enables or disables road hazard warnings during navigation. */
+  public static void setHazardWarningsEnabled(boolean enabled)
+  {
+    nativeSetHazardWarningsEnabled(enabled);
+  }
+
+  public static boolean areHazardWarningsEnabled()
+  {
+    return nativeAreHazardWarningsEnabled();
+  }
+
+  private static native boolean nativeAreHazardWarningsEnabled();
+
+  private static native void nativeSetHazardWarningsEnabled(boolean enabled);
+
+  /** Registers a listener for speed camera warnings on the current route. */
+  public static void setSpeedCamWarningListener(@Nullable SpeedCamWarningListener listener)
+  {
+    nativeSetSpeedCamWarningListener(listener);
+  }
+
+  /** Listener for speed camera proximity warnings during navigation. Called from JNI. */
+  public interface SpeedCamWarningListener
+  {
+    /** Called when the driver approaches a speed camera on the route. */
+    @Keep
+    @SuppressWarnings("unused")
+    void onSpeedCamShow(double lat, double lon, double speedKmPH);
+
+    /** Called when the previously shown speed camera warning is no longer relevant. */
+    @Keep
+    @SuppressWarnings("unused")
+    void onSpeedCamClear();
+  }
+
+  private static native void nativeSetSpeedCamWarningListener(@Nullable SpeedCamWarningListener listener);
 
   public static native void nativeRestoreDownloadQueue();
 
@@ -189,6 +228,29 @@ public class Framework
   public static native int nativeGetBackgroundTilesCacheSizeMB();
   public static native boolean nativeIsBackgroundTilesEnabled();
   public static native int nativeGetBackgroundTilesAreaOpacity();
+
+  // Weather: built-in radar overlay + point forecast (keyless services; see libs/map/weather_layer.hpp).
+  // onResult (optional, may be null) is called on the UI thread with true when the layer became
+  // active, false on network/parse failure (the toggle is not persisted then).
+  public static native void nativeSetWeatherLayerEnabled(boolean enabled,
+                                                         @Nullable WeatherLayerResultListener onResult);
+  public static native boolean nativeIsWeatherLayerEnabled();
+  // Fetches the point forecast for a WGS84 coordinate; `listener` is invoked once on the UI thread.
+  public static native void nativeGetWeatherForecast(double lat, double lon,
+                                                     @NonNull WeatherForecastListener listener);
+  // @return {lat, lon} of the current map viewport center.
+  @NonNull
+  public static native double[] nativeGetViewportCenterLatLon();
+  // User tile sources: JSON list of [{name,url,type,opacity}] entries plus the active index
+  // (-1 = none). Only one source is rendered at a time (single raster overlay constraint).
+  @NonNull
+  public static native String nativeGetBackgroundTilesSourcesJson();
+  public static native void nativeSetBackgroundTilesSources(@NonNull String json, int activeIndex);
+  public static native int nativeGetActiveBackgroundTilesSourceIndex();
+  public static native void nativeSetActiveBackgroundTilesSource(int index);
+  // Per-source imagery opacity, 0..100; applied live when the source is active.
+  public static native void nativeSetBackgroundTilesSourceOpacity(int index, int opacityPct);
+  public static native int nativeGetActiveBackgroundTilesSourceOpacity();
   public static native ParsedSearchRequest nativeGetParsedSearchRequest();
   public static native @Nullable String nativeGetParsedAppName();
   public static native @Nullable String nativeGetParsedOAuth2Code();

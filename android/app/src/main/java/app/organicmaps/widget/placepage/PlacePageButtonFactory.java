@@ -84,6 +84,11 @@ public class PlacePageButtonFactory
         titleId = R.string.avoid_ferry;
         yield R.drawable.ic_avoid_ferry;
       }
+      case STREET_LEVEL_IMAGERY ->
+      {
+        titleId = R.string.placepage_street_level_imagery;
+        yield R.drawable.ic_street_level_imagery;
+      }
       case MORE ->
       {
         titleId = R.string.placepage_more_button;

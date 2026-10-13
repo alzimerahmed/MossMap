@@ -2,6 +2,7 @@ package app.organicmaps.widget.placepage
 
 import android.content.DialogInterface
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.BundleCompat
@@ -26,8 +29,10 @@ import app.organicmaps.bookmarks.BookmarksSharingHelper
 import app.organicmaps.bookmarks.ChooseBookmarkCategoryFragment
 import app.organicmaps.dialog.DeleteConfirmationDialogFragment
 import app.organicmaps.sdk.bookmarks.data.BookmarkCategory
+import app.organicmaps.sdk.bookmarks.data.BookmarkInfo
 import app.organicmaps.sdk.bookmarks.data.BookmarkManager
 import app.organicmaps.sdk.bookmarks.data.FileType
+import app.organicmaps.util.MediaNotes
 import app.organicmaps.util.SharingUtils
 import app.organicmaps.util.UiUtils
 import app.organicmaps.widget.colorpicker.ColorPickerFragment
@@ -45,8 +50,18 @@ class EditBookmarkFragment :
     private lateinit var ivVisibility: ImageView
     private lateinit var nestedScrollView: NestedScrollView
     private lateinit var toolbar: Toolbar
+    private lateinit var mediaNotesSection: View
+    private lateinit var mediaNotesList: ViewGroup
     private lateinit var bookmarkCategory: BookmarkCategory
     private lateinit var shareLauncher: ActivityResultLauncher<SharingUtils.SharingIntent>
+    private lateinit var attachMediaLauncher: ActivityResultLauncher<String>
+
+    /** Staged media-note file names, persisted on save (bookmarks only). */
+    private val mediaNotes = mutableListOf<String>()
+    /** Names removed while editing; their files are deleted only when the edit is saved. */
+    private val removedMediaNotes = mutableListOf<String>()
+    /** Notes as loaded; used to detect media-note-only edits. */
+    private var originalMediaNotes: List<String> = emptyList()
 
     private var target: EditTarget? = null
     private var deleted: Boolean = false
@@ -56,6 +71,9 @@ class EditBookmarkFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         shareLauncher = SharingUtils.RegisterLauncher(this)
+        attachMediaLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) attachMediaNote(uri)
+        }
     }
 
     override fun getCustomTheme(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -83,6 +101,11 @@ class EditBookmarkFragment :
         toolbar = view.findViewById(R.id.toolbar)
         nestedScrollView = view.findViewById(R.id.edit_bookmark_scroll)
         view.findViewById<View>(R.id.color_row).setOnClickListener { selectBookmarkColor() }
+        mediaNotesSection = view.findViewById(R.id.media_notes_section)
+        mediaNotesList = view.findViewById(R.id.media_notes_list)
+        view.findViewById<View>(R.id.btn_attach_media).setOnClickListener {
+            attachMediaLauncher.launch("*/*")
+        }
 
         target = loadTarget(args, savedInstanceState)
         bookmarkCategory = savedInstanceState?.let {
@@ -110,6 +133,15 @@ class EditBookmarkFragment :
             t.color = savedInstanceState?.getInt(STATE_COLOR, t.color) ?: t.color
             if (t is TrackEditTarget && savedInstanceState != null) {
                 t.stagedVisibility = savedInstanceState.getBoolean(STATE_VISIBLE, t.stagedVisibility)
+            }
+            if (t is BookmarkEditTarget) {
+                val saved = savedInstanceState?.getStringArray(STATE_MEDIA_NOTES)
+                mediaNotes.apply {
+                    clear()
+                    if (saved != null) addAll(saved)
+                    else BookmarkInfo.getMediaNotes(t.id)?.let { addAll(it) }
+                }
+                originalMediaNotes = mediaNotes.toList()
             }
         }
     }
@@ -247,8 +279,10 @@ class EditBookmarkFragment :
         val t = target ?: return
         val newName = etName.text.toString()
         val newDescription = etDescription.text.toString()
-        if (!t.isDirty(newName, newDescription, bookmarkCategory)) return
+        val mediaNotesChanged = target is BookmarkEditTarget && mediaNotes != originalMediaNotes
+        if (!t.isDirty(newName, newDescription, bookmarkCategory) && !mediaNotesChanged) return
         val movedFromCategory = t.save(newName, newDescription, bookmarkCategory)
+        persistMediaNotes()
         setEditResult(t, ACTION_SAVED, movedFromCategory)
         trackTarget?.applyStagedVisibility()
     }
@@ -270,6 +304,8 @@ class EditBookmarkFragment :
         val t = target
         if (t != null) {
             t.delete()
+            // Media files are orphaned once the bookmark is gone - clean them up.
+            for (note in originalMediaNotes) MediaNotes.delete(requireContext(), note)
             setEditResult(t, ACTION_DELETED)
         }
         dismiss()
@@ -280,6 +316,7 @@ class EditBookmarkFragment :
         outState.putParcelable(STATE_BOOKMARK_CATEGORY, bookmarkCategory)
         target?.let { outState.putInt(STATE_COLOR, it.color) }
         trackTarget?.let { outState.putBoolean(STATE_VISIBLE, it.stagedVisibility) }
+        if (target is BookmarkEditTarget) outState.putStringArray(STATE_MEDIA_NOTES, mediaNotes.toTypedArray())
     }
 
     private fun selectBookmarkSet() {
@@ -320,6 +357,44 @@ class EditBookmarkFragment :
         refreshCategory()
         refreshSwatch()
         refreshVisibility()
+        refreshMediaNotes()
+    }
+
+    // Media notes (audio/video/photo attachments, bookmarks only).
+
+    private fun refreshMediaNotes() {
+        mediaNotesSection.isVisible = target is BookmarkEditTarget
+        mediaNotesList.removeAllViews()
+        val inflater = layoutInflater
+        for (note in mediaNotes) {
+            val row = inflater.inflate(R.layout.item_media_note, mediaNotesList, false)
+            row.findViewById<TextView>(R.id.tv_media_note_name).text = note
+            row.findViewById<View>(R.id.btn_media_note_open)
+                .setOnClickListener { MediaNotes.open(requireContext(), note) }
+            row.findViewById<View>(R.id.btn_media_note_remove)
+                .setOnClickListener { removeMediaNote(note) }
+            mediaNotesList.addView(row)
+        }
+    }
+
+    private fun attachMediaNote(uri: Uri) {
+        val name = MediaNotes.attach(requireContext(), uri) ?: return
+        if (!mediaNotes.contains(name)) mediaNotes.add(name)
+        refreshMediaNotes()
+    }
+
+    private fun removeMediaNote(name: String) {
+        mediaNotes.remove(name)
+        removedMediaNotes.add(name)
+        refreshMediaNotes()
+    }
+
+    private fun persistMediaNotes() {
+        val t = target as? BookmarkEditTarget ?: return
+        BookmarkInfo.setMediaNotes(t.id, mediaNotes.toTypedArray())
+        // Only delete files for notes removed in a saved edit; a cancelled edit keeps them.
+        for (name in removedMediaNotes) MediaNotes.delete(requireContext(), name)
+        removedMediaNotes.clear()
     }
 
     override fun onCategoryChanged(newCategory: BookmarkCategory) {
@@ -344,6 +419,7 @@ class EditBookmarkFragment :
         private const val STATE_BOOKMARK_CATEGORY = "bookmark_category"
         private const val STATE_COLOR = "color"
         private const val STATE_VISIBLE = "visible"
+        private const val STATE_MEDIA_NOTES = "media_notes"
         private const val TAG = "EditBookmarkFragment"
 
         @JvmStatic

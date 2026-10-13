@@ -131,4 +131,20 @@ public class Bookmark extends MapObject
   static native void nativeUpdateParams(long bookmarkId, @NonNull String name, @ColorInt int color,
                                         @NonNull String description);
   static native void nativeChangeCategory(long oldCatId, long newCatId, long bookmarkId);
+
+  /** Media notes (audio/video/photo attachments) carried in the bookmark's KML extended data. */
+  @Nullable
+  static native String[] nativeGetMediaNotes(long bookmarkId);
+  static native void nativeSetMediaNotes(long bookmarkId, @Nullable String[] notes);
+
+  @Nullable
+  public String[] getMediaNotes()
+  {
+    return nativeGetMediaNotes(mBookmarkId);
+  }
+
+  public void setMediaNotes(@NonNull String[] notes)
+  {
+    nativeSetMediaNotes(mBookmarkId, notes);
+  }
 }

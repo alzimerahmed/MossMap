@@ -20,6 +20,13 @@ char constexpr const * kBaseCommonsUrl =
 #else
     "https://commons.wikimedia.org/wiki/";
 #endif
+
+char constexpr const * kBaseWikivoyageUrl =
+#ifdef OMIM_OS_MOBILE
+    ".m.wikivoyage.org/wiki/";
+#else
+    ".wikivoyage.org/wiki/";
+#endif
 }  // namespace
 
 std::string_view MetadataBase::Get(uint8_t type) const
@@ -67,6 +74,21 @@ std::string Metadata::ToWikiURL(std::string v)
 std::string Metadata::GetWikiURL() const
 {
   return ToWikiURL(std::string(Get(FMD_WIKIPEDIA)));
+}
+
+std::string Metadata::ToWikivoyageURL(std::string v)
+{
+  if (v.empty())
+    return v;
+
+  size_t const colon = v.find(':');
+  if (colon == std::string::npos)
+    return v;
+
+  EncodeWikiURL(colon, v);
+
+  // Wikivoyage is the Wikimedia travel guide; same "lang:Title" convention as Wikipedia.
+  return "https://" + v.substr(0, colon) + kBaseWikivoyageUrl + v.substr(colon + 1);
 }
 
 std::string Metadata::ToWikimediaCommonsURL(std::string v)
@@ -154,6 +176,8 @@ bool Metadata::TypeFromString(std::string_view k, Metadata::EType & outType)
     outType = Metadata::FMD_POSTCODE;
   else if (k == "wikipedia")
     outType = Metadata::FMD_WIKIPEDIA;
+  else if (k == "wikivoyage")
+    outType = Metadata::FMD_WIKIVOYAGE;
   else if (k == "wikimedia_commons")
     outType = Metadata::FMD_WIKIMEDIA_COMMONS;
   else if (k == "addr:flats")
@@ -296,6 +320,7 @@ std::string ToString(Metadata::EType type)
   case Metadata::FMD_EMAIL: return "email";
   case Metadata::FMD_POSTCODE: return "addr:postcode";
   case Metadata::FMD_WIKIPEDIA: return "wikipedia";
+  case Metadata::FMD_WIKIVOYAGE: return "wikivoyage";
   case Metadata::FMD_DESCRIPTION: return "description";
   case Metadata::FMD_FLATS: return "addr:flats";
   case Metadata::FMD_HEIGHT: return "height";
