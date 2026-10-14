@@ -40,7 +40,7 @@ jobs:
           RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
         run: |
           test -n "$RELEASE_KEYSTORE" || { echo "::error::RELEASE_KEYSTORE secret is not set"; exit 1; }
-          echo "$RELEASE_KEYSTORE" | base64 -d > keystore.jks
+          echo "$RELEASE_KEYSTORE" | base64 -d > android/keystore.jks
 
       - name: Write keystore.properties
         shell: bash
