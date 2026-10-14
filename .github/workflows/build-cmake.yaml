@@ -114,6 +114,11 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: organicmaps/organicmaps
+          # Pin to a fixed upstream ref: tests assert exact border-derived output
+          # (e.g. cross_mwm_osm_ways_collector_tests), and upstream regenerates
+          # data/borders in-place. Tracking master made CI break when upstream
+          # updated borders on 2026-10-14 (commit 60949cd3de).
+          ref: 8267d9360c090a9f06107abc29e1bb2191eb6ad3
           sparse-checkout: |
             data/borders
             data/test_data
