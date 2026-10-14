@@ -12,6 +12,8 @@ jobs:
   android-release:
     name: Build Signed Release APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # create the GitHub Release and upload the APK asset
     steps:
       - name: Install build tools and dependencies
         shell: bash
