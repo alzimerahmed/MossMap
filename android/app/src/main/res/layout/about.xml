@@ -81,12 +81,6 @@
         android:textColor="?android:textColorPrimary"
         android:textStyle="bold" />
 
-    <app.organicmaps.widget.DonationView
-        android:id="@+id/donate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_base" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/margin_base"
@@ -132,13 +126,6 @@
         android:text="@string/report_a_bug"
         android:textAlignment="viewStart"
         app:drawableStartCompat="@drawable/ic_report_a_bug" />
-
-    <TextView
-        android:id="@+id/support_us"
-        style="@style/MwmWidget.TextView.Item"
-        android:text="@string/how_to_support_us"
-        android:textAlignment="viewStart"
-        app:drawableStartCompat="@drawable/ic_donate" />
 
     <TextView
         android:id="@+id/news"

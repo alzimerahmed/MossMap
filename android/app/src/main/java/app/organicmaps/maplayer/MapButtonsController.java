@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -298,23 +297,10 @@ public class MapButtonsController extends Fragment
     if (!(view instanceof FloatingActionButton helpButton))
       return;
 
-    if (Framework.nativeCanShowCrowdfundingPromo() && !TextUtils.isEmpty(Utils.getDonateUrl(requireContext())))
-    {
-      helpButton.setImageResource(R.drawable.ic_crowdfunding);
+    helpButton.setImageResource(app.organicmaps.branding.R.drawable.logo);
+    // Keep this button colorful in normal theme.
+    if (!ThemeUtils.isDarkTheme(requireContext()))
       helpButton.getDrawable().setTintList(null);
-    }
-    else if (Config.isNY() && !TextUtils.isEmpty(Utils.getDonateUrl(requireContext())))
-    {
-      helpButton.setImageResource(R.drawable.ic_christmas_tree);
-      helpButton.getDrawable().setTintList(null);
-    }
-    else
-    {
-      helpButton.setImageResource(app.organicmaps.branding.R.drawable.logo);
-      // Keep this button colorful in normal theme.
-      if (!ThemeUtils.isDarkTheme(requireContext()))
-        helpButton.getDrawable().setTintList(null);
-    }
   }
 
   public void updateLayerButton()

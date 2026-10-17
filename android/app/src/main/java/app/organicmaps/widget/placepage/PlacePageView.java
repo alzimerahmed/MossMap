@@ -77,7 +77,6 @@ import app.organicmaps.widget.placepage.sections.PlacePageLinksFragment;
 import app.organicmaps.widget.placepage.sections.PlacePageNotesFragment;
 import app.organicmaps.widget.placepage.sections.PlacePageOpeningHoursFragment;
 import app.organicmaps.widget.placepage.sections.PlacePagePhoneFragment;
-import app.organicmaps.widget.placepage.sections.PlacePageProductsFragment;
 import app.organicmaps.widget.placepage.sections.PlacePageTrackFragment;
 import app.organicmaps.widget.placepage.sections.PlacePageTrackRecordingFragment;
 import app.organicmaps.widget.placepage.sections.PlacePageWikipediaFragment;
@@ -96,7 +95,6 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
   private static final String NOTES_FRAGMENT_TAG = "NOTES_FRAGMENT_TAG";
   private static final String TRACK_FRAGMENT_TAG = "TRACK_FRAGMENT_TAG";
   private static final String TRACK_RECORDING_FRAGMENT_TAG = "TRACK_RECORDING_FRAGMENT_TAG";
-  private static final String PRODUCTS_FRAGMENT_TAG = "PRODUCTS_FRAGMENT_TAG";
   private static final String WIKIPEDIA_FRAGMENT_TAG = "WIKIPEDIA_FRAGMENT_TAG";
   private static final String PHONE_FRAGMENT_TAG = "PHONE_FRAGMENT_TAG";
   private static final String OPENING_HOURS_FRAGMENT_TAG = "OPENING_HOURS_FRAGMENT_TAG";
@@ -525,19 +523,6 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
                        hasWikipediaEntry());
   }
 
-  private boolean hasProductsEntry()
-  {
-    return Framework.nativeShouldShowProducts();
-  }
-
-  private void updateProductsView()
-  {
-    var hasProductsEntry = hasProductsEntry();
-
-    updateViewFragment(PlacePageProductsFragment.class, PRODUCTS_FRAGMENT_TAG, R.id.place_page_products_fragment,
-                       hasProductsEntry);
-  }
-
   private void setTextAndColorizeSubtitle()
   {
     String text = mMapObject.getSubtitle();
@@ -811,7 +796,6 @@ public class PlacePageView extends Fragment implements View.OnClickListener, Vie
     UiUtils.hideIf(isTrackOrRecording, mFrame.findViewById(R.id.ll__place_open_in), mDetailsTopSpace);
     updateLinksView();
     updateOpeningHoursView();
-    updateProductsView();
     updateWikipediaView();
     updateNotesView();
     updatePhoneView();

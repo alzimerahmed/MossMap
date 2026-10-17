@@ -467,16 +467,4 @@ public class Utils
     return StringUtils.formatUsingUsLocale("%d:%02d", time.getHour(), time.getMinute());
   }
 
-  @NonNull
-  public static String getDonateUrl(@NonNull Context context)
-  {
-    // The same l11n logic as in Framework::GetDonateUrl()
-
-    final String url = Config.getDonateUrl();
-    // Enable donations by default if not Google or Huawei. Replace organicmaps.app/donate/ with localized page.
-    if ((url.isEmpty() && !BuildConfig.FLAVOR.equals("google") && !BuildConfig.FLAVOR.equals("huawei"))
-        || url.endsWith("organicmaps.app/donate/"))
-      return context.getString(R.string.translated_om_site_url) + "donate/";
-    return url;
-  }
 }

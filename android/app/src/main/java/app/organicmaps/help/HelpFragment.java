@@ -22,11 +22,9 @@ import app.organicmaps.util.Graphics;
 import app.organicmaps.util.SharingUtils;
 import app.organicmaps.util.Utils;
 import app.organicmaps.util.WindowInsetUtils.ScrollableContentInsetsListener;
-import app.organicmaps.widget.DonationView;
 
 public class HelpFragment extends BaseMwmFragment implements View.OnClickListener
 {
-  private String mDonateUrl;
   private ActivityResultLauncher<SharingUtils.SharingIntent> shareLauncher;
 
   private TextView setupItem(@IdRes int id, boolean tint, @NonNull View frame)
@@ -41,7 +39,6 @@ public class HelpFragment extends BaseMwmFragment implements View.OnClickListene
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
   {
-    mDonateUrl = Utils.getDonateUrl(requireContext());
     View root = inflater.inflate(R.layout.about, container, false);
 
     ((TextView) root.findViewById(R.id.version)).setText(BuildConfig.VERSION_NAME);
@@ -66,27 +63,6 @@ public class HelpFragment extends BaseMwmFragment implements View.OnClickListene
     setupItem(R.id.openstreetmap, true, root);
     setupItem(R.id.faq, true, root);
     setupItem(R.id.report, isLandscape, root);
-
-    final TextView supportUsView = root.findViewById(R.id.support_us);
-    if (BuildConfig.FLAVOR.equals("google") && !TextUtils.isEmpty(mDonateUrl))
-      supportUsView.setVisibility(View.GONE);
-    else
-      setupItem(R.id.support_us, true, root);
-
-    DonationView donationView = root.findViewById(R.id.donate);
-    if (TextUtils.isEmpty(mDonateUrl))
-    {
-      donationView.setVisibility(View.GONE);
-      donationView.setOnDonateClickListener(null);
-    }
-    else
-    {
-      donationView.setVisibility(View.VISIBLE);
-      donationView.setOnDonateClickListener(() -> {
-        Utils.openUrl(requireActivity(), mDonateUrl);
-        Framework.nativeDidShowDonationPage();
-      });
-    }
 
     if (BuildConfig.REVIEW_URL.isEmpty())
       root.findViewById(R.id.rate).setVisibility(View.GONE);
@@ -138,8 +114,6 @@ public class HelpFragment extends BaseMwmFragment implements View.OnClickListene
       ((HelpActivity) requireActivity()).stackFragment(FaqFragment.class, getString(R.string.faq), null);
     else if (id == R.id.report)
       Utils.sendBugReport(shareLauncher, requireActivity(), "", "");
-    else if (id == R.id.support_us)
-      Utils.openUrl(requireActivity(), getResources().getString(R.string.translated_om_site_url) + "support-us/");
     else if (id == R.id.rate)
       Utils.openAppInMarket(requireActivity(), BuildConfig.REVIEW_URL);
     else if (id == R.id.copyright)
