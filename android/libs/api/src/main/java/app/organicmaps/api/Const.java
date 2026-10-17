@@ -4,7 +4,7 @@ public class Const
 {
   // Common
   public static final String API_SCHEME = "om";
-  public static final String AUTHORITY = "app.organicmaps.api";
+  public static final String AUTHORITY = "app.mossmap.api";
 
   public static final String EXTRA_PREFIX = AUTHORITY + ".extra";
   public static final String ACTION_PREFIX = AUTHORITY + ".action";

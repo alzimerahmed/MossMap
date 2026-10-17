@@ -39,7 +39,7 @@ rootProject.ext {
     // Release version: aligned with the git tag (v1.0.0). The date-based version.sh value
     // stays available as ver.V2 if we ever return to date versioning.
     versionName = '1.0.0'
-    appId = 'app.organicmaps'
+    appId = 'app.mossmap'
     CI = System.getenv("CI") != null
 }
 
