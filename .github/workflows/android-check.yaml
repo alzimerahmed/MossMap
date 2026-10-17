@@ -170,6 +170,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: android-${{ matrix.flavor }}
-          path: android/app/build/outputs/apk/**/OrganicMaps-*.apk
+          path: android/app/build/outputs/apk/**/MossMap-*.apk
           if-no-files-found: error
           retention-days: 30
