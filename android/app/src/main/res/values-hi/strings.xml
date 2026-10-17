@@ -258,13 +258,6 @@
     <string name="help">सहायता</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">अक्सर पूछे जाने वाले प्रश्नों</string>
-    <!-- Button in the main menu -->
-    <string name="donate">दान देना</string>
-    <string name="already_donated">पहले से दान</string>
-    <string name="remind_me_later">बाद में याद दिलाना</string>
-    <string name="support_organic_maps">Organic Maps का समर्थन करें</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">परियोजना का समर्थन करें</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">कॉपीराइट</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">गहरा</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">भोर से शाम तक लाइट</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">लाखों उपयोगकर्ताओं को बिना विज्ञापनों वाले मुफ़्त नक्शे उपहार में दें!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">मार्ग का अनुसरण करते समय कृपया ध्यान रखें:</string>

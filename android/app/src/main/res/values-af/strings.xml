@@ -258,13 +258,6 @@
     <string name="help">Help</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Gereelde vrae</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Skenk</string>
-    <string name="already_donated">Reeds geskenk</string>
-    <string name="remind_me_later">Herinner later</string>
-    <string name="support_organic_maps">Ondersteun Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Ondersteun die projek</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Kopiereg</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Donker</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Lig van dagbreek tot skemer</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Skenk gratis kaarte sonder advertensies aan miljoene gebrui</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Wanneer u die roete volg, hou asb. die volgende in gedagte:</string>

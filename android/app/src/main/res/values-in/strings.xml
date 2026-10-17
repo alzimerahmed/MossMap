@@ -258,13 +258,6 @@
     <string name="help">Bantuan</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Pertanyaan dan jawaban</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Menyumbangkan</string>
-    <string name="already_donated">Sudah disumbang</string>
-    <string name="remind_me_later">Ingatkan nanti</string>
-    <string name="support_organic_maps">Mendukung Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Mendukung proyek</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Hak cipta</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Gelap</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Terang dari fajar hingga senja</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Hadiahkan peta gratis tanpa iklan untuk jutaan pengguna!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Saat mengikuti rute, harap diingat:</string>

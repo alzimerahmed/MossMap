@@ -258,13 +258,6 @@
     <string name="help">Ajutor</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Întrebări frecvente</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Donează</string>
-    <string name="already_donated">Deja donat</string>
-    <string name="remind_me_later">Amintește mai târziu</string>
-    <string name="support_organic_maps">Susține Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Susține proiectul</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Drepturi de autor</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Întunecat</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Deschis de la răsărit până la apus</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Oferiți hărți gratuite fără reclame pentru milioane de utilizatori!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Când parcurgi traseul, ai în vedere următoarele:</string>

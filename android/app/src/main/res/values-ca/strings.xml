@@ -258,13 +258,6 @@
     <string name="help">Ajuda</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Preguntes més freqüents</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Donatiu</string>
-    <string name="already_donated">Ja he donat</string>
-    <string name="remind_me_later">Recorda’m més tard</string>
-    <string name="support_organic_maps">Doneu suport a l’Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Doneu suport al projecte</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Drets d’autor</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Fosc</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Clar de l\'alba fins al capvespre</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Regala mapes gratuïts sense anuncis a milions d\'usuaris!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Quan seguiu la ruta, tingueu present:</string>

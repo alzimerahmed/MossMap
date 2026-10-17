@@ -258,13 +258,6 @@
     <string name="help">Yardım</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Tez-tez soruşulan suallar</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Bağışlamaq</string>
-    <string name="already_donated">Artıq ianə edildi</string>
-    <string name="remind_me_later">Daha sonra xatırlat</string>
-    <string name="support_organic_maps">Organic Maps-i dəstəkləmək</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Bu layihəni dəstəkləyin</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Müəllif hüququ</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tünd</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Şəfəqdən gün batana qədər açıq</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Milyonlarla istifadəçiyə reklamsız, pulsuz xəritələr hədiyyə edin!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Marşrutunuzu izləyərkən aşağıdakıları yadda saxlayın:</string>

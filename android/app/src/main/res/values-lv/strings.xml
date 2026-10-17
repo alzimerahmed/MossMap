@@ -258,13 +258,6 @@
     <string name="help">Palīdzība</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Biežāk uzdotie jautājumi</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Ziedot</string>
-    <string name="already_donated">Jau esmu ziedojis/usi</string>
-    <string name="remind_me_later">Atgādināt vēlāk</string>
-    <string name="support_organic_maps">Atbalstīt Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Atbalstiet projektu</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Autortiesības</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tumšs</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Gaišs no rītausmas līdz krēslai</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Dāviniet bezmaksas kartes bez reklāmām miljoniem lietotāju!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Sekojot maršrutam, ievērojiet:</string>

@@ -258,13 +258,6 @@
     <string name="help">Trợ giúp</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Câu hỏi và trả lời</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Quyên tặng</string>
-    <string name="already_donated">Đã quyên góp</string>
-    <string name="remind_me_later">Nhắc sau</string>
-    <string name="support_organic_maps">Hỗ trợ Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Hỗ trợ dự án</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Bản quyền</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tối</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Sáng từ bình minh đến hoàng hôn</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Tặng bản đồ miễn phí không có quảng cáo cho hàng triệu người dùng!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Khi đi theo tuyến đường, hãy lưu ý:</string>

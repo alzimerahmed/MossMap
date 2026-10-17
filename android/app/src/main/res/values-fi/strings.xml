@@ -258,13 +258,6 @@
     <string name="help">Ohje</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Usein kysytyt kysymykset</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Lahjoita</string>
-    <string name="already_donated">Jo lahjoitettu</string>
-    <string name="remind_me_later">Muistuta myöhemmin</string>
-    <string name="support_organic_maps">Tue Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Tue projektia</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Tekijänoikeudet</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tumma</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Vaalea aamusta iltaan</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Lahjoita ilmaiset ja mainoksettomat kartat miljoonille käyttäjille!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Muista seuraavat asiat seuratessasi reittiä:</string>

@@ -258,13 +258,6 @@
     <string name="help">Hjelp</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Spørsmål og svar</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Donere</string>
-    <string name="already_donated">Allerede donert</string>
-    <string name="remind_me_later">Påminn senere</string>
-    <string name="support_organic_maps">Støtt Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Støtt prosjektet</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Opphavsrett</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Mørke</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Lys fra daggry til skumring</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Gi gratis kart uten reklame til millioner av brukere!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Husk følgende når du følger ruten:</string>

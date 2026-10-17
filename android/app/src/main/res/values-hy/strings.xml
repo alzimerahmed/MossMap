@@ -258,13 +258,6 @@
     <string name="help">Օգնություն</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Հաճախ տրվող հարցեր</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Նվիրաբերել</string>
-    <string name="already_donated">Արդեն նվիրաբերել եմ</string>
-    <string name="remind_me_later">Հիշեցնել ավելի ուշ</string>
-    <string name="support_organic_maps">Աջակցել Organic Maps-ին</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Աջակցել նախագծին</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Հեղինակային իրավունք</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Մուգ</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Բաց թեմա լուսաբացից մինչև մթնշաղ</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Նվիրեք անվճար և առանց գովազդի քարտեզներ միլիոնավոր օգտատերերի:</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Երթուղով շարժվելիս հիշեք՝</string>

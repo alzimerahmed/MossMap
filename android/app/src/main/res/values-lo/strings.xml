@@ -212,13 +212,6 @@
     <string name="help">ຊ່ວຍເຫຼືອ</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">ຄຳຖາມທີ່ພົບເລື້ອຍ</string>
-    <!-- Button in the main menu -->
-    <string name="donate">ບໍລິຈາກ</string>
-    <string name="already_donated">ບໍລິຈາກແລ້ວ</string>
-    <string name="remind_me_later">ເຕືອນພາຍຫຼັງ</string>
-    <string name="support_organic_maps">ສະໜັບສະໜູນ Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">ສະໜັບສະໜູນໂຄງການ</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">ລິຂະສິດ</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -270,8 +263,6 @@
     <string name="pref_appearance_dark">ມືດ</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">ໂໝດສະຫວ່າງຈາກອາລຸນເຖິງຕອນແລງ</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">ມອບແຜນທີ່ຟຣີທີ່ບໍ່ມີໂຄສະນາໃຫ້ກັບຜູ້ໃຊ້ຫຼາຍລ້ານຄົນ!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">ເມື່ອເດີນທາງຕາມເສັ້ນທາງ, ກະລຸນາຈື່ໄວ້ວ່າ:</string>

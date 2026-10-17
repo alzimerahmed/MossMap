@@ -258,13 +258,6 @@
     <string name="help">Pomoć</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Često postavljena pitanja</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Doniraj</string>
-    <string name="already_donated">Već si donirao/la</string>
-    <string name="remind_me_later">Podsjeti me kasnije</string>
-    <string name="support_organic_maps">Podrži Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Podrži projekt</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Autorska prava</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tamna</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Svijetlo od zore do sumraka</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Poklonite besplatne karte bez oglasa milijunima korisnika!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Prilikom praćenja rute, imajte sljedeće na umu:</string>

@@ -258,13 +258,6 @@
     <string name="help">Għajnuna</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Mistoqsijiet Frekwenti</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Donazzjoni</string>
-    <string name="already_donated">Ġa mogħtija id-donazzjoni</string>
-    <string name="remind_me_later">Fakkar aktar tard</string>
-    <string name="support_organic_maps">Appoġġja lill-Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Appoġġja lill-proġett</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Drittijiet tal-awtur</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Skur</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Ċar mill-għodwa sal-għaxija</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Agħti mapep b\'xejn u bla reklami lil miljuni ta\' utenti!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Meta ssegwi r-rotta, jekk jogħġbok żomm f’ moħħok:</string>

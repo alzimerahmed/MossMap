@@ -258,13 +258,6 @@
     <string name="help">کمک</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">سوالات متداول</string>
-    <!-- Button in the main menu -->
-    <string name="donate">حمایت مالی</string>
-    <string name="already_donated">قبلاً اهدا شده</string>
-    <string name="remind_me_later">بعداً یادآوری کن</string>
-    <string name="support_organic_maps">پشتیبانی از Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">از پروژه حمایت کنید</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">حق نشر و کپی رایت</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">تیره</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">روشن از سپیده‌دم تا غروب</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">نقشه‌های رایگان و بدون تبلیغات را به میلیون‌ها کاربر هدیه دهید!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">زمانی که مسیری را دنبال می کنید لطفا به یاد داشته باشید:</string>

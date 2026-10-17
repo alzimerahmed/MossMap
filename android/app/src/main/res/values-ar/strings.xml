@@ -258,13 +258,6 @@
     <string name="help">مساعدة</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">اسئلة مكررة</string>
-    <!-- Button in the main menu -->
-    <string name="donate">تبرع</string>
-    <string name="already_donated">تم التبرع</string>
-    <string name="remind_me_later">ذكر لاحقاً</string>
-    <string name="support_organic_maps">ادعموا Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">دعم المشروع</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">حقوق النشر</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">داكن</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">فاتح من الفجر حتى الغسق</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">اهْدِ خرائط مجانية بدون إعلانات لملايين المستخدمين!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">عند اتباع المسار، يُرجى الانتباه إلى ما يلي:</string>

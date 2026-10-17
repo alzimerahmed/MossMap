@@ -258,13 +258,6 @@
     <string name="help">Aiuto</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Domande frequenti</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Dona</string>
-    <string name="already_donated">Già donato</string>
-    <string name="remind_me_later">Ricorda più tardi</string>
-    <string name="support_organic_maps">Supporta Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Sostieni il progetto</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Copyright</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Scuro</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Chiaro dall\'alba al tramonto</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Regala mappe gratuite e senza pubblicità a milioni di utenti!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Quando segui il percorso, ricorda che:</string>

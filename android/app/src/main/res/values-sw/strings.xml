@@ -258,13 +258,6 @@
     <string name="help">Msaada</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Maswali na majibu</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Changia</string>
-    <string name="already_donated">Tayari kutoa</string>
-    <string name="remind_me_later">Kumbusha baadaye</string>
-    <string name="support_organic_maps">Usaidizi Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Saidia mradi</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Hakimiliki</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Giza</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Maudhui mepesi kutoka alfajiri hadi machweo</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Zawadia mamilioni ya watumiaji ramani za bure bila matangazo!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Unapofuata njia, tafadhali kumbuka:</string>

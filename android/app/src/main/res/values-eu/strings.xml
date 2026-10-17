@@ -258,13 +258,6 @@
     <string name="help">Laguntza</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Ohiko galderak</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Dohaintza eman</string>
-    <string name="already_donated">Dohaintza jada emana</string>
-    <string name="remind_me_later">Gogoratu geroago</string>
-    <string name="support_organic_maps">Sustatu Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Proiektuari laguntza eman</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Egile eskubideak</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Iluna</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Argi egunsentitik iluntzerarte</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Oparitu doako mapak iragarkirik gabe milioika erabiltzaileri!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Arrastoa jarraitzean, kontuan izan:</string>

@@ -8333,7 +8333,7 @@ zh-Hant = 問題和解答
 
 [donate]
 comment = Button in the main menu
-tags = android-app,apple-maps
+tags = apple-maps
 en = Donate
 af = Skenk
 ar = تبرع
@@ -8388,7 +8388,7 @@ zh-Hans = 捐助我们
 zh-Hant = 捐助我們
 
 [already_donated]
-tags = android-app,apple-maps
+tags = apple-maps
 en = Already donated
 af = Reeds geskenk
 ar = تم التبرع
@@ -8444,7 +8444,7 @@ zh-Hans = 已捐赠
 zh-Hant = 已捐贈
 
 [remind_me_later]
-tags = android-app,apple-maps
+tags = apple-maps
 en = Remind later
 af = Herinner later
 ar = ذكر لاحقاً
@@ -8499,7 +8499,7 @@ zh-Hans = 稍后提醒
 zh-Hant = 稍後提醒
 
 [support_organic_maps]
-tags = android-app,apple-maps
+tags = apple-maps
 en = Support Organic Maps
 af = Ondersteun Organic Maps
 ar = ادعموا Organic Maps
@@ -8553,62 +8553,6 @@ vi = Hỗ trợ Organic Maps
 zh-Hans = 支持 Organic Maps
 zh-Hant = 支援 Organic Maps
 
-[how_to_support_us]
-comment = Button in the main Help dialog
-tags = android-app
-en = Support the project
-af = Ondersteun die projek
-ar = دعم المشروع
-az = Bu layihəni dəstəkləyin
-be = Падтрымаць праект
-bg = Подкрепете проекта
-ca = Doneu suport al projecte
-cs = Podpořte projekt
-da = Støt projektet
-de = Unterstütze das Projekt
-el = Στηρίξτε αυτό το πρότζεκτ
-es = Apoye el proyecto
-es-MX = Apoyar el proyecto
-et = Toeta meie projekti
-eu = Proiektuari laguntza eman
-fa = از پروژه حمایت کنید
-fi = Tue projektia
-fr = Soutenir le projet
-gl = Apoie o proxecto
-he = תמכו בפרויקט
-hi = परियोजना का समर्थन करें
-hr = Podrži projekt
-hu = Támogatás
-hy = Աջակցել նախագծին
-id = Mendukung proyek
-is = Styddu við verkefnið
-it = Sostieni il progetto
-ja = プロジェクトを支援する
-ko = 프로젝트 지원
-lo = ສະໜັບສະໜູນໂຄງການ
-lt = Paremti projektą
-lv = Atbalstiet projektu
-mr = प्रकल्पाला पाठठिंबा द्या
-mt = Appoġġja lill-proġett
-nb = Støtt prosjektet
-nl = Steun het project
-pl = Wesprzyj projekt
-pt = Apoie o projeto
-pt-BR = Apoiar o projeto
-ro = Susține proiectul
-ru = Помочь проекту
-sk = Podporte projekt
-sl = Podprite projekt
-sq = Mbështet projektin
-sr = Подржи пројекат
-sv = Stöd projektet
-sw = Saidia mradi
-th = สนับสนุนโครงการ
-tr = Bu projeyi destekleyin
-uk = Підтримайте проект
-vi = Hỗ trợ dự án
-zh-Hans = 支持本项目
-zh-Hant = 支持本項目
 
 [copyright]
 comment = Button in the main Help dialog
@@ -11328,7 +11272,7 @@ zh-Hant = 從黎明到黃昏都是淺色
 
 [donate_description]
 comment = Tex label above the Donate button
-tags = android-app,apple-maps
+tags = apple-maps
 en = Gift free maps with no ads to millions of users!
 af = Skenk gratis kaarte sonder advertensies aan miljoene gebrui
 ar = اهْدِ خرائط مجانية بدون إعلانات لملايين المستخدمين!

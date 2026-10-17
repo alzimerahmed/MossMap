@@ -258,13 +258,6 @@
     <string name="help">Žinynas</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Dažnai užduodami klausimai</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Paaukoti</string>
-    <string name="already_donated">Jau paaukojau</string>
-    <string name="remind_me_later">Priminti vėliau</string>
-    <string name="support_organic_maps">Paremti „Organic Maps“</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Paremti projektą</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Autorių teisės</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tamsi</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Šviesi nuo aušros iki sutemų</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Padovanokite nemokamus žemėlapius be skelbimų milijonams vartotojų!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Keliaudami siūlomu maršrutu, nepamirškite, kad:</string>

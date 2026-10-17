@@ -258,13 +258,6 @@
     <string name="help">幫助</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">問題和解答</string>
-    <!-- Button in the main menu -->
-    <string name="donate">捐助我們</string>
-    <string name="already_donated">已捐贈</string>
-    <string name="remind_me_later">稍後提醒</string>
-    <string name="support_organic_maps">支援 Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">支持本項目</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">版權</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">深色</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">從黎明到黃昏都是淺色</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">向數百萬使用者贈送無廣告的免費地圖！</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">依照路線行進時，請牢記：</string>

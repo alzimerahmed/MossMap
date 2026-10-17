@@ -258,13 +258,6 @@
     <string name="help">Βοήθεια</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Συχνές ερωτήσεις</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Δωρεά</string>
-    <string name="already_donated">Ήδη δωρεά</string>
-    <string name="remind_me_later">Υπενθύμισε αργότερα</string>
-    <string name="support_organic_maps">Υποστήριξε το Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Στηρίξτε αυτό το πρότζεκτ</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Πνευματικά δικαιώματα</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Σκουρόχρωμη</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Ανοιχτόχρωμο από την αυγή μέχρι το σούρουπο</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Χαρίστε δωρεάν χάρτες χωρίς διαφημίσεις σε εκατομμύρια χρήστες!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Όταν ακολουθείτε την διαδρομή, να θυμάστε:</string>

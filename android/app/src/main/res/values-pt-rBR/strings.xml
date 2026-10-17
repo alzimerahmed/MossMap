@@ -167,13 +167,6 @@
     <string name="rate_the_app">Avaliar o aplicativo</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Perguntas Frequentes</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Doação</string>
-    <string name="already_donated">Já doou</string>
-    <string name="remind_me_later">Lembrar mais tarde</string>
-    <string name="support_organic_maps">Apoiar o Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Apoiar o projeto</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Direitos autorais</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -215,8 +208,6 @@
     <string name="pref_appearance_dark">Escura</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Claro do amanhecer ao anoitecer</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Ofereça mapas gratuitos e sem anúncios a milhões de usuários!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Ao seguir a rota, lembre-se que:</string>

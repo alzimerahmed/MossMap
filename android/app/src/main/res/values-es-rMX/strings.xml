@@ -121,9 +121,6 @@
     <string name="website">Página web</string>
     <!-- Text in menu -->
     <string name="rate_the_app">Valora la aplicación</string>
-    <string name="already_donated">Ya donado</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Apoyar el proyecto</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
     <string name="report_a_bug">Informar de un error</string>
     <!-- Toast text when compass calibration may improve the correctness of the current position arrow -->

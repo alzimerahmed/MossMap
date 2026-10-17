@@ -258,13 +258,6 @@
     <string name="help">ヘルプ</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">よくある質問</string>
-    <!-- Button in the main menu -->
-    <string name="donate">寄付</string>
-    <string name="already_donated">寄付済み</string>
-    <string name="remind_me_later">後でリマインド</string>
-    <string name="support_organic_maps">Organic Maps を応援してください</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">プロジェクトを支援する</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">著作権</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">ダーク</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">夜明けから夕暮れまでライト</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">何百万人ものユーザーに広告なしの無料地図を贈ろう！</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">案内ルートに従う際は、以下の点にご留意ください：</string>

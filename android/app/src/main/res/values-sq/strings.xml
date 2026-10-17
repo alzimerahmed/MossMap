@@ -258,13 +258,6 @@
     <string name="help">Ndihmë</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Pyetjet e Bëra Shpesh</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Dhuroni</string>
-    <string name="already_donated">Tashmë keni dhuruar</string>
-    <string name="remind_me_later">Kujto më vonë</string>
-    <string name="support_organic_maps">Mbështet Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Mbështet projektin</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">E drejta e autorit</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Errësirë</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">E çelët nga agimi deri në perëndim</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Dhuroni harta falas pa reklama për miliona përdorues!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Kur ndiqni rrugën, ju lutemi mbani parasysh:</string>

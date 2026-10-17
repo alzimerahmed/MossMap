@@ -258,13 +258,6 @@
     <string name="help">Abiteave</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Korduma kippuvad küsimused</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Anneta</string>
-    <string name="already_donated">Juba annetasin</string>
-    <string name="remind_me_later">Meenuta hiljem</string>
-    <string name="support_organic_maps">Toeta Organic Mapsi</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Toeta meie projekti</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Autoriõigused</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tume kujundus</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Hele hommikust kuni õhtuhämaruni</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Kingi miljonitele kasutajatele tasuta ja reklaamideta kaardid!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Teekonda järgides palun pea meeles:</string>

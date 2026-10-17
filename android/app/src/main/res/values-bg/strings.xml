@@ -258,13 +258,6 @@
     <string name="help">Помощ</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Въпроси и отговори</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Дарете</string>
-    <string name="already_donated">Вече дарено</string>
-    <string name="remind_me_later">Напомни по-късно</string>
-    <string name="support_organic_maps">Подкрепи Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Подкрепете проекта</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Авторски права</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Тъмен</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Светла от зори до здрач</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Подарете безплатни карти без реклами на милиони потребители!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Когато следвате маршрута, моля, имайте предвид:</string>

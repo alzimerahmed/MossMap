@@ -258,13 +258,6 @@
     <string name="help">Súgó</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">GYIK</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Adományozás</string>
-    <string name="already_donated">Már adományozott</string>
-    <string name="remind_me_later">Emlékeztessen később</string>
-    <string name="support_organic_maps">Támogassa az Organic Maps-et</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Támogatás</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Szerzői jogok</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Sötét</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Világos hajnaltól alkonyatig</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Ajándékozzon ingyenes, hirdetésmentes térképeket felhasználók millióinak!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Az útvonal követése során vegye figyelembe az alábbiakat:</string>

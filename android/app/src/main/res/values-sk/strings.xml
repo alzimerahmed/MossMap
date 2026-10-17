@@ -258,13 +258,6 @@
     <string name="help">Nápoveda</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Otázky a odpovede</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Darovať</string>
-    <string name="already_donated">Už darované</string>
-    <string name="remind_me_later">Pripomeň neskôr</string>
-    <string name="support_organic_maps">Podporiť Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Podporte projekt</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Autorské práva</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Tmavý</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Svetlý od úsvitu do súmraku</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Darujte bezplatné mapy bez reklám miliónom používateľov!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Pri sledovaní trasy majte na pamäti nasledujúce:</string>

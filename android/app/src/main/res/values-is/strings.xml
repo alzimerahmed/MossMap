@@ -258,13 +258,6 @@
     <string name="help">Hjálp</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">Algengar spurningar (FAQ)</string>
-    <!-- Button in the main menu -->
-    <string name="donate">Styrkja</string>
-    <string name="already_donated">Hef þegar styrkt verkefnið</string>
-    <string name="remind_me_later">Áminna mig síðar</string>
-    <string name="support_organic_maps">Styddu við Organic Maps</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">Styddu við verkefnið</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">Höfundarréttur</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">Dökkt</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">Ljós frá dögun til kvölds</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">Gefðu milljónum notenda ókeypis kort án auglýsinga!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">Þegar ferðast er eftir leið, skaltu hafa eftirfarandi í huga:</string>

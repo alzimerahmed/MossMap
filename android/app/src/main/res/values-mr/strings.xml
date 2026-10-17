@@ -258,13 +258,6 @@
     <string name="help">मदत</string>
     <!-- Button in the main Help dialog -->
     <string name="faq">वारंवार विचारलेले प्रश्न</string>
-    <!-- Button in the main menu -->
-    <string name="donate">दान करा</string>
-    <string name="already_donated">आधीच दान केले</string>
-    <string name="remind_me_later">नंतर आठवण करून द्या</string>
-    <string name="support_organic_maps">Organic Maps ला समर्थन द्या</string>
-    <!-- Button in the main Help dialog -->
-    <string name="how_to_support_us">प्रकल्पाला पाठठिंबा द्या</string>
     <!-- Button in the main Help dialog -->
     <string name="copyright">प्रकाशन अधिकार (कॉपीराईट)</string>
     <!-- Text in menu + Button in the main Help dialog. Used in home screen quick actions. -->
@@ -316,8 +309,6 @@
     <string name="pref_appearance_dark">अंधार</string>
     <!-- Settings "Appearance" category: "Scheduled" title, should be consistent with the pref_appearance_title translation. -->
     <string name="pref_appearance_scheduled">फिकट पहाटेपासून संध्याकाळपर्यंत</string>
-    <!-- Tex label above the Donate button -->
-    <string name="donate_description">लाखो वापरकर्त्यांना जाहिरातीशिवाय विनामूल्य नकाशे भेट द्या!</string>
 
     <!-- SECTION: Routing dialogs strings -->
     <string name="dialog_routing_disclaimer_title">प्रवास करताना, कृपात लक्षात ठेवा:</string>
